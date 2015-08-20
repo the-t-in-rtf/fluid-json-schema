@@ -1,0 +1,40 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id":      "base.json#",
+    "title":   "Example Base Schema",
+    "type":    "object",
+    "definitions": {
+        "required": {
+            "type": "boolean"
+        },
+        "boolean": {
+            "type": "boolean"
+        },
+        "date": {
+            "type":   "string",
+            "format": "date"
+        },
+        "number": {
+            "type":     "number",
+            "minValue": 1,
+            "maxValue": 10
+        },
+        "array": {
+            "type": "array",
+            "items": {"type": "boolean" }
+        },
+        "regex": {
+            "type":    "string",
+            "pattern": "^v.l.d$"
+        }
+    },
+    "properties": {
+        "required": { "$ref": "#/definitions/required" },
+        "boolean":  { "$ref": "#/definitions/boolean" },
+        "date":     { "$ref": "#/definitions/date"},
+        "number":   { "$ref": "#/definitions/number"},
+        "array":    { "$ref": "#/definitions/array"},
+        "regex":    { "$ref": "#/definitions/regex"}
+    },
+    "required": ["required"]
+}

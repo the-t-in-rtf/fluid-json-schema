@@ -1,0 +1,22 @@
+{
+    "$schema":     "http://json-schema.org/draft-04/schema#",
+    "title":       "Schema derived from base schema",
+    "description": "inheritance in JSON Schema v4 is still weird.  This example is the one we test against, and it works with JSON Schema.",
+    "type":        "object",
+    "properties": {
+        "required": { "$ref": "base.json#/definitions/required" },
+        "boolean":  { "$ref": "base.json#/definitions/boolean" },
+        "date":     { "$ref": "base.json#/definitions/date"},
+        "number":   { "$ref": "base.json#/definitions/number"},
+        "array":    { "$ref": "base.json#/definitions/array"},
+        "regex":    { "$ref": "base.json#/definitions/array"},
+
+        "additionalOptional": {
+            "type": "string"
+        },
+        "additionalRequired": {
+            "type": "boolean"
+        }
+    },
+    "required": ["additionalRequired", "required"]
+}

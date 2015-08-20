@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <title>Client-side tests for validator...</title>
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="/modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+
+        <!-- Fluid dependencies -->
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidView.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/lib/fastXmlPull/js/fastXmlPull.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/renderer/js/fluidParser.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/renderer/js/fluidRenderer.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidRequests.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- ZSchema dependency -->
+        <script type="text/javascript" src="/bc/z-schema/dist/ZSchema-browser.js"></script>
+
+        <!-- Client-side validator dependencies -->
+        <script src="/src/js/common/validate.js"></script>
+        <script src="/src/js/client/validate.js"></script>
+    </head>
+    <body>
+        <p>This page instantiates a client-side validator, which we will exercise using Zombie.  This page must be hosted using gpii.express or another web server.</p>
+
+        <script type="text/javascript">
+            var clientValidator = gpii.schema.validator.client({
+                members: {
+                    schemaContents: {
+                        base: {
+                            "$schema": "http://json-schema.org/draft-04/schema#",
+                            "id":      "base.json#",
+                            "title":   "Example Schema",
+                            "type":    "object",
+                            "definitions": {
+                                "required": {
+                                    "type": "boolean"
+                                },
+                                "boolean": {
+                                    "type": "boolean"
+                                },
+                                "date": {
+                                    "type":   "string",
+                                            "format": "date"
+                                },
+                                "number": {
+                                    "type":     "number",
+                                            "minValue": 1,
+                                            "maxValue": 10
+                                },
+                                "array": {
+                                    "type": "array",
+                                            "items": {"type": "boolean" }
+                                },
+                                "regex": {
+                                    "type":    "string",
+                                            "pattern": "^v.l.d$"
+                                }
+                            },
+                            "properties": {
+                                "required": { "$ref": "#/definitions/required" },
+                                "boolean":  { "$ref": "#/definitions/boolean" },
+                                "date":     { "$ref": "#/definitions/date"},
+                                "number":   { "$ref": "#/definitions/number"},
+                                "array":    { "$ref": "#/definitions/array"},
+                                "regex":    { "$ref": "#/definitions/regex"}
+                            },
+                            "required": ["required"]
+                        },
+                        derived: {
+                            "$schema":     "http://json-schema.org/draft-04/schema#",
+                            "title":       "Schema derived from base schema",
+                            "description": "inheritance in JSON Schema v4 is still weird.  This example is the one we test against, and it works with JSON Schema.",
+                            "type":        "object",
+                            "properties": {
+                                "required": { "$ref": "base.json#/definitions/required" },
+                                "boolean":  { "$ref": "base.json#/definitions/boolean" },
+                                "date":     { "$ref": "base.json#/definitions/date"},
+                                "number":   { "$ref": "base.json#/definitions/number"},
+                                "array":    { "$ref": "base.json#/definitions/array"},
+                                "regex":    { "$ref": "base.json#/definitions/array"},
+
+                                "additionalOptional": {
+                                    "type": "string"
+                                },
+                                "additionalRequired": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": ["additionalRequired", "required"]
+                        },
+                        deep: {
+                            "$schema": "http://json-schema.org/draft-04/schema#",
+                            "title": "Deep schema to test variable nesting and paths.",
+                            "type":  "object",
+                            "properties": {
+                                "deep": {
+                                    "type": "object",
+                                    "properties": {
+                                        "required": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": ["required"]
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

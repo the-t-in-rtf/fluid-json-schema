@@ -1,0 +1,33 @@
+{
+  "name": "gpii-json-schema",
+  "version": "0.1.0",
+  "description": "Fluid components to add support for JSON Schema validation.",
+  "main": "",
+  "scripts": {
+    "test": "node tests/all-tests.js",
+    "postinstall": "grunt dedupe-infusion"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GPII/gpii-json-schema"
+  },
+  "author": "Tony Atkins <tony@raisingthefloor.org>",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-jshint": "~0.9.0",
+    "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
+    "grunt-jsonlint": "1.0.4",
+    "grunt-shell": "0.6.4",
+    "infusion": "git://github.com/fluid-project/infusion.git#282f1a318718eed0b0ec060fb8b4ad254417fd7e",
+    "z-schema": "^3.12.2"
+  },
+  "devDependencies": {
+    "gpii-express": "git://github.com/GPII/gpii-express.git#3bf9783e9c05483b4acce1021926c4b957e48362",
+    "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#b7ef53aac1ca365bf23d35d255fae874faa88b70",
+    "kettle": "git://github.com/amb26/kettle.git#33e2826e78315c6d29b13c8ba810f54fef29e8ac",
+    "request": "2.51.0",
+    "when": "^3.7.3",
+    "zombie": "3.0.15"
+  }
+}
