@@ -69,6 +69,7 @@ gpii.schema.validator.validate = function (that, key, content) {
     return undefined;
 };
 
+
 /*
  z-schema gives us output like:
 
@@ -117,28 +118,52 @@ gpii.schema.validator.sanitizeError = function (error, errorMap) {
 gpii.schema.validator.removeEmptySegments = function (el) { return el !== undefined && el !== null && el.length > 0; };
 
 /*
+ Z-Schema escapes a literal slash in a key name, using the notation `~1`, as in:
+
+ ```
+ [
+     {
+         "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+         "params": [
+             "required"
+         ],
+         "message": "Missing required property: required",
+         "path": "#/deep~1slasher"
+     }
+ ]
+ ```
+
+ To avoid clobbering names with `~1` in it, a tilde is escaped as `~0`.  This function corrects for both types of escaping.
+
+ NOTE:  There is currently a bug in that only the first slash is escaped:  https://github.com/zaggino/z-schema/issues/130
+
+ Keys with multiple slashes are unlikely to work as expected.
+
+ */
+gpii.schema.validator.unescapeZSchemaisms = function (segment) {
+    // Unescape slashes and literal tildes (see above).
+    if (segment.indexOf("~") !== -1) {
+        segment = segment.replace(/~1/g, "/");
+        segment = segment.replace(/~0/g, "~");
+    }
+
+    return segment;
+};
+
+
+/*
   Z-Schema represents validation failures using path notation like `#/category/subcategory/field`.  This function
   converts that notation into a series of path segments that can be passed to `gpii.schema.validator.saveToPath`.
 
   In addition, this function unifies the two pieces of the z-schema path, `error.params` and `error.path`.  This enables
   us to represent a hierarchy of validation errors.
+
+  See above for details about the handling of slashes in field/key names.
+
  */
 
-// TODO:  Handle the special case when a slash is included in the path, which results in output like:
-//
-// [
-//   {
-//    "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
-//    "params": [
-//      "required"
-//    ],
-//    "message": "Missing required property: required",
-//    "path": "#/deep~1slasher"
-//  }
-//]
-//
 gpii.schema.validator.extractPathSegments = function (error) {
-    var segments = error.path.split("/").filter(gpii.schema.validator.removeEmptySegments).slice(1);
+    var segments = error.path.split("/").filter(gpii.schema.validator.removeEmptySegments).slice(1).map(gpii.schema.validator.unescapeZSchemaisms);
     if (error.code === "OBJECT_MISSING_REQUIRED_PROPERTY" && error.params) { segments = segments.concat(error.params); }
     return segments;
 };

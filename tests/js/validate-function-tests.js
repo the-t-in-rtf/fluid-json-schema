@@ -16,6 +16,14 @@ jqUnit.test("Extract the path for a missing required top-level field....", funct
     jqUnit.assertDeepEq("The path should be as expected...", expected, path);
 });
 
+jqUnit.test("Testing handling of Z-Schema escaping...", function () {
+    var original = ["this~1that", "other~01"];
+    var expected = ["this/that", "other~1"];
+    var output   = original.map(gpii.schema.validator.unescapeZSchemaisms);
+
+    jqUnit.assertDeepEq("The array data should have been escaped correctly...", expected, output);
+});
+
 jqUnit.test("Extract the path for a missing required deep field....", function () {
     var error    = { code: "OBJECT_MISSING_REQUIRED_PROPERTY", params: [ "required"], path: "#/deep", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
@@ -36,6 +44,14 @@ jqUnit.test("Extract the path for an invalid deep field....", function () {
     var error    = { code: "MIN_LENGTH", path: "#/deep/required", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
     var expected = ["deep", "required"];
+
+    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
+});
+
+jqUnit.test("Extract the path when escaped slashes and tildes are part of the path....", function () {
+    var error    = { code: "MIN_LENGTH", path: "#/this~1that/other~01", message: "message" };
+    var path     = gpii.schema.validator.extractPathSegments(error);
+    var expected = ["this/that", "other~1"];
 
     jqUnit.assertDeepEq("The path should be as expected...", expected, path);
 });

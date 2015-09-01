@@ -13,6 +13,7 @@ require("./lib/errors");
 var basePath    = path.resolve(__dirname, "../schemas/base.json");
 var derivedPath = path.resolve(__dirname, "../schemas/derived.json");
 var deepPath    = path.resolve(__dirname, "../schemas/deep.json");
+var escapedPath = path.resolve(__dirname, "../schemas/escaped.json");
 
 jqUnit.module("Unit tests for validation component...");
 
@@ -21,7 +22,8 @@ var testValidator = gpii.schema.validator.server({
     schemaFiles: {
         base:    basePath,
         derived: derivedPath,
-        deep:    deepPath
+        deep:    deepPath,
+        escaped: escapedPath
     },
     listeners: {
         "onCreate.runTests": {

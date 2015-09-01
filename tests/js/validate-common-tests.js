@@ -95,6 +95,29 @@ fluid.defaults("gpii.schema.tests.validator", {
             errors:      true,
             errorFields: ["required", "additionalRequired"]
         },
+        // Test handling of keys with slashes in their name to ensure that paths are correctly resolved
+        // TODO:  Add more complex tests for slash escaping once multiple slashes are supported: https://github.com/zaggino/z-schema/issues/130
+        // TODO:  Add handling for deep nesting once deep required fields are reported correctly: https://github.com/zaggino/z-schema/issues/131
+        invalidEscaped: {
+            message:     "Validate an empty 'escaped' record....",
+            schema:      "escaped",
+            content:     {},
+            errors:      true,
+            errorFields: ["s/good/bad/g"]
+        },
+        deeplyInvalidEscaped: {
+            message:     "Validate an 'escaped' record missing a 'deep' dependency....",
+            schema:      "escaped",
+            content:     { "this/that": {}, "s/good/bad/g": "valid"},
+            errors:      true,
+            errorFields: [["this/that", "the/other"]]
+        },
+        validEscaped: {
+            message:     "Validate a valid 'escaped' record....",
+            schema:      "escaped",
+            content:     { "this/that": { "the/other": "valid"}, "s/good/bad/g": "also valid"},
+            errors:      false
+        },
         // In theory any validation error should be caught using already tested methods, but we want to break things
         // in a range of ways to check.
         complexFraud: {
