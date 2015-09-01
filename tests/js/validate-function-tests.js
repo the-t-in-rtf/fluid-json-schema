@@ -81,7 +81,7 @@ jqUnit.test("Remove empty segments from an array using our filter function..", f
 jqUnit.test("Test underlying path targeting mechanism...", function () {
     var original = { deeply: { nested: { foo: "bar"} }};
     var expected = {foo: "bar"};
-    var target = gpii.schema.validator.resolveTargetFromPath(original, ["deeply", "nested"]);
+    var target = gpii.schema.validator.resolveOrCreateTargetFromPath(original, ["deeply", "nested"]);
     jqUnit.assertDeepEq("The target should have been resolved correctly...", expected, target);
 });
 

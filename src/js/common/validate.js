@@ -143,7 +143,25 @@ gpii.schema.validator.extractPathSegments = function (error) {
     return segments;
 };
 
-gpii.schema.validator.resolveTargetFromPath = function (target, path) {
+// Resolve the underlying data from a hierarchical object using an array of path segments. Returns the portion of the
+// original object at the selected path.  As an example:
+//
+// `resolveOrCreateTargetFromPath({ one: two: three: four: "five"}, ["one", "two", "three"])`
+//
+// Should return:
+//
+// `{ four: "five" }`
+//
+// Note that the relevant portion of the original object is returned, and not just the value.  Note also that if the
+// deep structure does not already exist, it will be created.  Thus:
+//
+// `resolveOrCreateTargetFromPath({},["one","two","three"])`
+//
+// Will return:
+//
+// `{ one: two: three: [] }`
+//
+gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path) {
     var resolvedTarget = target;
     for (var a = 0; a < path.length; a++) {
         var segment = path[a];
@@ -173,7 +191,7 @@ gpii.schema.validator.saveToPath = function (path, errorString, errorMap) {
     var target = errorMap.fieldErrors;
     // If we have path data, the error is related to a specific field.
     if (path && path.length > 0) {
-        target = gpii.schema.validator.resolveTargetFromPath(target, path);
+        target = gpii.schema.validator.resolveOrCreateTargetFromPath(target, path);
     }
     // Otherwise, we are working with a document-level error.
     else {

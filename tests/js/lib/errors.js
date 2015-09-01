@@ -11,7 +11,7 @@ fluid.registerNamespace("gpii.schema.tests");
 gpii.schema.tests.hasFieldErrors = function (results, fields) {
     fluid.each(fields, function (field) {
         var path = typeof field === "string" ? [field] : field;
-        var target = gpii.schema.validator.resolveTargetFromPath(results.fieldErrors, path);
+        var target = gpii.schema.validator.resolveOrCreateTargetFromPath(results.fieldErrors, path);
         jqUnit.assertTrue("There should be an error for the '" + field + "' field...", target && target.length >= 1);
     });
 };
