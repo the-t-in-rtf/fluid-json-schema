@@ -185,8 +185,7 @@ fluid.defaults("gpii.schema.validator", {
             args:     ["{that}", "{arguments}.0", "{arguments}.1"]
         },
         getValidator: {
-            funcName: "fluid.fail",
-            args:     ["You are expected to implement a `getValidator` invoker that provides access to ZSchema."]
+            funcName: "fluid.notImplemented"
         }
     }
 });
