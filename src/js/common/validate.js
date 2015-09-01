@@ -155,7 +155,7 @@ gpii.schema.validator.extractPathSegments = function (error) {
 // Note that the relevant portion of the original object is returned, and not just the value.  Note also that if the
 // deep structure does not already exist, it will be created.  Thus:
 //
-// `resolveOrCreateTargetFromPath({},["one","two","three"])`
+// `resolveOrCreateTargetFromPath({}, ["one","two","three"])`
 //
 // Will return:
 //
