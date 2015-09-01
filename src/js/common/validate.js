@@ -123,6 +123,20 @@ gpii.schema.validator.removeEmptySegments = function (el) { return el !== undefi
   In addition, this function unifies the two pieces of the z-schema path, `error.params` and `error.path`.  This enables
   us to represent a hierarchy of validation errors.
  */
+
+// TODO:  Handle the special case when a slash is included in the path, which results in output like:
+//
+// [
+//   {
+//    "code": "OBJECT_MISSING_REQUIRED_PROPERTY",
+//    "params": [
+//      "required"
+//    ],
+//    "message": "Missing required property: required",
+//    "path": "#/deep~1slasher"
+//  }
+//]
+//
 gpii.schema.validator.extractPathSegments = function (error) {
     var segments = error.path.split("/").filter(gpii.schema.validator.removeEmptySegments).slice(1);
     if (error.code === "OBJECT_MISSING_REQUIRED_PROPERTY" && error.params) { segments = segments.concat(error.params); }
