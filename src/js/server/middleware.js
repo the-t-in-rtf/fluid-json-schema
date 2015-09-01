@@ -33,7 +33,7 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     }
     else {
         // We choose to fail if we can't validate the body.  That way anything downstream is guaranteed to
-        // only receive 2valid content.
+        // only receive valid content.
         var message = "Your gpii.schema.middleware instance doesn't have a schema to work with, so it can't validate anything.";
         that.events.onInvalidRequest.fire(req, res, 500, { ok: false, error: message });
         fluid.fail(message);
