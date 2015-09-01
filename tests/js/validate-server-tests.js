@@ -18,7 +18,7 @@ jqUnit.module("Unit tests for validation component...");
 
 var testValidator = gpii.schema.validator.server({
     gradeNames: ["gpii.schema.tests.validator"],
-    schemas: {
+    schemaFiles: {
         base:    basePath,
         derived: derivedPath,
         deep:    deepPath
