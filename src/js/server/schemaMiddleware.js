@@ -46,7 +46,6 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 
 fluid.defaults("gpii.schema.middleware", {
     gradeNames: ["gpii.express.middleware"],
-    path: "/",
     components: {
         validator: {
             type: "gpii.schema.validator.server",

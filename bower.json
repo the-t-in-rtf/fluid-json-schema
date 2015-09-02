@@ -14,6 +14,6 @@
     "tests"
   ],
   "dependencies": {
-    "z-schema": "~3.12.3"
+    "z-schema": "3.12.5"
   }
 }

@@ -6,11 +6,17 @@
         "this/that": {
             "type": "object",
             "properties": {
-                "the/other": {
-                    "type": "string"
+                "t/h/e/ /o/t/h/e/r": {
+                    "type": "object",
+                    "properties": {
+                        "required": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["required"]
                 }
             },
-            "required": ["the/other"]
+            "required": ["t/h/e/ /o/t/h/e/r"]
         },
         "s/good/bad/g": {
             "type": "string"
