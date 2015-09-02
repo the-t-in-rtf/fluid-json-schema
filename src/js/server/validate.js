@@ -25,7 +25,7 @@ gpii.schema.validator.server.init = function (that) {
 };
 
 gpii.schema.validator.server.getValidator = function (that) {
-    return new ZSchema(that.zSchemaOptions);
+    return new ZSchema(that.options.zSchemaOptions);
 };
 
 fluid.defaults("gpii.schema.validator.server", {
