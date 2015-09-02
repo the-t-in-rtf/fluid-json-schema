@@ -135,10 +135,6 @@ gpii.schema.validator.removeEmptySegments = function (el) { return el !== undefi
 
  To avoid clobbering names with `~1` in it, a tilde is escaped as `~0`.  This function corrects for both types of escaping.
 
- NOTE:  There is currently a bug in that only the first slash is escaped:  https://github.com/zaggino/z-schema/issues/130
-
- Keys with multiple slashes are unlikely to work as expected.
-
  */
 gpii.schema.validator.unescapeZSchemaisms = function (segment) {
     // Unescape slashes and literal tildes (see above).
