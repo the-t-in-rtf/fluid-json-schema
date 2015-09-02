@@ -228,10 +228,8 @@ gpii.schema.validator.saveToPath = function (path, errorString, errorMap) {
 fluid.defaults("gpii.schema.validator", {
     gradeNames: ["fluid.component"],
     zSchemaOptions: {
-        noExtraKeywords:   true,
-        // This option does not appear to be respected in our version of z-schema, but we set it explicitly to avoid
-        // problems when we upgrade.
-        reportPathAsArray: false
+        // Override the defaults so that we get the full list of failures rather than just the first failure.
+        breakOnFirstError: false
     },
     members: {
         schemaContents: {}
