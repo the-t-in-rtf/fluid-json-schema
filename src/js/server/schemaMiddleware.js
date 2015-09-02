@@ -5,7 +5,7 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./handler");
+require("./schemaHandler");
 
 fluid.defaults("gpii.schema.middleware.handler", {
     gradeNames: ["gpii.express.handler"],
