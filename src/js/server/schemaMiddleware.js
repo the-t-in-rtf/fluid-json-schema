@@ -19,10 +19,6 @@ fluid.defaults("gpii.schema.middleware.handler", {
 
 fluid.registerNamespace("gpii.schema.middleware");
 
-gpii.schema.middleware.getMiddleware = function (that) {
-    return that.rejectOrForward;
-};
-
 gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     if (that.options.schemaContent) {
         var results = that.validator.validate("schema", req.body);
@@ -30,16 +26,16 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
             // Instantiate a handler that will take care of the rest of the request.
             that.events.onInvalidRequest.fire(req, res, 500, results);
         }
+        else {
+            next();
+        }
     }
     else {
         // We choose to fail if we can't validate the body.  That way anything downstream is guaranteed to
         // only receive valid content.
         var message = "Your gpii.schema.middleware instance doesn't have a schema to work with, so it can't validate anything.";
         that.events.onInvalidRequest.fire(req, res, 500, { ok: false, error: message });
-        fluid.fail(message);
     }
-
-    next();
 };
 
 // TODO:  Extract key pieces from `gpii.express.requestAware.router` to handle the request with the common infrastructure
@@ -62,11 +58,7 @@ fluid.defaults("gpii.schema.middleware", {
         }
     },
     invokers: {
-        getMiddleware: {
-            funcName: "gpii.schema.middleware.getMiddleware",
-            args:     ["{that}"]
-        },
-        rejectOrForward: {
+        middleware: {
             funcName: "gpii.schema.middleware.rejectOrForward",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
         }

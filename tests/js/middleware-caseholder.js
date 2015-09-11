@@ -6,6 +6,7 @@ var gpii         = fluid.registerNamespace("gpii");
 var jqUnit       = require("jqUnit");
 
 require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("./lib/errors");
 
 // We use just the request-handling bits of the kettle stack in our tests, but we include the whole thing to pick up the base grades
 require("../../node_modules/kettle");
@@ -27,8 +28,13 @@ gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, bo
     jqUnit.assertDeepEq("The status code should be as expected...", expectedStatus, response.statusCode);
 
     if (!shouldBeValid) {
-        var jsonData = typeof body === "string" ? JSON.parse(body) : body;
-        jqUnit.assertTrue("There should be either document or field errors...", jsonData.documentErrors.length > 0 || Object.keys(jsonData.fieldErrors).length > 0);
+        try {
+            var jsonData = typeof body === "string" ? JSON.parse(body) : body;
+            gpii.schema.tests.hasErrors(jsonData);
+        }
+        catch (e) {
+            fluid.fail("There should be no parsing errors:\n" + e);
+        }
     }
 };
 
@@ -49,21 +55,6 @@ fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
                             listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
                             event:    "{emptyRequest}.events.onComplete",
                             args:     ["{emptyRequest}.nativeResponse", "{arguments}.0", true]
-                        }
-                    ]
-                },
-                {
-                    name: "Testing a request with non-JSON data...",
-                    type: "test",
-                    sequence: [
-                        {
-                            func: "{nonJsonRequest}.send",
-                            args: ["BOGUS"]
-                        },
-                        {
-                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
-                            event:    "{nonJsonRequest}.events.onComplete",
-                            args:     ["{nonJsonRequest}.nativeResponse", "{arguments}.0", false]
                         }
                     ]
                 },
