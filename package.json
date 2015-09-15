@@ -5,7 +5,7 @@
   "main": "",
   "scripts": {
     "test": "node tests/all-tests.js",
-    "postinstall": "grunt dedupe-infusion"
+    "postinstall": "grunt dedupe-infusion && bower install"
   },
   "repository": {
     "type": "git",
