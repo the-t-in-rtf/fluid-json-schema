@@ -23,7 +23,7 @@
     "z-schema": "3.12.5"
   },
   "devDependencies": {
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express.git#a70110d98e45bca8c1d2a2db9034a64e78709477",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express.git#8730441601db239870046c796b85c0f020a302a1",
     "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#b7ef53aac1ca365bf23d35d255fae874faa88b70",
     "kettle": "git://github.com/amb26/kettle.git#33e2826e78315c6d29b13c8ba810f54fef29e8ac",
     "request": "2.51.0",
