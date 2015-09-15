@@ -23,8 +23,8 @@ var srcDir     = path.resolve(__dirname, "../../src");
 fluid.registerNamespace("gpii.schema.tests.harness");
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express", "autoInit"],
-    expressPort: 6994,
-    baseUrl: "http://localhost:6994/",
+    expressPort: 6194,
+    baseUrl: "http://localhost:6194/",
     config:  {
         express: {
             "port" : "{that}.options.expressPort",
