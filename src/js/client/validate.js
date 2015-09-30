@@ -14,7 +14,17 @@ var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.schema.validator.client");
 
 gpii.schema.validator.client.getValidator = function (that) {
-    return new ZSchema(that.options.zSchemaOptions);
+    var validator = new ZSchema(that.options.zSchemaOptions);
+
+    // This is required on the client side to handle dependencies between schemas correctly.
+    fluid.each(that.schemaContents, function (schemaContent) {
+        var schemasValid = validator.validateSchema(schemaContent);
+        if (!schemasValid) {
+            fluid.fail(validator.getLastErrors());
+        }
+    });
+
+    return validator;
 };
 
 fluid.defaults("gpii.schema.validator.client", {

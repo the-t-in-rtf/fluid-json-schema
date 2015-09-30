@@ -58,14 +58,6 @@ gpii.schema.validator.validate = function (that, key, content) {
         validator.setRemoteReference(schemaKey, schemaContent);
     });
 
-    // We have to validate all schemas at once to a) confirm that we have usable schemas and b) handle dependencies between schemas correctly.
-    fluid.each(that.schemaContents, function (schemaContent) {
-        var schemasValid = validator.validateSchema(schemaContent);
-        if (!schemasValid) {
-            fluid.fail(validator.getLastErrors());
-        }
-    });
-
     var contentValid = validator.validate(content, that.schemaContents[key]);
     if (!contentValid) {
         return (gpii.schema.validator.sanitizeValidationErrors(validator.getLastErrors()));
