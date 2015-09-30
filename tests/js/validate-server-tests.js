@@ -10,21 +10,13 @@ require("../../src/js/server/validate");
 require("./validate-common-tests");
 require("./lib/errors");
 
-var basePath    = path.resolve(__dirname, "../schemas/base.json");
-var derivedPath = path.resolve(__dirname, "../schemas/derived.json");
-var deepPath    = path.resolve(__dirname, "../schemas/deep.json");
-var escapedPath = path.resolve(__dirname, "../schemas/escaped.json");
+var schemaDir = path.resolve(__dirname, "../schemas");
 
 jqUnit.module("Unit tests for validation component...");
 
 var testValidator = gpii.schema.validator.server({
     gradeNames: ["gpii.schema.tests.validator"],
-    schemaFiles: {
-        base:    basePath,
-        derived: derivedPath,
-        deep:    deepPath,
-        escaped: escapedPath
-    },
+    schemaDir:  schemaDir,
     listeners: {
         "onCreate.runTests": {
             funcName: "gpii.schema.tests.validator.runTests",

@@ -2,6 +2,7 @@
     "$schema":     "http://json-schema.org/draft-04/schema#",
     "title":       "Schema derived from base schema",
     "description": "inheritance in JSON Schema v4 is still weird.  This example is the one we test against, and it works with JSON Schema.",
+    "id":          "derived",
     "type":        "object",
     "properties": {
         "required": { "$ref": "base.json#/definitions/required" },
