@@ -25,19 +25,20 @@ fluid.registerNamespace("gpii.schema.validator.server");
 
 // Load any schema files on startup.
 gpii.schema.validator.server.init = function (that) {
-    if (!that.options.schemaDir) {
+    if (that.options.schemaDir) {
+        fluid.each(fs.readdirSync(that.options.schemaDir), function (filename) {
+            var schemaPath = path.resolve(that.options.schemaDir, filename);
+            var schemaKey  = filename.replace(/.json$/i, "");
+            var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+
+            // We register both `filename` and `filename.json` to allow schema authors more flexibility.
+            that.schemaContents[filename]  = content;
+            that.schemaContents[schemaKey] = content;
+        });
+    }
+    else {
         fluid.fail("You have not provided the location of your schema directory.");
     }
-
-    fluid.each(fs.readdirSync(that.options.schemaDir), function (filename) {
-        var schemaPath = path.resolve(that.options.schemaDir, filename);
-        var schemaKey  = filename.replace(/.json$/i, "");
-        var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-
-        // We register both `filename` and `filename.json` to allow schema authors more flexibility.
-        that.schemaContents[filename]  = content;
-        that.schemaContents[schemaKey] = content;
-    });
 };
 
 gpii.schema.validator.server.getValidator = function (that) {

@@ -3,6 +3,9 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
+var path = require("path");
+var schemaDir = path.resolve(__dirname, "../schemas");
+
 fluid.setLogging(true);
 
 require("./test-harness");
@@ -48,7 +51,8 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
                     gateKeeper: {
                         type: "gpii.schema.middleware",
                         options: {
-                            schemaContent: { "type": "object", "properties": { "required": { "type": "boolean" } }, "required": ["required"]}
+                            schemaKey: "base",
+                            schemaDir: schemaDir
                         }
                     },
                     router: {
