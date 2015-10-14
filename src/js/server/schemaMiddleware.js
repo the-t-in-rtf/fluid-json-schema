@@ -25,7 +25,7 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
         var results = that.validator.validate(that.options.schemaKey, req.body);
         if (results) {
             // Instantiate a handler that will take care of the rest of the request.
-            that.events.onInvalidRequest.fire(req, res, 500, results);
+            that.events.onInvalidRequest.fire(req, res, 400, results);
         }
         else {
             next();
