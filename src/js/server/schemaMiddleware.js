@@ -2,6 +2,21 @@
 // `options.schemaKey`.  You are required to set `options.schemaDir` to a directory that contains a file matching that
 // key.
 //
+// Any validation errors are transformed using `options.rules.validationErrorsToResponse` before they are sent to the
+// user.  The default format looks roughly like:
+//
+// {
+//   ok: false,
+//   message: "The JSON you have provided is not valid.",
+//   errors: {
+//     field1: ["This field is required."]
+//   }
+// }
+//
+// The output of this middleware is itself expected to be valid according to a JSON schema, and to be delivered
+// using a `schemaHandler`.  You are expected to supply `options.responseSchemaKey` and `options.responseSchemaUrl`,
+// which will be distributed to the `schemaHandler` instance.
+//
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
@@ -9,7 +24,7 @@ var gpii  = fluid.registerNamespace("gpii");
 require("./schemaHandler");
 
 fluid.defaults("gpii.schema.middleware.handler", {
-    gradeNames: ["gpii.express.handler"],
+    gradeNames: ["gpii.schema.handler"],
     invokers: {
         handleRequest: {
             func: "{that}.sendResponse",
@@ -24,8 +39,10 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     if (that.options.schemaDir && that.options.schemaKey) {
         var results = that.validator.validate(that.options.schemaKey, req.body);
         if (results) {
+            var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
+
             // Instantiate a handler that will take care of the rest of the request.
-            that.events.onInvalidRequest.fire(req, res, 400, results);
+            that.events.onInvalidRequest.fire(req, res, 400, transformedResults);
         }
         else {
             next();
@@ -41,6 +58,32 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 
 fluid.defaults("gpii.schema.middleware", {
     gradeNames: ["gpii.express.middleware"],
+    responseSchemaKey: "message.json",
+    responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
+    distributeOptions: [
+        {
+            source: "{that}.options.responseSchemaKey",
+            target: "{that gpii.express.schemaHandler}.options.schemaKey"
+        },
+        {
+            source: "{that}.options.responseSchemaUrl",
+            target: "{that gpii.express.schemaHandler}.options.schemaUrl"
+        }
+    ],
+    messages: {
+        error: "The JSON you have provided is not valid."
+    },
+    rules: {
+        validationErrorsToResponse: {
+            "": "",
+            "ok": {
+                literalValue: false
+            },
+            "message": {
+                literalValue: "{that}.options.messages.error"
+            }
+        }
+    },
     components: {
         validator: {
             type: "gpii.schema.validator.server",
