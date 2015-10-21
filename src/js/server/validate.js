@@ -15,7 +15,6 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var ZSchema = require("z-schema");
 var path    = require("path");
 var fs      = require("fs");
 
@@ -26,6 +25,7 @@ fluid.registerNamespace("gpii.schema.validator.server");
 // Load any schema files on startup.
 gpii.schema.validator.server.init = function (that) {
     if (that.options.schemaDir) {
+        var schemas = {};
         fluid.each(fs.readdirSync(that.options.schemaDir), function (filename) {
             if (filename.match(/.json$/i)) {
                 var schemaPath = path.resolve(that.options.schemaDir, filename);
@@ -33,18 +33,16 @@ gpii.schema.validator.server.init = function (that) {
                 var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 
                 // We register both `filename` and `filename.json` to allow schema authors more flexibility.
-                that.schemaContents[filename]  = content;
-                that.schemaContents[schemaKey] = content;
+                schemas[filename]  = content;
+                schemas[schemaKey] = content;
             }
         });
+
+        that.applier.change("schemas", schemas);
     }
     else {
         fluid.fail("You have not provided the location of your schema directory.");
     }
-};
-
-gpii.schema.validator.server.getValidator = function (that) {
-    return new ZSchema(that.options.zSchemaOptions);
 };
 
 fluid.defaults("gpii.schema.validator.server", {
@@ -52,12 +50,6 @@ fluid.defaults("gpii.schema.validator.server", {
     listeners: {
         "onCreate.loadSchemas": {
             funcName: "gpii.schema.validator.server.init",
-            args:     ["{that}"]
-        }
-    },
-    invokers: {
-        "getValidator": {
-            funcName: "gpii.schema.validator.server.getValidator",
             args:     ["{that}"]
         }
     }

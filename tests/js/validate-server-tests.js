@@ -7,7 +7,7 @@ var jqUnit = require("jqUnit");
 var path = require("path");
 
 require("../../src/js/server/validate");
-require("./validate-common-tests");
+require("./validate-common-test-definitions");
 require("./lib/errors");
 
 var schemaDir = path.resolve(__dirname, "../schemas");

@@ -25,7 +25,7 @@ var jqUnit = require("jqUnit");
 
 require("./lib/errors");
 require("./test-harness");
-require("./validate-common-tests");
+require("./validate-common-test-definitions");
 
 fluid.registerNamespace("gpii.schema.tests.validator.zombie");
 

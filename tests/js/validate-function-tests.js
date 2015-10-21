@@ -9,23 +9,49 @@ require("../../src/js/common/validate");
 jqUnit.module("Unit tests for validation component static functions...");
 
 jqUnit.test("Extract the path for a missing required top-level field....", function () {
-    var error    = { code: "OBJECT_MISSING_REQUIRED_PROPERTY", params: [ "required"], path: "#/", message: "message" };
+    var error    = { keyword: "requireed", dataPath: ".required", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
     var expected = ["required"];
 
     jqUnit.assertDeepEq("The path should be as expected...", expected, path);
 });
 
-jqUnit.test("Testing handling of Z-Schema escaping...", function () {
-    var original = ["this~1that", "other~01"];
-    var expected = ["this/that", "other~1"];
-    var output   = original.map(gpii.schema.validator.unescapeZSchemaisms);
+jqUnit.test("Testing handling of solitary dot escaping...", function () {
+    var error    = { dataPath: ".['utter.madness']" };
+    var expected = ["utter.madness"];
+    var output   = gpii.schema.validator.extractPathSegments(error);
 
-    jqUnit.assertDeepEq("The array data should have been escaped correctly...", expected, output);
+    jqUnit.assertDeepEq("A path with just one segment that contains an escaped dot should be parsed correctly...", expected, output);
 });
 
+
+jqUnit.test("Testing handling of leading dot escaping...", function () {
+    var error    = { dataPath: ".['outer.space'].sky.earth" };
+    var expected = ["outer.space", "sky", "earth"];
+    var output   = gpii.schema.validator.extractPathSegments(error);
+
+    jqUnit.assertDeepEq("A path with escaped dots in the lead position should be parsed correctly...", expected, output);
+});
+
+jqUnit.test("Testing handling of intermediate dot escaping...", function () {
+    var error    = { dataPath: ".sky.['middle.earth'].moria" };
+    var expected = ["sky", "middle.earth", "moria"];
+    var output   = gpii.schema.validator.extractPathSegments(error);
+
+    jqUnit.assertDeepEq("A path with escaped dots in a middle position should be parsed correctly...", expected, output);
+});
+
+jqUnit.test("Testing handling of trailing dot escaping...", function () {
+    var error    = { dataPath: ".barrel.monkey.['monkey.innards']" };
+    var expected = ["barrel", "monkey", "monkey.innards"];
+    var output   = gpii.schema.validator.extractPathSegments(error);
+
+    jqUnit.assertDeepEq("A path with escaped dots in a trailing position should be parsed correctly...", expected, output);
+});
+
+
 jqUnit.test("Extract the path for a missing required deep field....", function () {
-    var error    = { code: "OBJECT_MISSING_REQUIRED_PROPERTY", params: [ "required"], path: "#/deep", message: "message" };
+    var error    = { keyword: "required", dataPath: ".deep.required", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
     var expected = ["deep", "required"];
 
@@ -33,7 +59,7 @@ jqUnit.test("Extract the path for a missing required deep field....", function (
 });
 
 jqUnit.test("Extract the path for an invalid top-level field....", function () {
-    var error    = { code: "MIN_LENGTH", path: "#/required", message: "message" };
+    var error    = { keyword: "minLength", dataPath: ".required", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
     var expected = ["required"];
 
@@ -41,57 +67,43 @@ jqUnit.test("Extract the path for an invalid top-level field....", function () {
 });
 
 jqUnit.test("Extract the path for an invalid deep field....", function () {
-    var error    = { code: "MIN_LENGTH", path: "#/deep/required", message: "message" };
+    var error    = { keyword: "minLength", dataPath: ".deep.required", message: "message" };
     var path     = gpii.schema.validator.extractPathSegments(error);
     var expected = ["deep", "required"];
 
     jqUnit.assertDeepEq("The path should be as expected...", expected, path);
 });
 
-jqUnit.test("Extract the path when escaped slashes and tildes are part of the path....", function () {
-    var error    = { code: "MIN_LENGTH", path: "#/this~1that/other~01", message: "message" };
-    var path     = gpii.schema.validator.extractPathSegments(error);
-    var expected = ["this/that", "other~1"];
-
-    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
-});
-
 jqUnit.test("Save a top-level path to a map with no existing data....", function () {
-    var errorMap = { fieldErrors: {}, documentErrors: []};
+    var errorMap = { fieldErrors: {}};
     gpii.schema.validator.saveToPath(["required"], "message", errorMap);
-    var expected = { fieldErrors: { required: ["message"] }, documentErrors: [] };
+    var expected = { fieldErrors: { required: ["message"] } };
 
     jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
 });
 
 jqUnit.test("Save a top-level path to a map with existing data....", function () {
-    var errorMap = { fieldErrors: { required: ["old message"]}, documentErrors: []};
+    var errorMap = { fieldErrors: { required: ["old message"]}};
     gpii.schema.validator.saveToPath(["required"], "new message", errorMap);
-    var expected = { fieldErrors: { required: ["old message", "new message"] }, documentErrors: []};
+    var expected = { fieldErrors: { required: ["old message", "new message"] }};
 
     jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
 });
 
 jqUnit.test("Save a deep path to a map with no existing data....", function () {
-    var errorMap = { fieldErrors: {}, documentErrors: []};
+    var errorMap = { fieldErrors: {}};
     gpii.schema.validator.saveToPath(["deep", "required"], "message", errorMap);
-    var expected = { fieldErrors: { deep: { required: ["message"] }}, documentErrors: []};
+    var expected = { fieldErrors: { deep: { required: ["message"] }}};
 
     jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
 });
 
 jqUnit.test("Save a deep path to a map with existing data....", function () {
-    var errorMap = { fieldErrors: { deep: { required: ["old message"]}}, documentErrors: []};
+    var errorMap = { fieldErrors: { deep: { required: ["old message"]}}};
     gpii.schema.validator.saveToPath(["deep", "required"], "new message", errorMap);
-    var expected = { fieldErrors: { deep: { required: ["old message", "new message"] }}, documentErrors: []};
+    var expected = { fieldErrors: { deep: { required: ["old message", "new message"] }}};
 
     jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
-});
-
-jqUnit.test("Remove empty segments from an array using our filter function..", function () {
-    var output = ["", "data", null, "more data", undefined].filter(gpii.schema.validator.removeEmptySegments);
-    var expected = ["data", "more data"];
-    jqUnit.assertDeepEq("The filtered array should be as expected...", expected, output);
 });
 
 jqUnit.test("Test underlying path targeting mechanism...", function () {
@@ -104,17 +116,17 @@ jqUnit.test("Test underlying path targeting mechanism...", function () {
 // In theory we have already tested all the individual underlying static functions, now we test the static function that
 // uses them all end-to-end.
 jqUnit.test("Test sanitizing an individual error with an empty map...", function () {
-    var errorMap = { fieldErrors: {}, documentErrors: []};
-    var error    = { code: "OBJECT_MISSING_REQUIRED_PROPERTY", message: "message", path: "#/", params: ["required"]};
-    var expected = { fieldErrors: { required: ["message"]}, documentErrors: []};
+    var errorMap = { fieldErrors: {}};
+    var error    = { keyword: "required", message: "message", dataPath: ".required"};
+    var expected = { fieldErrors: { required: ["message"]}};
     gpii.schema.validator.sanitizeError(error, errorMap);
     jqUnit.assertDeepEq("The sanitized error output should be as expected...", expected, errorMap);
 });
 
 jqUnit.test("Test sanitizing an individual error with a non-empty map...", function () {
-    var errorMap = { fieldErrors: { required: ["old message"]}, documentErrors: []};
-    var error    = { code: "OBJECT_MISSING_REQUIRED_PROPERTY", message: "new message", path: "#/", params: ["required"]};
-    var expected = { fieldErrors: { required: ["old message", "new message"]}, documentErrors: []};
+    var errorMap = { fieldErrors: { required: ["old message"]}};
+    var error    = { keyword: "required", message: "new message", dataPath: ".required"};
+    var expected = { fieldErrors: { required: ["old message", "new message"]}};
     gpii.schema.validator.sanitizeError(error, errorMap);
     jqUnit.assertDeepEq("The sanitized error output should be as expected...", expected, errorMap);
 });

@@ -10,10 +10,16 @@ require("../../../src/js/common/validate");
 fluid.registerNamespace("gpii.schema.tests");
 gpii.schema.tests.hasFieldErrors = function (results, fields) {
     if (fields) {
-        fluid.each(fields, function (field) {
+        fluid.each(fields, function (settings, field) {
             var path = typeof field === "string" ? [field] : field;
             var target = gpii.schema.validator.resolveOrCreateTargetFromPath(results.fieldErrors, path);
-            jqUnit.assertTrue("There should be an error for the '" + field + "' field...", target && target.length >= 1);
+
+            if (settings.multiple) {
+                jqUnit.assertTrue("There should be multiple errors for the '" + field + "' field...", target && target.length > 1);
+            }
+            else {
+                jqUnit.assertTrue("There should be an error for the '" + field + "' field...", target && target.length >= 1);
+            }
         });
     }
     else {
@@ -28,3 +34,4 @@ gpii.schema.tests.hasDocumentErrors = function (results) {
 gpii.schema.tests.hasErrors = function (results) {
     jqUnit.assertTrue("There should be errors...", fluid.makeArray(results.documentErrors).length > 0 || fluid.makeArray(results.fieldErrors).length > 0);
 };
+

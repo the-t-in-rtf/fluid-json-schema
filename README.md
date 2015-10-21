@@ -28,7 +28,6 @@ side, start with `gpii.schema.validator.client`.  To use it on the server side, 
 Each package contains more detailed documentation about its use.  Here is an example of how it might work from within
 node:
 
-```
   var fluid = fluid || require("infusion);
   var gpii  = fluid.registerNamespace("gpii");
 
@@ -46,7 +45,6 @@ node:
   else {
     // Rejoice
   }
-```
 
 One of the key strengths of JSON Schema is that it allows you to compose a complex schema out of parts taken from
 other schemas.  The validator in this package supports references between JSON Schemas.
@@ -67,37 +65,35 @@ components to safely assume they will only receive JSON data in the correct form
 
 The component is intended to be wired into an existing rest endpoint as in the following example:
 
-```
-var fluid = fluid || require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
+    var fluid = fluid || require("infusion");
+    var gpii  = fluid.registerNamespace("gpii");
 
-require("gpii-express");
-require("gpii-json-schema");
+    require("gpii-express");
+    require("gpii-json-schema");
 
-fluid.defaults("gpii.schema.tests.handler", {
-  gradeNames: ["gpii.express.handler"],
-  invokers: {
-    handleRequest: {
-      funcName: "{that}.sendResponse",
-      args:     [200, "Someone sent me a valid JSON payload."]
-    }
-  }
-);
-
-gpii.express({
-  gradeNames: ["gpii.express.requestAware.router"],
-  handlerGrades: ["gpii.schema.tests.handler"],
-  path: "/gatekeeper",
-  components: {
-    gatekeeper: {
-      type: "gpii.schema.middleware",
-      options: {
-        schemaContent: { "type": "object", "properties": { "required": { "type": "boolean" } }, "required": ["required"]}
+    fluid.defaults("gpii.schema.tests.handler", {
+      gradeNames: ["gpii.express.handler"],
+      invokers: {
+        handleRequest: {
+          funcName: "{that}.sendResponse",
+          args:     [200, "Someone sent me a valid JSON payload."]
+        }
       }
-    }
-  }
-});
-```
+    );
+
+    gpii.express({
+      gradeNames: ["gpii.express.requestAware.router"],
+      handlerGrades: ["gpii.schema.tests.handler"],
+      path: "/gatekeeper",
+      components: {
+        gatekeeper: {
+          type: "gpii.schema.middleware",
+          options: {
+            schemaContent: { "type": "object", "properties": { "required": { "type": "boolean" } }, "required": ["required"]}
+          }
+        }
+      }
+    });
 
 If you were to launch this example which is adapted from the tests in this package), you would have a rest endpoint
 (/gatekeeper) that rejects all invalid responses and outputs a success message when the JSON is valid.
@@ -115,12 +111,17 @@ used to provide hints about the output format we are using.
 The working group that writes the JSON Schema standard [has outlined two approaches for labeling outgoing responses](http://json-schema.org/latest/json-schema-core.html#anchor33).
 Both of these involve setting HTTP headers in the outgoing response, as in:
 
-```
-Content-Type: application/my-media-type+json; profile="http://example.com/my-hyper-schema#"
-Link: <http://example.com/my-hyper-schema#>; rel="describedBy"
-```
+    Content-Type: application/my-media-type+json; profile="http://example.com/my-hyper-schema#"
+    Link: <http://example.com/my-hyper-schema#>; rel="describedBy"
 
 The `gpii.schema.response` component provided with this package extends the server side validator
 (`gpii.schema.validator.server`), and is intended to be used in conjunction with a `gpii.express.handler`.  For
 examples, see the tests in this package.
 
+# Using the validator in a browser
+
+To use this component in a browser, you will need to run `browserify` against ajv and generate a client-side bundle,
+using commands like the following:
+
+    npm install -g browserify
+    browserify -r ajv -o ajv.bundle.js

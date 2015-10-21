@@ -19,20 +19,19 @@
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
 
-        <!-- ZSchema dependency -->
-        <script type="text/javascript" src="/bc/z-schema/dist/ZSchema-browser.js"></script>
+        <!-- browserified AJV dependency -->
+        <script type="text/javascript" src="/content/js/ajv.bundle.js"></script>
 
         <!-- Client-side validator dependencies -->
         <script src="/src/js/common/validate.js"></script>
-        <script src="/src/js/client/validate.js"></script>
     </head>
     <body>
         <p>This page instantiates a client-side validator, which we will exercise using Zombie.  This page must be hosted using gpii.express or another web server.</p>
 
         <script type="text/javascript">
-            var clientValidator = gpii.schema.validator.client({
-                members: {
-                    schemaContents: {
+            var clientValidator = gpii.schema.validator({
+                model: {
+                    schemas: {
                         base: {
                             "$schema": "http://json-schema.org/draft-04/schema#",
                             "id":      "base.json#",
@@ -61,6 +60,14 @@
                                 "regex": {
                                     "type":    "string",
                                             "pattern": "^v.l.d$"
+                                },
+                                "password": {
+                                    "allOf": [
+                                        { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
+                                        { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
+                                        { "type": "string", "description": "The password must have at least one lowercase letter.", "pattern": "[a-z]+"},
+                                        { "type": "string", "description": "The password must have at least one number or special character.", "pattern": "[^a-zA-Z]"}
+                                    ]
                                 }
                             },
                             "properties": {
@@ -69,6 +76,7 @@
                                 "date":     { "$ref": "#/definitions/date"},
                                 "number":   { "$ref": "#/definitions/number"},
                                 "array":    { "$ref": "#/definitions/array"},
+                                "password": { "$ref": "base.json#/definitions/password"},
                                 "regex":    { "$ref": "#/definitions/regex"}
                             },
                             "required": ["required"]
