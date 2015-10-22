@@ -54,11 +54,6 @@ gpii.schema.validator.init = function (that) {
 };
 
 gpii.schema.validator.validate = function (that, key, content) {
-    // TODO:  Confirm that remote references work in ajv and then delete this block.
-    //fluid.each(that.schemaContents, function (schemaContent, schemaKey) {
-    //    validator.setRemoteReference(schemaKey, schemaContent);
-    //});
-
     var contentValid = that.ajv.validate(key, content);
     if (!contentValid) {
         return (gpii.schema.validator.sanitizeValidationErrors(that.ajv.errors));
