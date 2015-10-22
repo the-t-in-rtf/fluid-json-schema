@@ -76,7 +76,7 @@
                                 "date":     { "$ref": "#/definitions/date"},
                                 "number":   { "$ref": "#/definitions/number"},
                                 "array":    { "$ref": "#/definitions/array"},
-                                "password": { "$ref": "base.json#/definitions/password"},
+                                "password": { "$ref": "base#/definitions/password"},
                                 "regex":    { "$ref": "#/definitions/regex"}
                             },
                             "required": ["required"]
@@ -87,12 +87,12 @@
                             "description": "inheritance in JSON Schema v4 is still weird.  This example is the one we test against, and it works with JSON Schema.",
                             "type":        "object",
                             "properties": {
-                                "required": { "$ref": "base.json#/definitions/required" },
-                                "boolean":  { "$ref": "base.json#/definitions/boolean" },
-                                "date":     { "$ref": "base.json#/definitions/date"},
-                                "number":   { "$ref": "base.json#/definitions/number"},
-                                "array":    { "$ref": "base.json#/definitions/array"},
-                                "regex":    { "$ref": "base.json#/definitions/array"},
+                                "required": { "$ref": "base#/definitions/required" },
+                                "boolean":  { "$ref": "base#/definitions/boolean" },
+                                "date":     { "$ref": "base#/definitions/date"},
+                                "number":   { "$ref": "base#/definitions/number"},
+                                "array":    { "$ref": "base#/definitions/array"},
+                                "regex":    { "$ref": "base#/definitions/array"},
 
                                 "additionalOptional": {
                                     "type": "string"

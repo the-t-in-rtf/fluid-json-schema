@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "id":      "base.json",
+    "id":      "base",
     "title":   "Example Base Schema",
     "type":    "object",
     "definitions": {

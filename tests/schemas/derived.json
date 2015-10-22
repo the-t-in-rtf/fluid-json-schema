@@ -5,12 +5,12 @@
     "id":          "derived",
     "type":        "object",
     "properties": {
-        "required": { "$ref": "base.json#/definitions/required" },
-        "boolean":  { "$ref": "base.json#/definitions/boolean" },
-        "date":     { "$ref": "base.json#/definitions/date"},
-        "number":   { "$ref": "base.json#/definitions/number"},
-        "array":    { "$ref": "base.json#/definitions/array"},
-        "regex":    { "$ref": "base.json#/definitions/array"},
+        "required": { "$ref": "base#/definitions/required" },
+        "boolean":  { "$ref": "base#/definitions/boolean" },
+        "date":     { "$ref": "base#/definitions/date"},
+        "number":   { "$ref": "base#/definitions/number"},
+        "array":    { "$ref": "base#/definitions/array"},
+        "regex":    { "$ref": "base#/definitions/array"},
 
         "additionalOptional": {
             "type": "string"
