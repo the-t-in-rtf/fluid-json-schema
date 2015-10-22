@@ -32,8 +32,6 @@ gpii.schema.validator.server.init = function (that) {
                 var schemaKey  = filename.replace(/.json$/i, "");
                 var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 
-                // We register both `filename` and `filename.json` to allow schema authors more flexibility.
-                schemas[filename]  = content;
                 schemas[schemaKey] = content;
             }
         });
