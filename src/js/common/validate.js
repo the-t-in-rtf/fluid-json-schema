@@ -230,7 +230,13 @@ gpii.schema.validator.refreshSchemas = function (that) {
         if (that.ajv.getSchema(schemaKey)) {
             that.ajv.removeSchema(schemaKey);
         }
-        that.ajv.addSchema(schemaContent, schemaKey);
+
+        try {
+            that.ajv.addSchema(schemaContent, schemaKey);
+        }
+        catch (e) {
+            fluid.fail("There was an error loading one of your JSON Schemas:", e);
+        }
     });
 };
 
