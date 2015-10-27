@@ -21,7 +21,7 @@
     "grunt-jsonlint": "1.0.4",
     "grunt-shell": "0.6.4",
     "infusion": "git://github.com/fluid-project/infusion.git#282f1a318718eed0b0ec060fb8b4ad254417fd7e",
-    "json-schema-ref-parser": "^1.4.0"
+    "json-schema-ref-parser": "1.4.0"
   },
   "devDependencies": {
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express.git#8730441601db239870046c796b85c0f020a302a1",
