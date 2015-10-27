@@ -290,7 +290,7 @@ fluid.defaults("gpii.schema.validator", {
             type: "gpii.schema.parser",
             options: {
                 model: {
-                    schemas: "{that}.model.schemas"
+                    schemas: "{gpii.schema.validator}.model.schemas"
                 }
             }
         }
