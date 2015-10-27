@@ -48,7 +48,7 @@ fluid.registerNamespace("gpii.schema.validator");
 
 gpii.schema.validator.init = function (that) {
     // We persist a single AJV instance so that we can take advantage of its automatic compiling and caching.
-    that.ajv = Ajv(that.options.validatorOptions);
+    that.ajv = Ajv(that.options.validatorOptions); // jshint ignore:line
 
     gpii.schema.validator.refreshSchemas(that);
 };
@@ -56,7 +56,7 @@ gpii.schema.validator.init = function (that) {
 gpii.schema.validator.validate = function (that, key, content) {
     var contentValid = that.ajv.validate(key, content);
     if (!contentValid) {
-        return (gpii.schema.validator.sanitizeValidationErrors(that.ajv.errors));
+        return (gpii.schema.validator.sanitizeValidationErrors(that, key, that.ajv.errors));
     }
 
     return undefined;
@@ -88,20 +88,29 @@ gpii.schema.validator.validate = function (that, key, content) {
  elements.  This allows us to show overall in-context feedback to the user.
 
  */
-gpii.schema.validator.sanitizeValidationErrors = function (errors) {
+gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, errors) {
     var sanitizedErrors = { fieldErrors: {}};
 
     fluid.each(errors, function (error) {
-        gpii.schema.validator.sanitizeError(error, sanitizedErrors);
+        gpii.schema.validator.sanitizeError(that, schemaKey, error, sanitizedErrors);
     });
 
     return sanitizedErrors;
 };
 
-gpii.schema.validator.sanitizeError = function (error, errorMap) {
+gpii.schema.validator.sanitizeError = function (that, schemaKey, error, errorMap) {
     // Errors are associated with the right field based on the `dataPath` received from AJV.
-    var path = gpii.schema.validator.extractPathSegments(error);
-    gpii.schema.validator.saveToPath(path, error.message, errorMap);
+    var path = gpii.schema.validator.extractPathSegmentsFromError(error);
+
+    // If the parser can pull a human-readable instruction from the Schema, it will do so.
+    var errorFeedback = that.parser.lookupField(schemaKey, path);
+
+    // Otherwise, it will fail over to the raw message provided by the validator.
+    if (!errorFeedback) {
+        errorFeedback = error.message;
+    }
+
+    gpii.schema.validator.saveToPath(path, errorFeedback, errorMap);
 };
 
 
@@ -117,14 +126,23 @@ gpii.schema.validator.sanitizeError = function (error, errorMap) {
   variables, etc.
 
  */
-gpii.schema.validator.extractPathSegments = function (error) {
+gpii.schema.validator.extractPathSegments = function (string) {
     var segments = [];
 
-    // A regular expression to split the curent segment and the remainder from one another: https://xkcd.com/1171/
-    var slicingRegexp = /^(\['[^\']+'\]|[^\[\.]+)\.(.+)$/;
+    // A regular expression to split the current segment and the remainder from one another. Handles variations like:
+    //
+    // 1. `simple.simon`
+    // 2. `['kinda.complex'].simple`
+    // 3. `simple['kinda.complex']`
+    // 4. `['really.complex']['don\'t I know it']`
+    //
+    // See https://xkcd.com/1171/
+    //
+    // The matching within single quotes must be non-greedy to ensure that things like `['a.b']['c.d']` are treated as
+    // separate segments.
+    var slicingRegexp = /^\.?(\['.+?']|[^\[\.]+)([\[\.].+)$/;
 
-    // Strip the leading dot up front
-    var remainingPath = error.dataPath.replace(/^\./, "");
+    var remainingPath = string;
 
     // Iterate through, splitting by dots while preserving escaped dot notation (see above).
     var matches = remainingPath.match(slicingRegexp);
@@ -142,6 +160,16 @@ gpii.schema.validator.extractPathSegments = function (error) {
 
 /*
 
+  Convenience function to extract the path segments from the `error` data structure returned by AJV.
+
+ */
+gpii.schema.validator.extractPathSegmentsFromError = function (error) {
+    return gpii.schema.validator.extractPathSegments(error.dataPath);
+};
+
+
+/*
+
   Because dots are allowed in Javascript/JSON object keys, any segment with a dot is escaped by AJV.  The simplest
   example is `this.that`, which would be escaped as `['this.that']`.  This gives us three additional special characters,
   namely the square brackets and the single quote.
@@ -156,16 +184,18 @@ gpii.schema.validator.extractPathSegments = function (error) {
 
  */
 gpii.schema.validator.sanitizePathSegment = function (segment) {
-    var hasSpecialRegexp = /\['(.+)'\]/;
+    // Discard any leading dot
+    var segmentMinusLeadingDot = segment.replace(/^\./, "");
 
     // If we are surrounded by `['']`, extract the inner content and then unescape it.
-    var matches = segment.match(hasSpecialRegexp);
-    if (matches) {
+    var hasSpecialRegexp = /\['(.+)'\]/;
+    var specialMatches = segmentMinusLeadingDot.match(hasSpecialRegexp);
+    if (specialMatches) {
         // unescape the remaining variables by using them to create a new `String`.
-        return String(matches[1]);
+        return String(specialMatches[1]);
     }
 
-    return segment;
+    return segmentMinusLeadingDot;
 };
 
 // Resolve the underlying data from a hierarchical object using an array of path segments. Returns the portion of the
@@ -238,6 +268,8 @@ gpii.schema.validator.refreshSchemas = function (that) {
             fluid.fail("There was an error loading one of your JSON Schemas:", e);
         }
     });
+
+    that.events.schemasLoaded.fire(that);
 };
 
 fluid.defaults("gpii.schema.validator", {
@@ -247,8 +279,21 @@ fluid.defaults("gpii.schema.validator", {
         messages: true,  // Display human-readable error messages
         allErrors: true  // Generate a complete list of errors and not just the first failure.
     },
+    events: {
+        schemasLoaded: null
+    },
     model: {
         schemas: {}
+    },
+    components: {
+        parser: {
+            type: "gpii.schema.parser",
+            options: {
+                model: {
+                    schemas: "{that}.model.schemas"
+                }
+            }
+        }
     },
     invokers: {
         validate: {

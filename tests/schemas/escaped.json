@@ -3,11 +3,12 @@
     "title": "Schema to test names that would otherwise conflict with the path handling",
     "type":  "object",
     "properties": {
-        "this/that": {
+        "this.that": {
             "type": "object",
             "properties": {
-                "t/h/e/ /o/t/h/e/r": {
+                "th'other": {
                     "type": "object",
+                    "description": "How do increasingly sloppy variable names make you feel?",
                     "properties": {
                         "required": {
                             "type": "boolean"
@@ -16,11 +17,12 @@
                     "required": ["required"]
                 }
             },
-            "required": ["t/h/e/ /o/t/h/e/r"]
+            "required": ["th'other"]
         },
-        "s/good/bad/g": {
-            "type": "string"
+        "[x][x]": {
+            "type": "string",
+            "description": "How do textual cross marks make you feel?"
         }
     },
-    "required" : ["s/good/bad/g"]
+    "required" : ["[x][x]"]
 }

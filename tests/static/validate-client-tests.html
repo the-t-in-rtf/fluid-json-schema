@@ -8,6 +8,7 @@
         <!-- Fluid dependencies -->
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDocument.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidPromises.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidIoC.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/DataBinding.js"></script>
@@ -19,10 +20,14 @@
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
         <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
 
-        <!-- browserified AJV dependency -->
-        <script type="text/javascript" src="/content/js/ajv.bundle.js"></script>
+
+        <!-- Client-side parser dependencies -->
+        <script type="text/javascript" src="/modules/json-schema-ref-parser/dist/ref-parser.js"></script>
+        <script src="/src/js/common/parser.js"></script>
 
         <!-- Client-side validator dependencies -->
+        <!-- browserified AJV dependency -->
+        <script type="text/javascript" src="/content/js/ajv.bundle.js"></script>
         <script src="/src/js/common/validate.js"></script>
     </head>
     <body>
@@ -124,11 +129,12 @@
                             "title": "Schema to test names that would otherwise conflict with the path handling",
                             "type":  "object",
                             "properties": {
-                                "this/that": {
+                                "this.that": {
                                     "type": "object",
                                     "properties": {
-                                        "t/h/e/ /o/t/h/e/r": {
+                                        "th'other": {
                                             "type": "object",
+                                            "description": "How do increasingly sloppy variable names make you feel?",
                                             "properties": {
                                                 "required": {
                                                     "type": "boolean"
@@ -137,13 +143,14 @@
                                             "required": ["required"]
                                         }
                                     },
-                                    "required": ["t/h/e/ /o/t/h/e/r"]
+                                    "required": ["th'other"]
                                 },
-                                "s/good/bad/g": {
-                                    "type": "string"
+                                "[x][x]": {
+                                    "type": "string",
+                                    "description": "How do textual cross marks make you feel?"
                                 }
                             },
-                            "required" : ["s/good/bad/g"]
+                            "required" : ["[x][x]"]
                         }
                     }
                 }

@@ -19,6 +19,7 @@ var path    = require("path");
 var fs      = require("fs");
 
 require("../common/validate");
+require("../common/parser");
 
 fluid.registerNamespace("gpii.schema.validator.server");
 

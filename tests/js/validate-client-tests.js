@@ -26,10 +26,11 @@ var jqUnit = require("jqUnit");
 require("./lib/errors");
 require("./test-harness");
 require("./validate-common-test-definitions");
+require("../../src/js/server/validate");
 
 fluid.registerNamespace("gpii.schema.tests.validator.zombie");
 
-gpii.schema.tests.validator.zombie.singleTest = function (that, message, schema, content, errors, errorFields) {
+gpii.schema.tests.validator.zombie.singleTest = function (that, message, schema, content, errors, errorFields, multipleErrorFields) {
     jqUnit.asyncTest(message, function () {
         var browser = Browser.create();
         browser.on("error", function (error) {
@@ -42,7 +43,13 @@ gpii.schema.tests.validator.zombie.singleTest = function (that, message, schema,
             var result    = component.validate(schema, content);
 
             if (errors) {
-                gpii.schema.tests.hasFieldErrors(result, errorFields);
+                if (errorFields) {
+                    gpii.schema.tests.hasFieldErrors(result, errorFields);
+                }
+
+                if (multipleErrorFields) {
+                    gpii.schema.tests.hasFieldErrors(result, multipleErrorFields, true);
+                }
             }
             else {
                 jqUnit.assertUndefined("There should be no validation errors...", result);
@@ -56,7 +63,7 @@ gpii.schema.tests.validator.zombie.runTests = function (that) {
     jqUnit.module("Testing client side JSON Schema validation...");
 
     fluid.each(that.options.tests, function (test) {
-        gpii.schema.tests.validator.zombie.singleTest(that, test.message, test.schema, test.content, test.errors, test.errorFields);
+        gpii.schema.tests.validator.zombie.singleTest(that, test.message, test.schema, test.content, test.errors, test.errorPaths, test.multipleErrorPaths);
     });
 
     // This last test is the only one that can't use `hasFieldErrors`

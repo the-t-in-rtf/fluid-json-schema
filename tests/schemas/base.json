@@ -24,10 +24,12 @@
             "items": {"type": "boolean" }
         },
         "regex": {
+            "description": "The string should be five characters long, begin with 'v' and end with 'd'.",
             "type":    "string",
             "pattern": "^v.l.d$"
         },
         "password": {
+          "description": "Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character.",
           "allOf": [
             { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
             { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
