@@ -77,7 +77,7 @@ gpii.schema.tests.validator.zombie.runTests = function (that) {
             jqUnit.start();
             var component = browser.window[that.options.testComponent];
             var bogus  = "{}";
-            var result = component.validate("base", bogus);
+            var result = component.validate("base.json", bogus);
             jqUnit.assertNotUndefined("There should be validation errors...", result);
         });
     });

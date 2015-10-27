@@ -51,7 +51,7 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
                     gateKeeper: {
                         type: "gpii.schema.middleware",
                         options: {
-                            schemaKey: "base",
+                            schemaKey: "base.json",
                             schemaDir: schemaDir
                         }
                     },

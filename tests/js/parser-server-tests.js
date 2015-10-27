@@ -22,7 +22,9 @@ require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
 fluid.registerNamespace("gpii.schema.parser.tests.server");
 
 gpii.schema.parser.tests.server.testSchemaCaching = function (that) {
-    jqUnit.assertTrue("There should be a dereferenced schema after startup...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas.base));
+    jqUnit.assertTrue("There should be a dereferenced schema after startup...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas["base.json"]));
+
+    jqUnit.assertTrue("A derived schema should have been correctly dereferenced as well...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas["derived.json"]));
 };
 
 gpii.schema.parser.tests.server.testFieldLookup = function (that, schemaKey, path, expected) {
@@ -50,7 +52,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testSchemaCaching",
-                            args:     ["{testEnvironment}.gateKeeper.parser"]
+                            args:     ["{testEnvironment}.gateKeeper.validator.parser"]
                         }
                     ]
                 },
@@ -60,7 +62,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.parser", "base", ".regex.description", "The string should be five characters long, begin with 'v' and end with 'd'."] // path, expected
+                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "base.json", ".regex.description", "The string should be five characters long, begin with 'v' and end with 'd'."] // path, expected
                         }
                     ]
                 },
@@ -70,7 +72,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.parser", "escaped", ".['[x][x]'].description", "How do textual cross marks make you feel?"] // path, expected
+                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "escaped.json", ".['[x][x]'].description", "How do textual cross marks make you feel?"] // path, expected
                         }
                     ]
                 },
@@ -80,7 +82,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.parser", "escaped", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
+                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "escaped.json", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
                         }
                     ]
                 }
@@ -108,20 +110,18 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             options: {
                 components: {
                     validator: {
-                        type: "gpii.schema.validator.server",
+                        type: "gpii.schema.validator.server.hasParser",
                         options: {
-                            schemaDir: schemaDir
-                        }
-                    },
-                    parser: {
-                        type: "gpii.schema.parser",
-                        options: {
-                            model: {
-                                schemas: "{validator}.model.schemas"
-                            },
-                            listeners: {
-                                "onSchemasUpdated.notifyParent": {
-                                    func: "{testEnvironment}.events.onSchemasUpdated.fire"
+                            schemaDir: schemaDir,
+                            components: {
+                                parser: {
+                                    options: {
+                                        listeners: {
+                                            "onSchemasUpdated.notifyEnvironment": {
+                                                func: "{testEnvironment}.events.onSchemasUpdated.fire"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

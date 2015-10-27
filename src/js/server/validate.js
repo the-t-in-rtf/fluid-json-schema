@@ -3,12 +3,11 @@
  A server-side wrapper for the validation component.  See `../common/validate.js` for full details.
 
  The server-side component will populate `schemaContents` for you on startup based on the contents of
- `options.schemaDir`.  As an example, the contents of `options.schemaDir/schema-file-name.json` will end up in
- `schemaContents["schema-file-name]`.
+ `options.schemaDir`.  Because of limitations in the current `parser`, the schema key must match the filename.
 
  The server-side component will also resolve dependencies from `schemaContents`.  For example, if you have a
- second schema that has a reference to `#schema-file-name`, it will resolve to the contents of
- `schemaContents["schema-file-name"]`.
+ second schema that has a reference to `#schema-file-name.json`, it will resolve to the contents of
+ `schemaContents["schema-file-name.json"]`.
 
  */
 "use strict";
@@ -30,10 +29,9 @@ gpii.schema.validator.server.init = function (that) {
         fluid.each(fs.readdirSync(that.options.schemaDir), function (filename) {
             if (filename.match(/.json$/i)) {
                 var schemaPath = path.resolve(that.options.schemaDir, filename);
-                var schemaKey  = filename.replace(/.json$/i, "");
                 var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 
-                schemas[schemaKey] = content;
+                schemas[filename] = content;
             }
         });
 
@@ -52,4 +50,8 @@ fluid.defaults("gpii.schema.validator.server", {
             args:     ["{that}"]
         }
     }
+});
+
+fluid.defaults("gpii.schema.validator.server.hasParser", {
+    gradeNames: ["gpii.schema.validator.hasParser", "gpii.schema.validator.server"]
 });

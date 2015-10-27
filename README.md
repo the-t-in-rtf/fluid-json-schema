@@ -53,7 +53,13 @@ Inheritance is still a sticking point at least in v4 of the draft standard.   Yo
 multiple schemas on top of each other.  Best practice for now is to only reuse individual definitions between schemas,
 and to explicitly specify each schema's required properties.
 
-See the tests for examples of the preferred and tested approach (see the example schemas `derived.json` and `base.json`).
+A limitation of this implementation is that it expects external references to use filenames rather than ids,
+as in:
+
+    $ref: "filename.json#/definitions/field`
+
+This is a by product of the library we use to evolve the error output. As this may change, best practice is for the
+`id` in the schema to exactly match the filename.  See the `derived.json` and `base.json` test schemas for an example.
 
 # Rejecting invalid REST payloads
 

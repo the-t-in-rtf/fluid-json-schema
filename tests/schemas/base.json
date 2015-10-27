@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "id":      "base",
+    "id":      "base.json",
     "title":   "Example Base Schema",
     "type":    "object",
     "definitions": {
@@ -31,21 +31,30 @@
         "password": {
           "description": "Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character.",
           "allOf": [
-            { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
-            { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
-            { "type": "string", "description": "The password must have at least one lowercase letter.", "pattern": "[a-z]+"},
-            { "type": "string", "description": "The password must have at least one number or special character.", "pattern": "[^a-zA-Z]"}
+            { "type": "string", "minLength": 8 },
+            { "type": "string", "pattern": "[A-Z]+"},
+            { "type": "string", "pattern": "[a-z]+"},
+            { "type": "string", "pattern": "[^a-zA-Z]"}
+          ]
+        },
+        "rawMultiple": {
+          "allOf": [
+            { "type": "string", "minLength": 8 },
+            { "type": "string", "pattern": "[A-Z]+"},
+            { "type": "string", "pattern": "[a-z]+"},
+            { "type": "string", "pattern": "[^a-zA-Z]"}
           ]
         }
     },
     "properties": {
-        "required": { "$ref": "#/definitions/required" },
-        "boolean":  { "$ref": "#/definitions/boolean" },
-        "date":     { "$ref": "#/definitions/date"},
-        "number":   { "$ref": "#/definitions/number"},
-        "array":    { "$ref": "#/definitions/array"},
-        "password": { "$ref": "#/definitions/password"},
-        "regex":    { "$ref": "#/definitions/regex"}
+        "required":    { "$ref": "#/definitions/required" },
+        "boolean":     { "$ref": "#/definitions/boolean" },
+        "date":        { "$ref": "#/definitions/date"},
+        "number":      { "$ref": "#/definitions/number"},
+        "array":       { "$ref": "#/definitions/array"},
+        "password":    { "$ref": "#/definitions/password"},
+        "rawMultiple": { "$ref": "#/definitions/rawMultiple"},
+        "regex":       { "$ref": "#/definitions/regex"}
     },
     "required": ["required"]
 }

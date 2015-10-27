@@ -12,7 +12,7 @@ fluid.registerNamespace("gpii.schema.tests.validator");
 //
 //  emptyDerived: {
 //    message:     "Validate an empty 'derived' record....",
-//    schema:      "derived",
+//    schema:      "derived.json",
 //    content:     {},
 //    errors:      true,
 //    errorPaths: [".required", ".deeply.nested.additionalRequired"]
@@ -46,7 +46,7 @@ gpii.schema.tests.validator.runTests = function (that) {
     // This last test is the only one that can't use `hasFieldErrors`
     jqUnit.test("Test handling of non-JSON content....", function () {
         var bogus  = "{}";
-        var result = that.validate("base", bogus);
+        var result = that.validate("base.json", bogus);
         jqUnit.assertNotUndefined("There should be validation errors...", result);
     });
 };
@@ -55,47 +55,47 @@ fluid.defaults("gpii.schema.tests.validator", {
     tests: {
         validBase: {
             message: "Validate the simplest valid 'base' record....",
-            schema:  "base",
+            schema:  "base.json",
             content: { required: true },
             errors:  false
         },
         validDerived: {
             message: "Validate the simplest valid 'derived' record....",
-            schema:  "derived",
+            schema:  "derived.json",
             content: {required: true, additionalRequired: true},
             errors:  false
         },
         emptyBase: {
             message:     "Validate an empty 'base' record....",
-            schema:      "base",
+            schema:      "base.json",
             content:     {},
             errors:      true,
             errorPaths: [".required"]
         },
         emptyDerived: {
             message:     "Validate an empty 'derived' record....",
-            schema:      "derived",
+            schema:      "derived.json",
             content:     {},
             errors:      true,
             errorPaths: [".required", ".additionalRequired"]
         },
         deeplyInvalid: {
             message:     "Test handling of 'deep' validation error....",
-            schema:      "deep",
+            schema:      "deep.json",
             content:     { deep: {} },
             errors:      true,
             errorPaths: [".deep.required"]
         },
         invalidBase: {
             message:     "Validate an invalid 'base' record....",
-            schema:      "base",
+            schema:      "base.json",
             content:     { required: "bogus"},
             errors:      true,
             errorPaths: [".required"]
         },
         invalidDerived: {
             message:     "Validate an invalid 'derived' record....",
-            schema:      "derived",
+            schema:      "derived.json",
             content:     { required: "bogus", additionalRequired: "also bogus"},
             errors:      true,
             errorPaths: [".required", ".additionalRequired"]
@@ -103,34 +103,42 @@ fluid.defaults("gpii.schema.tests.validator", {
         // Test handling of keys with slashes in their name to ensure that paths are correctly resolved
         invalidEscaped: {
             message:     "Validate an empty 'escaped' record....",
-            schema:      "escaped",
+            schema:      "escaped.json",
             content:     {},
             errors:      true,
             errorPaths: [".[x][x]"]
         },
         deeplyInvalidEscaped: {
             message:     "Validate an 'escaped' record missing a 'deep' dependency....",
-            schema:      "escaped",
+            schema:      "escaped.json",
             content:     { "this.that": { "th'other": {} } },
             errors:      true,
             errorPaths: [".[x][x]", ".['this.that']['th\\'other'].required"]
         },
         validEscaped: {
             message:     "Validate a valid 'escaped' record....",
-            schema:      "escaped",
+            schema:      "escaped.json",
             content:     { "this.that": { "th'other": { "required": true} }, "[x][x]": "also valid"},
             errors:      false
         },
-        badPassword: {
-            message:     "Validate a field that fails multiple rules...",
-            schema:      "base",
-            content:     { required: true, password: "pass" },
+        badRawMultiple: {
+            message:     "Validate a field that fails multiple rules (raw output)...",
+            schema:      "base.json",
+            content:     { required: true, rawMultiple: "bogus" },
             errors:      true,
-            multipleErrorPaths: [".password"]
+            multipleErrorPaths: [".rawMultiple"]
         },
-        goodPassword: {
+        // TODO:  Depending on the timing, this will randomly fail until we convert to a testEnvironment and add the required pause before running the tests.
+        //badEvolvedMultiple: {
+        //    message:     "Validate a field that fails multiple rules (evolved output)...",
+        //    schema:      "base.json",
+        //    content:     { required: true, password: "pass" },
+        //    errors:      true,
+        //    errorPaths: [".password"]
+        //},
+        goodMultiple: {
             message: "Validate a field that passes multiple rules...",
-            schema:  "base",
+            schema:  "base.json",
             content: { required: true, password: "Password1" },
             errors:  false
         },
@@ -138,7 +146,7 @@ fluid.defaults("gpii.schema.tests.validator", {
         // in a range of ways to check.
         complexFraud: {
             message: "Test a variety of invalid field types and formats...",
-            schema: "base",
+            schema: "base.json",
             content: {required: true, number: "bogus", date: "bogus", "boolean": "bogus", array: "bogus", regex: "bogus"},
             errors: true,
             errorPaths: [".number", ".date", ".array", ".boolean", ".regex"]

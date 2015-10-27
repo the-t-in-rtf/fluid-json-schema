@@ -14,7 +14,7 @@ var schemaDir = path.resolve(__dirname, "../schemas");
 
 jqUnit.module("Unit tests for validation component...");
 
-var testValidator = gpii.schema.validator.server({
+var testValidator = gpii.schema.validator.server.hasParser({
     gradeNames: ["gpii.schema.tests.validator"],
     schemaDir:  schemaDir,
     listeners: {

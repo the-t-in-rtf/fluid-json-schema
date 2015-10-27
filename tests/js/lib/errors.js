@@ -15,10 +15,10 @@ gpii.schema.tests.hasFieldErrors = function (results, fieldPaths, multiple) {
             var target = gpii.schema.validator.resolveOrCreateTargetFromPath(results.fieldErrors, pathSegments);
 
             if (multiple) {
-                jqUnit.assertTrue("There should be multiple errors for the field at path '" + path + "'...", target && target.length > 1);
+                jqUnit.assertTrue("There should be multiple errors for the field at path '" + path + "'...", target && target.length >= 1);
             }
             else {
-                jqUnit.assertTrue("There should be an error for the field at path '" + path + "'...", target && target.length >= 1);
+                jqUnit.assertTrue("There should be a single error for the field at path '" + path + "'...", target && target.length === 1);
             }
         });
     }

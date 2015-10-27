@@ -29,12 +29,15 @@ Assuming that each value was invalid, you might see validation output like the f
   ```
   {
     fieldErrors: {
-      field1: ["field1 must be 8 characters or longer.", "field1 must contain at least one uppercase letter."],
+      field1: ["should NOT be shorter than 8 characters", "should match pattern \"[A-Z]+\""],
       category1: {
         nestedField1: ["nested field is not a valid number."]
       }
   }
   ```
+
+If you have configured your instance to work together with a `gpii.schema.parser`, it will further evolve the error
+messages where possible.
 
  */
 
@@ -92,27 +95,28 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
     var sanitizedErrors = { fieldErrors: {}};
 
     fluid.each(errors, function (error) {
-        gpii.schema.validator.sanitizeError(that, schemaKey, error, sanitizedErrors);
+        // Errors are associated with the right field based on the `dataPath` received from AJV.
+        var path = gpii.schema.validator.extractPathSegmentsFromError(error);
+
+        var errorMessage      = error.message;
+        var overwriteExisting = false;
+
+        // If we have a parser, we will evolve the output if possible, and use that to replace every raw message for
+        // the same field.
+        //
+        if (that.parser) {
+            var evolvedMessage = that.parser.lookupField(schemaKey, path);
+            if (evolvedMessage) {
+                errorMessage = evolvedMessage;
+                overwriteExisting = true;
+            }
+        }
+
+        gpii.schema.validator.saveToPath(path, errorMessage, sanitizedErrors, overwriteExisting);
     });
 
     return sanitizedErrors;
 };
-
-gpii.schema.validator.sanitizeError = function (that, schemaKey, error, errorMap) {
-    // Errors are associated with the right field based on the `dataPath` received from AJV.
-    var path = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    // If the parser can pull a human-readable instruction from the Schema, it will do so.
-    var errorFeedback = that.parser.lookupField(schemaKey, path);
-
-    // Otherwise, it will fail over to the raw message provided by the validator.
-    if (!errorFeedback) {
-        errorFeedback = error.message;
-    }
-
-    gpii.schema.validator.saveToPath(path, errorFeedback, errorMap);
-};
-
 
 /*
 
@@ -207,21 +211,28 @@ gpii.schema.validator.sanitizePathSegment = function (segment) {
 //
 // `{ four: "five" }`
 //
-// Note that the relevant portion of the original object is returned, and not just the value.  Note also that if the
-// deep structure does not already exist, it will be created.  Thus:
+// Note that the relevant portion of the original object is returned, and not just the value.  If
+// `createMissingSegments` is set, the deep structure will be created if it doesn't already exist, Thus:
 //
-// `resolveOrCreateTargetFromPath({}, ["one","two","three"])`
+// `resolveOrCreateTargetFromPath({}, ["one","two","three"], true)`
 //
 // Will return:
 //
 // `{ one: { two: { three: [] }}}`
 //
-gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path) {
+// If you try to resolve a path that does not exist and `createMissingSegments` is not set, `undefined` will be returned.
+//
+gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path, createMissingSegments) {
     var resolvedTarget = target;
     for (var a = 0; a < path.length; a++) {
         var segment = path[a];
         if (!resolvedTarget[segment]) {
-            resolvedTarget[segment] = a === path.length - 1 ? [] : {};
+            if (createMissingSegments) {
+                resolvedTarget[segment] = a === path.length - 1 ? [] : {};
+            }
+            else {
+                return undefined;
+            }
         }
 
         resolvedTarget = resolvedTarget[segment];
@@ -241,11 +252,21 @@ gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path) {
 
   `errorMap`:
     A map of error messages for the whole document.  This will be modified with new values.
+
+  `overwriteExisting`:
+    Whether to overwrite what's found at path or append it to the array.  Used by the parser to collapse duplicate
+    "evolved" messages into a single message.
+
  */
-gpii.schema.validator.saveToPath = function (path, errorString, errorMap) {
+gpii.schema.validator.saveToPath = function (path, errorString, errorMap, overwriteExisting) {
     var target = errorMap.fieldErrors;
-    target     = gpii.schema.validator.resolveOrCreateTargetFromPath(target, path);
-    target.push(errorString);
+    target     = gpii.schema.validator.resolveOrCreateTargetFromPath(target, path, true);
+    if (overwriteExisting) {
+        target[0] = errorString;
+    }
+    else {
+        target.push(errorString);
+    }
 };
 
 /*
@@ -285,16 +306,6 @@ fluid.defaults("gpii.schema.validator", {
     model: {
         schemas: {}
     },
-    components: {
-        parser: {
-            type: "gpii.schema.parser",
-            options: {
-                model: {
-                    schemas: "{gpii.schema.validator}.model.schemas"
-                }
-            }
-        }
-    },
     invokers: {
         validate: {
             funcName: "gpii.schema.validator.validate",
@@ -312,6 +323,21 @@ fluid.defaults("gpii.schema.validator", {
             funcName:      "gpii.schema.validator.refreshSchemas",
             excludeSource: "init",
             args:          ["{that}"]
+        }
+    }
+});
+
+// Convenience grade to add a parser to any validator, with the same schemas, etc. configured.
+fluid.defaults("gpii.schema.validator.hasParser", {
+    components: {
+        parser: {
+            type: "gpii.schema.parser",
+            options: {
+                schemaDir: "{gpii.schema.validator}.options.schemaDir",
+                model: {
+                    schemas: "{gpii.schema.validator}.model.schemas"
+                }
+            }
         }
     }
 });

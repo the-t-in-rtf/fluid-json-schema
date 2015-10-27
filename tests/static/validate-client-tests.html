@@ -37,7 +37,7 @@
             var clientValidator = gpii.schema.validator({
                 model: {
                     schemas: {
-                        base: {
+                        "base.json": {
                             "$schema": "http://json-schema.org/draft-04/schema#",
                             "id":      "base.json#",
                             "title":   "Example Schema",
@@ -67,37 +67,47 @@
                                             "pattern": "^v.l.d$"
                                 },
                                 "password": {
+                                    "description": "Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character.",
                                     "allOf": [
-                                        { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
-                                        { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
-                                        { "type": "string", "description": "The password must have at least one lowercase letter.", "pattern": "[a-z]+"},
-                                        { "type": "string", "description": "The password must have at least one number or special character.", "pattern": "[^a-zA-Z]"}
+                                        { "type": "string", "minLength": 8 },
+                                        { "type": "string", "pattern": "[A-Z]+"},
+                                        { "type": "string", "pattern": "[a-z]+"},
+                                        { "type": "string", "pattern": "[^a-zA-Z]"}
+                                    ]
+                                },
+                                "rawMultiple": {
+                                    "allOf": [
+                                        { "type": "string", "minLength": 8 },
+                                        { "type": "string", "pattern": "[A-Z]+"},
+                                        { "type": "string", "pattern": "[a-z]+"},
+                                        { "type": "string", "pattern": "[^a-zA-Z]"}
                                     ]
                                 }
                             },
                             "properties": {
-                                "required": { "$ref": "#/definitions/required" },
-                                "boolean":  { "$ref": "#/definitions/boolean" },
-                                "date":     { "$ref": "#/definitions/date"},
-                                "number":   { "$ref": "#/definitions/number"},
-                                "array":    { "$ref": "#/definitions/array"},
-                                "password": { "$ref": "base#/definitions/password"},
-                                "regex":    { "$ref": "#/definitions/regex"}
+                                "required":    { "$ref": "#/definitions/required" },
+                                "boolean":     { "$ref": "#/definitions/boolean" },
+                                "date":        { "$ref": "#/definitions/date"},
+                                "number":      { "$ref": "#/definitions/number"},
+                                "array":       { "$ref": "#/definitions/array"},
+                                "password":    { "$ref": "#/definitions/password"},
+                                "rawMultiple": { "$ref": "#/definitions/rawMultiple"},
+                                "regex":       { "$ref": "#/definitions/regex"}
                             },
                             "required": ["required"]
                         },
-                        derived: {
+                        "derived.json": {
                             "$schema":     "http://json-schema.org/draft-04/schema#",
                             "title":       "Schema derived from base schema",
                             "description": "inheritance in JSON Schema v4 is still weird.  This example is the one we test against, and it works with JSON Schema.",
                             "type":        "object",
                             "properties": {
-                                "required": { "$ref": "base#/definitions/required" },
-                                "boolean":  { "$ref": "base#/definitions/boolean" },
-                                "date":     { "$ref": "base#/definitions/date"},
-                                "number":   { "$ref": "base#/definitions/number"},
-                                "array":    { "$ref": "base#/definitions/array"},
-                                "regex":    { "$ref": "base#/definitions/array"},
+                                "required": { "$ref": "base.json#/definitions/required" },
+                                "boolean":  { "$ref": "base.json#/definitions/boolean" },
+                                "date":     { "$ref": "base.json#/definitions/date"},
+                                "number":   { "$ref": "base.json#/definitions/number"},
+                                "array":    { "$ref": "base.json#/definitions/array"},
+                                "regex":    { "$ref": "base.json#/definitions/array"},
 
                                 "additionalOptional": {
                                     "type": "string"
@@ -108,7 +118,7 @@
                             },
                             "required": ["additionalRequired", "required"]
                         },
-                        deep: {
+                        "deep.json": {
                             "$schema": "http://json-schema.org/draft-04/schema#",
                             "title": "Deep schema to test variable nesting and paths.",
                             "type":  "object",
@@ -124,7 +134,7 @@
                                 }
                             }
                         },
-                        escaped: {
+                        "escaped.json": {
                             "$schema": "http://json-schema.org/draft-04/schema#",
                             "title": "Schema to test names that would otherwise conflict with the path handling",
                             "type":  "object",

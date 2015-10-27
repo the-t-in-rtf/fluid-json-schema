@@ -50,7 +50,18 @@
   it using `options.parserOptions` (empty by default).  Read the library's documentation for details of what options
   are available.
 
- */
+  Note that this library expects to be able to resolve external references relative to the first argument passed to its
+  `dereference` function, and it expects to load and cache the references itself as needed.  Since we are receiving keys
+  from the `validator`, we need to some how convert these to URLs.  We do this using `fluid.stringTemplate` to combine
+  `options.schemaDir` with the individual key, which means:
+
+  1.  If `options.schemaDir` is a directory location, a full path will be produced.
+  2.  If `options.schemaDir` is a URL, a full URL will be produced.
+  3.  If `options.schemaDir` is empty, paths will be resolved relative to the working directory.
+
+  If you are using this with the `validator`, it takes care of that bit of wiring for you.
+
+  */
 
 "use strict";
 var fluid = fluid || require("infusion");
@@ -66,13 +77,15 @@ fluid.registerNamespace("gpii.schema.parser");
 
  */
 
-gpii.schema.parser.dereference = function (that, schemaContent, schemaKey) {
+gpii.schema.parser.dereference = function (that, schemaKey) {
     var parser = new $RefParser(); // jshint ignore:line
-    return parser.dereference(schemaContent, that.options.parserOptions, gpii.schema.parser.getParserCallback(that, schemaKey));
+    var pathOrUri = fluid.stringTemplate(that.options.uriTemplate, { schemaDir: that.options.schemaDir, schemaKey: schemaKey});
+    var promise = fluid.promise();
+    parser.dereference(pathOrUri, that.options.parserOptions, gpii.schema.parser.getParserCallback(that, schemaKey, promise));
+    return promise;
 };
 
-gpii.schema.parser.getParserCallback = function (that, schemaKey) {
-    var promise = fluid.promise();
+gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
     return function (error, schema) {
         if (error) {
             promise.reject(error);
@@ -89,7 +102,7 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey) {
  Given the path to a field and a schema key, look up the definition in the JSON Schema.
  Accepts the following input parameters when launched through the invoker:
 
- 1. `schemaKey`: The `key` of the schema (generally the filename minus `.json`).
+ 1. `schemaKey`: The `key` of the schema (generally the filename, i.e. `base.json`).
  2. `schemaFieldPath`: a string like `.root.nested.value.description` or an array of path segments like
     `["root", "nested", "value", "description"]`.
 
@@ -145,28 +158,31 @@ gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
     return false;
 };
 
+
 /*
 
   A listener to cache schemas as they are added.
 
  */
-gpii.schema.parser.updateSchemas = function (that, change) {
-    // TODO:  Only update the schemas that have changed instead of those that do not already exist.
+gpii.schema.parser.updateSchemas = function (that) {
     var promises = [];
     fluid.each(that.model.schemas, function (schemaContent, schemaKey) {
         if (!that.dereferencedSchemas[schemaKey]) {
-            promises.push(gpii.schema.parser.dereference(that, schemaContent, schemaKey));
+            promises.push(gpii.schema.parser.dereference(that, schemaKey));
         }
     });
 
-    fluid.promise.sequence(promises).then(function () {
-        that.events.onSchemasUpdated.fire(that);
-    });
+    if (promises.length > 0) {
+        fluid.promise.sequence(promises).then(function () {
+            that.events.onSchemasUpdated.fire(that);
+        });
+    }
 };
 
 fluid.defaults("gpii.schema.parser", {
-    gradeNames: ["fluid.modelComponent"],
+    gradeNames:    ["fluid.modelComponent"],
     parserOptions: {},
+    uriTemplate:   "%schemaDir/%schemaKey",
     model: {
         schemas: {}
     },
