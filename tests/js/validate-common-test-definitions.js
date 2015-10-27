@@ -128,14 +128,6 @@ fluid.defaults("gpii.schema.tests.validator", {
             errors:      true,
             multipleErrorPaths: [".rawMultiple"]
         },
-        // TODO:  Depending on the timing, this will randomly fail until we convert to a testEnvironment and add the required pause before running the tests.
-        //badEvolvedMultiple: {
-        //    message:     "Validate a field that fails multiple rules (evolved output)...",
-        //    schema:      "base.json",
-        //    content:     { required: true, password: "pass" },
-        //    errors:      true,
-        //    errorPaths: [".password"]
-        //},
         goodMultiple: {
             message: "Validate a field that passes multiple rules...",
             schema:  "base.json",

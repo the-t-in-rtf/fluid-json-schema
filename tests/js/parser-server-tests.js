@@ -32,6 +32,12 @@ gpii.schema.parser.tests.server.testFieldLookup = function (that, schemaKey, pat
     jqUnit.assertDeepEq("The field lookup output should be as expected...", expected, output);
 };
 
+gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey, content, expected) {
+    var output = validator.validate(schemaKey, content);
+    jqUnit.assertDeepEq("The output should be as expected...", expected, output);
+};
+
+
 fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
     sequenceStart: [
@@ -83,6 +89,16 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
                             args:     ["{testEnvironment}.gateKeeper.validator.parser", "escaped.json", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing evolution and collapse of multiple failures within a single field...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.gateKeeper.validator", "base.json", { required: true, password: "pass" }, { fieldErrors: { password: ["Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character."]}}] // validator, schemaKey, content, expected
                         }
                     ]
                 }

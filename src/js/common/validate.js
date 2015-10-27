@@ -105,7 +105,7 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
         // the same field.
         //
         if (that.parser) {
-            var evolvedMessage = that.parser.lookupField(schemaKey, path);
+            var evolvedMessage = that.parser.lookupDescription(schemaKey, path);
             if (evolvedMessage) {
                 errorMessage = evolvedMessage;
                 overwriteExisting = true;

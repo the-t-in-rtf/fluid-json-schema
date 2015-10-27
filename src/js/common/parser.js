@@ -158,6 +158,17 @@ gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
     return false;
 };
 
+/*
+
+  Convenience function to lookup the most commonly used field (the description).
+
+ */
+gpii.schema.parser.lookupDescription = function (that, schemaKey, schemaFieldPath) {
+    var pathPlusDescription = Array.isArray(schemaFieldPath) ? schemaFieldPath.concat("description") : schemaFieldPath + ".description";
+    return gpii.schema.parser.lookupField(that, schemaKey, pathPlusDescription);
+};
+
+
 
 /*
 
@@ -196,6 +207,10 @@ fluid.defaults("gpii.schema.parser", {
     invokers: {
         lookupField: {
             funcName: "gpii.schema.parser.lookupField",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // schemaKey, schemaFieldPath
+        },
+        lookupDescription: {
+            funcName: "gpii.schema.parser.lookupDescription",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // schemaKey, schemaFieldPath
         }
     },
