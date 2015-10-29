@@ -63,11 +63,11 @@ fluid.defaults("gpii.schema.middleware", {
     distributeOptions: [
         {
             source: "{that}.options.responseSchemaKey",
-            target: "{that gpii.express.schemaHandler}.options.schemaKey"
+            target: "{that gpii.schema.middleware.handler}.options.schemaKey"
         },
         {
             source: "{that}.options.responseSchemaUrl",
-            target: "{that gpii.express.schemaHandler}.options.schemaUrl"
+            target: "{that gpii.schema.middleware.handler}.options.schemaUrl"
         }
     ],
     messages: {
