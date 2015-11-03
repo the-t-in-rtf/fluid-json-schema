@@ -2,8 +2,15 @@
 // `options.schemaKey`.  You are required to set `options.schemaDir` to a directory that contains a file matching that
 // key.
 //
-// Any validation errors are transformed using `options.rules.validationErrorsToResponse` before they are sent to the
-// user.  The default format looks roughly like:
+// Validates information available in the request object, transformed using `options.rules.requestContentToValidate`.
+// The default options validate the request body.  To validate a query instead, you would set that option to something like:
+//
+//  requestContentToValidate: {
+//      "": "query"
+//  }
+//
+// The transformed request data is validated against the schema. Any validation errors are then transformed using
+// `options.rules.validationErrorsToResponse` before they are sent to the user.  The default format looks roughly like:
 //
 // {
 //   ok: false,
@@ -37,7 +44,8 @@ fluid.registerNamespace("gpii.schema.middleware");
 
 gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     if (that.options.schemaDir && that.options.schemaKey) {
-        var results = that.validator.validate(that.options.schemaKey, req.body);
+        var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
+        var results = that.validator.validate(that.options.schemaKey, toValidate);
         if (results) {
             var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
 
@@ -82,6 +90,9 @@ fluid.defaults("gpii.schema.middleware", {
             "message": {
                 literalValue: "{that}.options.messages.error"
             }
+        },
+        requestContentToValidate: {
+            "": "body"
         }
     },
     components: {
