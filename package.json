@@ -14,11 +14,11 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "1.4.5",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#89f446fb53d8070f7c4c110202f4d147c7fe6d77",
     "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
     "json-schema-ref-parser": "1.4.0"
   },
   "devDependencies": {
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#89f446fb53d8070f7c4c110202f4d147c7fe6d77",
     "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#68ebbc6ba5039607fb7f432ba0735f69030bc620",
     "grunt": "~0.4.4",
     "grunt-contrib-jshint": "~0.9.0",
