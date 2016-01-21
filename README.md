@@ -56,10 +56,11 @@ and to explicitly specify each schema's required properties.
 A limitation of this implementation is that it expects external references to use filenames rather than ids,
 as in:
 
-    $ref: "filename.json#/definitions/field`
+    $ref: "filename.json#/definitions/field"
 
-This is a by product of the library we use to evolve the error output. As this may change, best practice is for the
-`id` in the schema to exactly match the filename.  See the `derived.json` and `base.json` test schemas for an example.
+This is a byproduct of `json-schema-ref-parser`, the library we use to evolve the error output. As this may change, best
+practice is for the `id` in the schema to exactly match the filename.  See the `derived.json` and `base.json` test
+schemas for an example.
 
 # Rejecting invalid REST payloads
 
