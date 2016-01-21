@@ -1,9 +1,9 @@
 // Simple function to examine validation errors.
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 
 require("../../../src/js/common/validate");
 

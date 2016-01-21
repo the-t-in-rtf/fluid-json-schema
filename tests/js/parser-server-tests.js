@@ -6,9 +6,9 @@
 
  */
 "use strict";
-var fluid  = fluid || require("infusion");
+var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 var path   = require("path");
 var schemaDir = path.resolve(__dirname, "../schemas");
 

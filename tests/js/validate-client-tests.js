@@ -15,13 +15,13 @@
 //
 // https://github.com/assaf/zombie/issues/915
 
-var fluid = fluid || require("infusion");
+var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 fluid.setLogging(true);
 
 var Browser = require("zombie");
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 
 require("./lib/errors");
 require("./test-harness");

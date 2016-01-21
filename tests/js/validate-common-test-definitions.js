@@ -2,9 +2,9 @@
 // must mix it in with an existing test grade.  See `validate-server-tests.js` for an example.
 //
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 
 fluid.registerNamespace("gpii.schema.tests.validator");
 
