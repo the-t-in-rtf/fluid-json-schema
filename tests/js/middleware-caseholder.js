@@ -5,8 +5,8 @@ var fluid        =  require("infusion");
 var gpii         = fluid.registerNamespace("gpii");
 var jqUnit       = require("node-jqunit");
 
-var express = require("gpii-express");
-express.loadTestingSupport();
+require("gpii-express");
+gpii.express.loadTestingSupport();
 
 require("./lib/errors");
 

@@ -5,8 +5,8 @@ var fluid        =  require("infusion");
 var gpii         = fluid.registerNamespace("gpii");
 var jqUnit       = require("node-jqunit");
 
-var express = require("gpii-express");
-express.loadTestingSupport();
+require("gpii-express");
+gpii.express.loadTestingSupport();
 
 // We use just the request-handling bits of the kettle stack in our tests, but we include the whole thing to pick up the base grades
 var kettle = require("kettle");
