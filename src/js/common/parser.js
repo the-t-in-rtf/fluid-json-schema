@@ -177,7 +177,8 @@ gpii.schema.parser.lookupDescription = function (that, schemaKey, schemaFieldPat
  */
 gpii.schema.parser.updateSchemas = function (that) {
     var promises = [];
-    fluid.each(that.model.schemas, function (schemaContent, schemaKey) {
+    fluid.each(
+        that.model.schemas, function (schemaContent, schemaKey) {
         if (!that.dereferencedSchemas[schemaKey]) {
             promises.push(gpii.schema.parser.dereference(that, schemaKey));
         }
@@ -186,7 +187,7 @@ gpii.schema.parser.updateSchemas = function (that) {
     if (promises.length > 0) {
         fluid.promise.sequence(promises).then(function () {
             that.events.onSchemasUpdated.fire(that);
-        });
+        }, fluid.fail);
     }
 };
 

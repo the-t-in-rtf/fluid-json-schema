@@ -126,7 +126,7 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             options: {
                 components: {
                     validator: {
-                        type: "gpii.schema.validator.server.hasParser",
+                        type: "gpii.schema.validator.server",
                         options: {
                             schemaDir: schemaDir,
                             components: {

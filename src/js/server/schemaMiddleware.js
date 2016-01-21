@@ -127,12 +127,3 @@ fluid.defaults("gpii.schema.middleware", {
 
     }
 });
-
-fluid.defaults("gpii.schema.middleware.hasParser", {
-    gradeNames: ["gpii.schema.middleware"],
-    components: {
-        validator: {
-            type: "gpii.schema.validator.server.hasParser"
-        }
-    }
-});
