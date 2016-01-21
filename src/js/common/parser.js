@@ -47,8 +47,8 @@
     parser.lookupField("user", ".password.description")
 
   This component uses [json-schema-ref-parser](https://github.com/BigstickCarpet/json-schema-ref-parser).  We configure
-  it using `options.parserOptions` (empty by default).  Read the library's documentation for details of what options
-  are available.
+  it using `options.parserOptions` (empty by default).  Read the library's documentation for details of [what options
+  are available](https://github.com/BigstickCarpet/json-schema-ref-parser/blob/master/docs/options.md).
 
   Note that this library expects to be able to resolve external references relative to the first argument passed to its
   `dereference` function, and it expects to load and cache the references itself as needed.  Since we are receiving keys
