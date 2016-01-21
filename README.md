@@ -28,23 +28,23 @@ side, start with `gpii.schema.validator.client`.  To use it on the server side, 
 Each package contains more detailed documentation about its use.  Here is an example of how it might work from within
 node:
 
-  var fluid = fluid || require("infusion);
-  var gpii  = fluid.registerNamespace("gpii");
+    var fluid = require("infusion"");
+    var gpii  = fluid.registerNamespace("gpii");
 
-  require("gpii-json-schema");
-  var validator = gpii.schema.validator({
-    schemaContents: {
-      sample: { "type": "object", "properties": { "required": { "type": "boolean" } }, "required": ["required"]}
+    require("gpii-json-schema");
+    var validator = gpii.schema.validator({
+        schemaContents: {
+          sample: { "type": "object", "properties": { "required": { "type": "boolean" } }, "required": ["required"]}
+        }
+    });
+
+    var errors = validator.validate("sample", { foo: "bar" });
+    if (errors) {
+        // Complain
     }
-  });
-
-  var errors = validator.validate("sample", { foo: "bar" });
-  if (errors) {
-    // Complain
-  }
-  else {
-    // Rejoice
-  }
+    else {
+        // Rejoice
+    }
 
 One of the key strengths of JSON Schema is that it allows you to compose a complex schema out of parts taken from
 other schemas.  The validator in this package supports references between JSON Schemas.
@@ -71,7 +71,7 @@ components to safely assume they will only receive JSON data in the correct form
 
 The component is intended to be wired into an existing rest endpoint as in the following example:
 
-    var fluid = fluid || require("infusion");
+    var fluid = require("infusion");
     var gpii  = fluid.registerNamespace("gpii");
 
     require("gpii-express");
