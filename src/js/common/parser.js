@@ -185,9 +185,10 @@ gpii.schema.parser.updateSchemas = function (that) {
     });
 
     if (promises.length > 0) {
-        fluid.promise.sequence(promises).then(function () {
-            that.events.onSchemasUpdated.fire(that);
-        }, fluid.fail);
+        fluid.promise.sequence(promises).then(
+            function () { that.events.onSchemasUpdated.fire(that); },
+            function (error) { fluid.fail(error.message || error); }
+        );
     }
 };
 

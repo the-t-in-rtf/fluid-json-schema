@@ -16,8 +16,8 @@ require("../../src/js/common/parser");
 require("../../src/js/common/validate");
 require("../../src/js/server/validate");
 
-// Utility function to wire up and initial wait into each test case.
-require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("gpii-express");
+gpii.express.loadTestingSupport();
 
 fluid.registerNamespace("gpii.schema.parser.tests.server");
 
