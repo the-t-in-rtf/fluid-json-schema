@@ -19,8 +19,6 @@ var modulesDir = path.resolve(__dirname, "../../node_modules");
 // Main source to be tested
 var srcDir     = path.resolve(__dirname, "../../src");
 
-
-fluid.registerNamespace("gpii.schema.tests.harness");
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express"],
     expressPort: 6194,
