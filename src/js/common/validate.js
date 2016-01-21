@@ -104,13 +104,13 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
         // If we have a parser, we will evolve the output if possible, and use that to replace every raw message for
         // the same field.
         //
-        if (that.parser) {
+        //if (that.parser) {
             var evolvedMessage = that.parser.lookupDescription(schemaKey, path);
             if (evolvedMessage) {
                 errorMessage = evolvedMessage;
                 overwriteExisting = true;
             }
-        }
+        //}
 
         gpii.schema.validator.saveToPath(path, errorMessage, sanitizedErrors, overwriteExisting);
     });
@@ -324,11 +324,7 @@ fluid.defaults("gpii.schema.validator", {
             excludeSource: "init",
             args:          ["{that}"]
         }
-    }
-});
-
-// Convenience grade to add a parser to any validator, with the same schemas, etc. configured.
-fluid.defaults("gpii.schema.validator.hasParser", {
+    },
     components: {
         parser: {
             type: "gpii.schema.parser",
@@ -341,3 +337,4 @@ fluid.defaults("gpii.schema.validator.hasParser", {
         }
     }
 });
+

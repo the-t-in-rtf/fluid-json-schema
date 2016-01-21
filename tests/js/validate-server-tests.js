@@ -1,8 +1,8 @@
 // Tests of the core validator.
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 
 var path = require("path");
 
@@ -14,7 +14,7 @@ var schemaDir = path.resolve(__dirname, "../schemas");
 
 jqUnit.module("Unit tests for validation component...");
 
-var testValidator = gpii.schema.validator.server.hasParser({
+var testValidator = gpii.schema.validator.server({
     gradeNames: ["gpii.schema.tests.validator"],
     schemaDir:  schemaDir,
     listeners: {

@@ -25,7 +25,7 @@
 // which will be distributed to the `schemaHandler` instance.
 //
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("./schemaHandler");
@@ -125,14 +125,5 @@ fluid.defaults("gpii.schema.middleware", {
             }
         }
 
-    }
-});
-
-fluid.defaults("gpii.schema.middleware.hasParser", {
-    gradeNames: ["gpii.schema.middleware"],
-    components: {
-        validator: {
-            type: "gpii.schema.validator.server.hasParser"
-        }
     }
 });

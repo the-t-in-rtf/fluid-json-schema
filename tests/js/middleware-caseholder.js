@@ -1,16 +1,17 @@
 // Test `gpii.schema.middleware` and its subcomponents.
 //
 "use strict";
-var fluid        = fluid || require("infusion");
+var fluid        =  require("infusion");
 var gpii         = fluid.registerNamespace("gpii");
-var jqUnit       = require("jqUnit");
+var jqUnit       = require("node-jqunit");
 
-require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("gpii-express");
+gpii.express.loadTestingSupport();
+
 require("./lib/errors");
 
-// We use just the request-handling bits of the kettle stack in our tests, but we include the whole thing to pick up the base grades
-require("../../node_modules/kettle");
-require("../../node_modules/kettle/lib/test/KettleTestUtils");
+var kettle = require("kettle");
+kettle.loadTestingSupport();
 
 // The server-side libraries we are testing
 require("../../");

@@ -11,7 +11,7 @@
 
  */
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 var path    = require("path");
@@ -49,9 +49,16 @@ fluid.defaults("gpii.schema.validator.server", {
             funcName: "gpii.schema.validator.server.init",
             args:     ["{that}"]
         }
+    },
+    components: {
+        parser: {
+            type: "gpii.schema.parser",
+            options: {
+                schemaDir: "{gpii.schema.validator}.options.schemaDir",
+                model: {
+                    schemas: "{gpii.schema.validator}.model.schemas"
+                }
+            }
+        }
     }
-});
-
-fluid.defaults("gpii.schema.validator.server.hasParser", {
-    gradeNames: ["gpii.schema.validator.hasParser", "gpii.schema.validator.server"]
 });

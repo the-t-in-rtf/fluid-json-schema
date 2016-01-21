@@ -6,9 +6,9 @@
 
  */
 "use strict";
-var fluid  = fluid || require("infusion");
+var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
-var jqUnit = require("jqUnit");
+var jqUnit = require("node-jqunit");
 var path   = require("path");
 var schemaDir = path.resolve(__dirname, "../schemas");
 
@@ -16,8 +16,8 @@ require("../../src/js/common/parser");
 require("../../src/js/common/validate");
 require("../../src/js/server/validate");
 
-// Utility function to wire up and initial wait into each test case.
-require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("gpii-express");
+gpii.express.loadTestingSupport();
 
 fluid.registerNamespace("gpii.schema.parser.tests.server");
 
@@ -126,7 +126,7 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             options: {
                 components: {
                     validator: {
-                        type: "gpii.schema.validator.server.hasParser",
+                        type: "gpii.schema.validator.server",
                         options: {
                             schemaDir: schemaDir,
                             components: {

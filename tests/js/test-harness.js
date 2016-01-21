@@ -2,7 +2,7 @@
     Test harness common to all Zombie tests.  Loads all required server-side components.
  */
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid = require("infusion");
 var path  = require("path");
 
 require("gpii-express");
@@ -19,10 +19,8 @@ var modulesDir = path.resolve(__dirname, "../../node_modules");
 // Main source to be tested
 var srcDir     = path.resolve(__dirname, "../../src");
 
-
-fluid.registerNamespace("gpii.schema.tests.harness");
 fluid.defaults("gpii.schema.tests.harness", {
-    gradeNames: ["gpii.express", "autoInit"],
+    gradeNames: ["gpii.express"],
     expressPort: 6194,
     baseUrl: "http://localhost:6194/",
     config:  {
