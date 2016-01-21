@@ -26,7 +26,7 @@
         "regex": {
             "description": "The string should be five characters long, begin with 'v' and end with 'd'.",
             "type":    "string",
-            "pattern": "^v.l.d$"
+            "pattern": "^v...d$"
         },
         "password": {
           "description": "Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character.",
