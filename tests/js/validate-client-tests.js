@@ -123,7 +123,7 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
             sequence.push({
                 event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onEvaluateComplete",
                 listener: "jqUnit.assertEquals",
-                args:     ["There should be no errors...", null, "{arguments}.0"]
+                args:     ["There should be no errors...", undefined, "{arguments}.0"]
             });
         }
         var generatedTest = {
