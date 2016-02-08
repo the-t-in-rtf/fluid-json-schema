@@ -1,4 +1,4 @@
-var clientValidator = gpii.schema.validator({ // jshint ignore:line
+var clientValidator = gpii.schema.validator.ajv({ // jshint ignore:line
     model: {
         schemas: {
             "base.json": {

@@ -6,7 +6,7 @@ var jqUnit = require("node-jqunit");
 
 require("../../src/js/common/validate");
 
-fluid.registerNamespace("gpii.schema.validator.tests");
+fluid.registerNamespace("gpii.schema.validator.ajv.tests");
 
 // A test runner function that executes `test.fnToExecute` and compares the result to `test.expected` using
 // `jqUnit[test.compareFnName]`.  Supports two variations, one for the `saveToPath` function, and one for everything
@@ -15,23 +15,23 @@ fluid.registerNamespace("gpii.schema.validator.tests");
 //
 // We use this instead of a standard test sequence because we are dealing with static functions that do not fire any
 // events.
-gpii.schema.validator.tests.runSingleTest = function (test) {
+gpii.schema.validator.ajv.tests.runSingleTest = function (test) {
     jqUnit.test(test.message, function () {
         // `saveToPath` modified an existing map, so we have to construct and pass it the initial data, and then evaluate that.
         if (test.fnToExecute === "saveToPath") {
             var resultMap = test.startMap;
-            gpii.schema.validator.saveToPath.apply(null, fluid.makeArray(test.input).concat(resultMap));
+            gpii.schema.validator.ajv.saveToPath.apply(null, fluid.makeArray(test.input).concat(resultMap));
 
             jqUnit[test.compareFnName](test.message, test.expected, resultMap);
         }
         // For everything else, we can execute the named function using the given input and compare the output to the expected result.
         else {
-            jqUnit[test.compareFnName](test.message, test.expected, gpii.schema.validator[test.fnToExecute].apply(null, fluid.makeArray(test.input)));
+            jqUnit[test.compareFnName](test.message, test.expected, gpii.schema.validator.ajv[test.fnToExecute].apply(null, fluid.makeArray(test.input)));
         }
     });
 };
 
-fluid.defaults("gpii.schema.validator.tests", {
+fluid.defaults("gpii.schema.validator.ajv.tests", {
     gradeNames: ["fluid.component"],
     tests: [
         {
@@ -158,10 +158,10 @@ fluid.defaults("gpii.schema.validator.tests", {
         },
         "onCreate.runTests": {
             funcName: "fluid.each",
-            args:     ["{that}.options.tests", gpii.schema.validator.tests.runSingleTest]
+            args:     ["{that}.options.tests", gpii.schema.validator.ajv.tests.runSingleTest]
 
         }
     }
 });
 
-gpii.schema.validator.tests();
+gpii.schema.validator.ajv.tests();

@@ -20,10 +20,10 @@ var fs      = require("fs");
 require("../common/validate");
 require("../common/parser");
 
-fluid.registerNamespace("gpii.schema.validator.server");
+fluid.registerNamespace("gpii.schema.validator.ajv.server");
 
 // Load any schema files on startup.
-gpii.schema.validator.server.init = function (that) {
+gpii.schema.validator.ajv.server.init = function (that) {
     if (that.options.schemaDir) {
         var schemas = {};
         fluid.each(fs.readdirSync(that.options.schemaDir), function (filename) {
@@ -42,11 +42,11 @@ gpii.schema.validator.server.init = function (that) {
     }
 };
 
-fluid.defaults("gpii.schema.validator.server", {
-    gradeNames: ["gpii.schema.validator"],
+fluid.defaults("gpii.schema.validator.ajv.server", {
+    gradeNames: ["gpii.schema.validator.ajv"],
     listeners: {
         "onCreate.loadSchemas": {
-            funcName: "gpii.schema.validator.server.init",
+            funcName: "gpii.schema.validator.ajv.server.init",
             args:     ["{that}"]
         }
     },
@@ -54,9 +54,9 @@ fluid.defaults("gpii.schema.validator.server", {
         parser: {
             type: "gpii.schema.parser",
             options: {
-                schemaDir: "{gpii.schema.validator}.options.schemaDir",
+                schemaDir: "{gpii.schema.validator.ajv}.options.schemaDir",
                 model: {
-                    schemas: "{gpii.schema.validator}.model.schemas"
+                    schemas: "{gpii.schema.validator.ajv}.model.schemas"
                 }
             }
         }

@@ -132,7 +132,7 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
  */
 
 gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
-    var pathSegments = Array.isArray(schemaFieldPath) ? schemaFieldPath : gpii.schema.validator.extractPathSegments(schemaFieldPath);
+    var pathSegments = Array.isArray(schemaFieldPath) ? schemaFieldPath : gpii.schema.validator.ajv.extractPathSegments(schemaFieldPath);
 
     var dereferencedSchema = that.dereferencedSchemas[schemaKey];
     if (dereferencedSchema) {

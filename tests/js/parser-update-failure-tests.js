@@ -19,7 +19,7 @@ require("../../src/js/common/validate");
 require("../../src/js/server/validate");
 
 fluid.defaults("gpii.schema.tests.validator.bornToDie", {
-    gradeNames: ["gpii.schema.validator.server"],
+    gradeNames: ["gpii.schema.validator.ajv.server"],
     schemaDir: schemaDir
 });
 

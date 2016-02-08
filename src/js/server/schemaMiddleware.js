@@ -87,7 +87,7 @@ fluid.defaults("gpii.schema.middleware", {
     },
     components: {
         validator: {
-            type: "gpii.schema.validator.server",
+            type: "gpii.schema.validator.ajv.server",
             options: {
                 schemaDir: "{gpii.schema.middleware}.options.schemaDir"
             }

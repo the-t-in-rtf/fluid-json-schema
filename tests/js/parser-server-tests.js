@@ -116,14 +116,14 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
         }
     },
     distributeOptions: {
-        target: "{that > gpii.schema.validator.server}.options.components.parser.options.listeners.onSchemasUpdated",
+        target: "{that > gpii.schema.validator.ajv.server}.options.components.parser.options.listeners.onSchemasUpdated",
         record: {
             func: "{testEnvironment}.events.onSchemasUpdated.fire"
         }
     },
     components: {
         validator: {
-            type: "gpii.schema.validator.server",
+            type: "gpii.schema.validator.ajv.server",
             createOnEvent: "constructServer",
             options: {
                 schemaDir: schemaDir

@@ -11,8 +11,8 @@ fluid.registerNamespace("gpii.schema.tests");
 gpii.schema.tests.hasFieldErrors = function (results, fieldPaths, multiple) {
     if (fieldPaths) {
         fluid.each(fieldPaths, function (path) {
-            var pathSegments = gpii.schema.validator.extractPathSegments(path);
-            var target = gpii.schema.validator.resolveOrCreateTargetFromPath(results.fieldErrors, pathSegments);
+            var pathSegments = gpii.schema.validator.ajv.extractPathSegments(path);
+            var target = gpii.schema.validator.ajv.resolveOrCreateTargetFromPath(results.fieldErrors, pathSegments);
 
             if (multiple) {
                 jqUnit.assertTrue("There should be multiple errors for the field at path '" + path + "'...", target && target.length >= 1);

@@ -47,19 +47,19 @@ var gpii  = fluid.registerNamespace("gpii");
 
 var Ajv = require("ajv");
 
-fluid.registerNamespace("gpii.schema.validator");
+fluid.registerNamespace("gpii.schema.validator.ajv");
 
-gpii.schema.validator.init = function (that) {
+gpii.schema.validator.ajv.init = function (that) {
     // We persist a single AJV instance so that we can take advantage of its automatic compiling and caching.
     that.ajv = Ajv(that.options.validatorOptions); // jshint ignore:line
 
-    gpii.schema.validator.refreshSchemas(that);
+    gpii.schema.validator.ajv.refreshSchemas(that);
 };
 
-gpii.schema.validator.validate = function (that, key, content) {
+gpii.schema.validator.ajv.validate = function (that, key, content) {
     var contentValid = that.ajv.validate(key, content);
     if (!contentValid) {
-        return (gpii.schema.validator.sanitizeValidationErrors(that, key, that.ajv.errors));
+        return (gpii.schema.validator.ajv.sanitizeValidationErrors(that, key, that.ajv.errors));
     }
 
     return undefined;
@@ -91,12 +91,12 @@ gpii.schema.validator.validate = function (that, key, content) {
  elements.  This allows us to show overall in-context feedback to the user.
 
  */
-gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, errors) {
+gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, errors) {
     var sanitizedErrors = { fieldErrors: {}};
 
     fluid.each(errors, function (error) {
         // Errors are associated with the right field based on the `dataPath` received from AJV.
-        var path = gpii.schema.validator.extractPathSegmentsFromError(error);
+        var path = gpii.schema.validator.ajv.extractPathSegmentsFromError(error);
 
         var errorMessage      = error.message;
         var overwriteExisting = false;
@@ -107,7 +107,7 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
             overwriteExisting = true;
         }
 
-        gpii.schema.validator.saveToPath(path, errorMessage, sanitizedErrors, overwriteExisting);
+        gpii.schema.validator.ajv.saveToPath(path, errorMessage, sanitizedErrors, overwriteExisting);
     });
 
     return sanitizedErrors;
@@ -116,7 +116,7 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
 /*
 
   AJV represents the location of validation failures using path notation like `.category.subcategory.field`.  This function
-  converts that notation into a series of path segments that can be passed to `gpii.schema.validator.saveToPath`.
+  converts that notation into a series of path segments that can be passed to `gpii.schema.validator.ajv.saveToPath`.
 
   Path segments with a literal period in their name are encoded like `sky.['middle.earth'].moria`.
 
@@ -125,7 +125,7 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
   variables, etc.
 
  */
-gpii.schema.validator.extractPathSegments = function (string) {
+gpii.schema.validator.ajv.extractPathSegments = function (string) {
     var segments = [];
 
     // A regular expression to split the current segment and the remainder from one another. Handles variations like:
@@ -146,13 +146,13 @@ gpii.schema.validator.extractPathSegments = function (string) {
     // Iterate through, splitting by dots while preserving escaped dot notation (see above).
     var matches = remainingPath.match(slicingRegexp);
     while (matches) {
-        segments.push(gpii.schema.validator.sanitizePathSegment(matches[1]));
+        segments.push(gpii.schema.validator.ajv.sanitizePathSegment(matches[1]));
         remainingPath = matches[2];
         matches = remainingPath.match(slicingRegexp);
     }
 
     // The last segment will not have two parts and can be added in its entirety
-    segments.push(gpii.schema.validator.sanitizePathSegment(remainingPath));
+    segments.push(gpii.schema.validator.ajv.sanitizePathSegment(remainingPath));
 
     return segments;
 };
@@ -162,8 +162,8 @@ gpii.schema.validator.extractPathSegments = function (string) {
   Convenience function to extract the path segments from the `error` data structure returned by AJV.
 
  */
-gpii.schema.validator.extractPathSegmentsFromError = function (error) {
-    return gpii.schema.validator.extractPathSegments(error.dataPath);
+gpii.schema.validator.ajv.extractPathSegmentsFromError = function (error) {
+    return gpii.schema.validator.ajv.extractPathSegments(error.dataPath);
 };
 
 
@@ -182,7 +182,7 @@ gpii.schema.validator.extractPathSegmentsFromError = function (error) {
   original unescaped literal key.
 
  */
-gpii.schema.validator.sanitizePathSegment = function (segment) {
+gpii.schema.validator.ajv.sanitizePathSegment = function (segment) {
     // Discard any leading dot
     var segmentMinusLeadingDot = segment.replace(/^\./, "");
 
@@ -217,7 +217,7 @@ gpii.schema.validator.sanitizePathSegment = function (segment) {
 //
 // If you try to resolve a path that does not exist and `createMissingSegments` is not set, `undefined` will be returned.
 //
-gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path, createMissingSegments) {
+gpii.schema.validator.ajv.resolveOrCreateTargetFromPath = function (target, path, createMissingSegments) {
     var value = fluid.get(target, path);
     if (!value && createMissingSegments) {
         value = [];
@@ -244,9 +244,9 @@ gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path, cr
     "evolved" messages into a single message.
 
  */
-gpii.schema.validator.saveToPath = function (path, errorString, errorMap, overwriteExisting) {
+gpii.schema.validator.ajv.saveToPath = function (path, errorString, errorMap, overwriteExisting) {
     var target = errorMap.fieldErrors;
-    target     = gpii.schema.validator.resolveOrCreateTargetFromPath(target, path, true);
+    target     = gpii.schema.validator.ajv.resolveOrCreateTargetFromPath(target, path, true);
     if (overwriteExisting) {
         target[0] = errorString;
     }
@@ -260,7 +260,7 @@ gpii.schema.validator.saveToPath = function (path, errorString, errorMap, overwr
 If we receive new schemas, make the validator aware of them so that we can simply validate using their key.
 
  */
-gpii.schema.validator.refreshSchemas = function (that) {
+gpii.schema.validator.ajv.refreshSchemas = function (that) {
     // Update the list of schemas using the supplied content
     fluid.each(that.model.schemas, function (schemaContent, schemaKey) {
         // AJV will not let us overwrite an existing schema , so we have to remove the current content first.
@@ -279,7 +279,7 @@ gpii.schema.validator.refreshSchemas = function (that) {
     that.events.schemasLoaded.fire(that);
 };
 
-fluid.defaults("gpii.schema.validator", {
+fluid.defaults("gpii.schema.validator.ajv", {
     gradeNames: ["fluid.modelComponent"],
     validatorOptions: {
         verbose: false,  // Prevent invalid data (such as passwords) from being displayed in error messages
@@ -294,19 +294,19 @@ fluid.defaults("gpii.schema.validator", {
     },
     invokers: {
         validate: {
-            funcName: "gpii.schema.validator.validate",
+            funcName: "gpii.schema.validator.ajv.validate",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"]
         }
     },
     listeners: {
         "onCreate.init": {
-            funcName: "gpii.schema.validator.init",
+            funcName: "gpii.schema.validator.ajv.init",
             args:     ["{that}"]
         }
     },
     modelListeners: {
         "schemas": {
-            funcName:      "gpii.schema.validator.refreshSchemas",
+            funcName:      "gpii.schema.validator.ajv.refreshSchemas",
             excludeSource: "init",
             args:          ["{that}"]
         }
@@ -315,9 +315,9 @@ fluid.defaults("gpii.schema.validator", {
         parser: {
             type: "gpii.schema.parser",
             options: {
-                schemaDir: "{gpii.schema.validator}.options.schemaDir",
+                schemaDir: "{gpii.schema.validator.ajv}.options.schemaDir",
                 model: {
-                    schemas: "{gpii.schema.validator}.model.schemas"
+                    schemas: "{gpii.schema.validator.ajv}.model.schemas"
                 }
             }
         }
