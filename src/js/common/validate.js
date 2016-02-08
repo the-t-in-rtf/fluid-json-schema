@@ -101,16 +101,11 @@ gpii.schema.validator.sanitizeValidationErrors = function (that, schemaKey, erro
         var errorMessage      = error.message;
         var overwriteExisting = false;
 
-        // If we have a parser, we will evolve the output if possible, and use that to replace every raw message for
-        // the same field.
-        //
-        //if (that.parser) {
-            var evolvedMessage = that.parser.lookupDescription(schemaKey, path);
-            if (evolvedMessage) {
-                errorMessage = evolvedMessage;
-                overwriteExisting = true;
-            }
-        //}
+        var evolvedMessage = that.parser.lookupDescription(schemaKey, path);
+        if (evolvedMessage) {
+            errorMessage = evolvedMessage;
+            overwriteExisting = true;
+        }
 
         gpii.schema.validator.saveToPath(path, errorMessage, sanitizedErrors, overwriteExisting);
     });
@@ -223,21 +218,12 @@ gpii.schema.validator.sanitizePathSegment = function (segment) {
 // If you try to resolve a path that does not exist and `createMissingSegments` is not set, `undefined` will be returned.
 //
 gpii.schema.validator.resolveOrCreateTargetFromPath = function (target, path, createMissingSegments) {
-    var resolvedTarget = target;
-    for (var a = 0; a < path.length; a++) {
-        var segment = path[a];
-        if (!resolvedTarget[segment]) {
-            if (createMissingSegments) {
-                resolvedTarget[segment] = a === path.length - 1 ? [] : {};
-            }
-            else {
-                return undefined;
-            }
-        }
-
-        resolvedTarget = resolvedTarget[segment];
+    var value = fluid.get(target, path);
+    if (!value && createMissingSegments) {
+        value = [];
+        fluid.set(target, path, value);
     }
-    return resolvedTarget;
+    return value;
 };
 
 /*
