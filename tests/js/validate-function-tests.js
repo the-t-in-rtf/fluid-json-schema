@@ -6,128 +6,162 @@ var jqUnit = require("node-jqunit");
 
 require("../../src/js/common/validate");
 
-jqUnit.module("Unit tests for validation component static functions...");
+fluid.registerNamespace("gpii.schema.validator.tests");
 
-jqUnit.test("Test sanitizing basic path segment...", function () {
-    var output = gpii.schema.validator.sanitizePathSegment(".dotless");
-    jqUnit.assertEquals("The output should be as expected...", "dotless", output);
+// A test runner function that executes `test.fnToExecute` and compares the result to `test.expected` using
+// `jqUnit[test.compareFnName]`.  Supports two variations, one for the `saveToPath` function, and one for everything
+// else.  For the former, `test.input`, `test.expected`, and `test.startMap` are required.  For the latter,
+// `test.startMap` is not required.
+//
+// We use this instead of a standard test sequence because we are dealing with static functions that do not fire any
+// events.
+gpii.schema.validator.tests.runSingleTest = function (test) {
+    jqUnit.test(test.message, function () {
+        // `saveToPath` modified an existing map, so we have to construct and pass it the initial data, and then evaluate that.
+        if (test.fnToExecute === "saveToPath") {
+            var resultMap = test.startMap;
+            gpii.schema.validator.saveToPath.apply(null, fluid.makeArray(test.input).concat(resultMap));
+
+            jqUnit[test.compareFnName](test.message, test.expected, resultMap);
+        }
+        // For everything else, we can execute the named function using the given input and compare the output to the expected result.
+        else {
+            jqUnit[test.compareFnName](test.message, test.expected, gpii.schema.validator[test.fnToExecute].apply(null, fluid.makeArray(test.input)));
+        }
+    });
+};
+
+fluid.defaults("gpii.schema.validator.tests", {
+    gradeNames: ["fluid.component"],
+    tests: [
+        {
+            message:       "Test sanitizing basic path segment...",
+            compareFnName: "assertEquals",
+            fnToExecute:   "sanitizePathSegment",
+            input:         ".dotless",
+            expected:      "dotless"
+        },
+        {
+            message:       "Test sanitizing path segment with square brackets...",
+            compareFnName: "assertEquals",
+            fnToExecute:   "sanitizePathSegment",
+            input:         ".['this.works']",
+            expected:      "this.works"
+        },
+        {
+            message:       "Extract the path for a missing required top-level field...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { keyword: "required", dataPath: ".required", message: "message" },
+            expected:      ["required"]
+        },
+        {
+            message:       "Testing handling of solitary dot escaping...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { dataPath: ".['utter.madness']" },
+            expected:      ["utter.madness"]
+        },
+        {
+            message:       "Testing handling of leading dot escaping...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { dataPath: ".['outer.space'].sky.earth" },
+            expected:      ["outer.space", "sky", "earth"]
+        },
+        {
+            message:       "Testing handling of intermediate dot escaping...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { dataPath: ".sky['middle.earth'].moria" },
+            expected:      ["sky", "middle.earth", "moria"]
+        },
+        {
+            message:       "Testing handling of trailing dot escaping...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { dataPath: ".barrel.monkey['monkey.innards']" },
+            expected:      ["barrel", "monkey", "monkey.innards"]
+        },
+        {
+            message:       "Testing handling of adjacent dot escaping...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { dataPath: ".['first.segment']['second.segment']" },
+            expected:      ["first.segment", "second.segment"]
+        },
+        {
+            message:       "Extract the path for a missing required deep field...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "extractPathSegmentsFromError",
+            input:         { keyword: "required", dataPath: ".deep.required", message: "message" },
+            expected:      ["deep", "required"]
+        },
+        {
+            message:       "Extract the path for an invalid top-level field...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:  "extractPathSegmentsFromError",
+            input:         { keyword: "minLength", dataPath: ".required", message: "message" },
+            expected:      ["required"]
+        },
+        {
+            message:       "Extract the path for an invalid deep field...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:  "extractPathSegmentsFromError",
+            input:         { keyword: "minLength", dataPath: ".deep.required", message: "message" },
+            expected:      ["deep", "required"]
+        },
+        {
+            message:       "Test underlying path targeting mechanism...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:  "resolveOrCreateTargetFromPath",
+            input:         [{ deeply: { nested: { foo: "bar"} }}, ["deeply", "nested"]],
+            expected:      {foo: "bar"}
+        },
+        {
+            message:       "Save a top-level path to a map with no existing data...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "saveToPath",
+            startMap:      { fieldErrors: {}},
+            input:         [["required"], "message"],
+            expected:      { fieldErrors: { required: ["message"] } }
+        },
+        {
+            message:       "Save a top-level path to a map with existing data...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "saveToPath",
+            startMap:      { fieldErrors: { required: ["old message"]}},
+            input:         [["required"], "new message"],
+            expected:      { fieldErrors: { required: ["old message", "new message"] }}
+        },
+        {
+            message:       "Save a deep path to a map with no existing data...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "saveToPath",
+            startMap:      { fieldErrors: {}},
+            input:         [["deep", "required"], "message"],
+            expected:      { fieldErrors: { deep: { required: ["message"] }}}
+        },
+        {
+            message:       "Save a deep path to a map with existing data...",
+            compareFnName: "assertDeepEq",
+            fnToExecute:   "saveToPath",
+            startMap:      { fieldErrors: { deep: { required: ["old message"]}}},
+            input:         [["deep", "required"], "new message"],
+            expected:      { fieldErrors: { deep: { required: ["old message", "new message"] }}}
+        }
+    ],
+    listeners: {
+        "onCreate.setModule": {
+            funcName: "jqUnit.module",
+            args:     ["Unit tests for validation component static functions..."]
+        },
+        "onCreate.runTests": {
+            funcName: "fluid.each",
+            args:     ["{that}.options.tests", gpii.schema.validator.tests.runSingleTest]
+
+        }
+    }
 });
 
-jqUnit.test("Test sanitizing path segment with square brackets...", function () {
-    var output = gpii.schema.validator.sanitizePathSegment(".['this.works']");
-    jqUnit.assertEquals("The output should be as expected...", "this.works", output);
-});
-
-
-jqUnit.test("Extract the path for a missing required top-level field....", function () {
-    var error    = { keyword: "required", dataPath: ".required", message: "message" };
-    var path     = gpii.schema.validator.extractPathSegmentsFromError(error);
-    var expected = ["required"];
-
-    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
-});
-
-jqUnit.test("Testing handling of solitary dot escaping...", function () {
-    var error    = { dataPath: ".['utter.madness']" };
-    var expected = ["utter.madness"];
-    var output   = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    jqUnit.assertDeepEq("A path with just one segment that contains an escaped dot should be parsed correctly...", expected, output);
-});
-
-
-jqUnit.test("Testing handling of leading dot escaping...", function () {
-    var error    = { dataPath: ".['outer.space'].sky.earth" };
-    var expected = ["outer.space", "sky", "earth"];
-    var output   = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    jqUnit.assertDeepEq("A path with escaped dots in the lead position should be parsed correctly...", expected, output);
-});
-
-jqUnit.test("Testing handling of intermediate dot escaping...", function () {
-    var error    = { dataPath: ".sky['middle.earth'].moria" };
-    var expected = ["sky", "middle.earth", "moria"];
-    var output   = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    jqUnit.assertDeepEq("A path with escaped dots in a middle position should be parsed correctly...", expected, output);
-});
-
-jqUnit.test("Testing handling of trailing dot escaping...", function () {
-    var error    = { dataPath: ".barrel.monkey['monkey.innards']" };
-    var expected = ["barrel", "monkey", "monkey.innards"];
-    var output   = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    jqUnit.assertDeepEq("A path with escaped dots in a trailing position should be parsed correctly...", expected, output);
-});
-
-jqUnit.test("Testing handling of adjacent dot escaping...", function () {
-    var error    = { dataPath: ".['first.segment']['second.segment']" };
-    var expected = ["first.segment", "second.segment"];
-    var output   = gpii.schema.validator.extractPathSegmentsFromError(error);
-
-    jqUnit.assertDeepEq("Adjacent escaped segments should be parsed correctly...", expected, output);
-});
-
-
-jqUnit.test("Extract the path for a missing required deep field....", function () {
-    var error    = { keyword: "required", dataPath: ".deep.required", message: "message" };
-    var path     = gpii.schema.validator.extractPathSegmentsFromError(error);
-    var expected = ["deep", "required"];
-
-    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
-});
-
-jqUnit.test("Extract the path for an invalid top-level field....", function () {
-    var error    = { keyword: "minLength", dataPath: ".required", message: "message" };
-    var path     = gpii.schema.validator.extractPathSegmentsFromError(error);
-    var expected = ["required"];
-
-    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
-});
-
-jqUnit.test("Extract the path for an invalid deep field....", function () {
-    var error    = { keyword: "minLength", dataPath: ".deep.required", message: "message" };
-    var path     = gpii.schema.validator.extractPathSegmentsFromError(error);
-    var expected = ["deep", "required"];
-
-    jqUnit.assertDeepEq("The path should be as expected...", expected, path);
-});
-
-jqUnit.test("Save a top-level path to a map with no existing data....", function () {
-    var errorMap = { fieldErrors: {}};
-    gpii.schema.validator.saveToPath(["required"], "message", errorMap);
-    var expected = { fieldErrors: { required: ["message"] } };
-
-    jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
-});
-
-jqUnit.test("Save a top-level path to a map with existing data....", function () {
-    var errorMap = { fieldErrors: { required: ["old message"]}};
-    gpii.schema.validator.saveToPath(["required"], "new message", errorMap);
-    var expected = { fieldErrors: { required: ["old message", "new message"] }};
-
-    jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
-});
-
-jqUnit.test("Save a deep path to a map with no existing data....", function () {
-    var errorMap = { fieldErrors: {}};
-    gpii.schema.validator.saveToPath(["deep", "required"], "message", errorMap);
-    var expected = { fieldErrors: { deep: { required: ["message"] }}};
-
-    jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
-});
-
-jqUnit.test("Save a deep path to a map with existing data....", function () {
-    var errorMap = { fieldErrors: { deep: { required: ["old message"]}}};
-    gpii.schema.validator.saveToPath(["deep", "required"], "new message", errorMap);
-    var expected = { fieldErrors: { deep: { required: ["old message", "new message"] }}};
-
-    jqUnit.assertDeepEq("The error map should be as expected...", expected, errorMap);
-});
-
-jqUnit.test("Test underlying path targeting mechanism...", function () {
-    var original = { deeply: { nested: { foo: "bar"} }};
-    var expected = {foo: "bar"};
-    var target = gpii.schema.validator.resolveOrCreateTargetFromPath(original, ["deeply", "nested"]);
-    jqUnit.assertDeepEq("The target should have been resolved correctly...", expected, target);
-});
+gpii.schema.validator.tests();
