@@ -154,7 +154,8 @@ gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
         return currentLevel;
     }
 
-    // If we can't evolve the output, return `false` so that we can use the existing error.
+    // If we can't evolve the output, return `false`, indicating that no evolved output is available.  Code using this
+    // function is expected to test for truthiness and take action as needed.
     return false;
 };
 
