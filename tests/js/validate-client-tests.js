@@ -134,7 +134,7 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
     });
 
     // Finish off each sequence by running it through the `gpii.express` function that prepends and appends sequence steps.
-    var finalSequences = gpii.express.tests.helpers.addRequiredSequences([{ tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd)
+    var finalSequences = gpii.express.tests.helpers.addRequiredSequences([{ tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd);
 
     return finalSequences;
 };
