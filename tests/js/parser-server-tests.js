@@ -49,7 +49,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testSchemaCaching",
-                            args:     ["{testEnvironment}.gateKeeper.validator.parser"]
+                            args:     ["{testEnvironment}.validator.parser"]
                         }
                     ]
                 },
@@ -59,7 +59,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "base.json", ".regex.description", "The string should be five characters long, begin with 'v' and end with 'd'."] // path, expected
+                            args:     ["{testEnvironment}.validator.parser", "base.json", ".regex.description", "The string should be five characters long, begin with 'v' and end with 'd'."] // path, expected
                         }
                     ]
                 },
@@ -69,7 +69,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "escaped.json", ".['[x][x]'].description", "How do textual cross marks make you feel?"] // path, expected
+                            args:     ["{testEnvironment}.validator.parser", "escaped.json", ".['[x][x]'].description", "How do textual cross marks make you feel?"] // path, expected
                         }
                     ]
                 },
@@ -79,7 +79,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.gateKeeper.validator.parser", "escaped.json", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
+                            args:     ["{testEnvironment}.validator.parser", "escaped.json", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
                         }
                     ]
                 },
@@ -89,7 +89,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.validateAndTest",
-                            args:     ["{testEnvironment}.gateKeeper.validator", "base.json", { required: true, password: "pass" }, { fieldErrors: { password: ["Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character."]}}] // validator, schemaKey, content, expected
+                            args:     ["{testEnvironment}.validator", "base.json", { required: true, password: "pass" }, { fieldErrors: { password: ["Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character."]}}] // validator, schemaKey, content, expected
                         }
                     ]
                 }
@@ -115,30 +115,18 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             args:     ["The test environment was indeed notified..."]
         }
     },
+    distributeOptions: {
+        target: "{that > gpii.schema.validator.server}.options.components.parser.options.listeners.onSchemasUpdated",
+        record: {
+            func: "{testEnvironment}.events.onSchemasUpdated.fire"
+        }
+    },
     components: {
-        gateKeeper: {
-            type:         "fluid.component",
+        validator: {
+            type: "gpii.schema.validator.server",
             createOnEvent: "constructServer",
             options: {
-                components: {
-                    validator: {
-                        type: "gpii.schema.validator.server",
-                        options: {
-                            schemaDir: schemaDir,
-                            components: {
-                                parser: {
-                                    options: {
-                                        listeners: {
-                                            "onSchemasUpdated.notifyEnvironment": {
-                                                func: "{testEnvironment}.events.onSchemasUpdated.fire"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                schemaDir: schemaDir
             }
         },
         caseHolder: {
