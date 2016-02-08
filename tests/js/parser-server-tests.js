@@ -40,15 +40,6 @@ gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey
 
 fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
-    sequenceStart: [
-        { // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
-            func: "{testEnvironment}.events.constructEverything.fire"
-        },
-        {
-            listener: "fluid.identity",
-            event: "{testEnvironment}.events.onSchemasUpdated"
-        }
-    ],
     rawModules: [
         {
             tests: [
@@ -110,8 +101,13 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
 fluid.defaults("gpii.schema.parser.tests.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
-        constructEverything: null,
-        onSchemasUpdated:    null
+        constructServer: null,
+        onSchemasUpdated:    null,
+        onStarted: {
+            events: {
+                onSchemasUpdated: "onSchemasUpdated"
+            }
+        }
     },
     listeners: {
         onSchemasUpdated: {
@@ -122,7 +118,7 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
     components: {
         gateKeeper: {
             type:         "fluid.component",
-            createOnEvent: "constructEverything",
+            createOnEvent: "constructServer",
             options: {
                 components: {
                     validator: {
