@@ -15,6 +15,7 @@ kettle.loadTestingSupport();
 
 // The server-side libraries we are testing
 require("../../");
+require("./handler-caseholder");
 
 fluid.defaults("gpii.schema.tests.middleware.request", {
     gradeNames: ["kettle.test.request.http"],
@@ -25,10 +26,13 @@ fluid.defaults("gpii.schema.tests.middleware.request", {
 
 fluid.registerNamespace("gpii.schema.tests.middleware.caseHolder");
 gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, body, shouldBeValid) {
-    var expectedStatus = shouldBeValid ? 200 : 400;
-    jqUnit.assertDeepEq("The status code should be as expected...", expectedStatus, response.statusCode);
 
-    if (!shouldBeValid) {
+    if (shouldBeValid) {
+        gpii.schema.tests.handler.caseHolder.examineResponse(response, body);
+    }
+    else {
+        gpii.schema.tests.handler.caseHolder.examineResponse(response, body, "base", "base");
+
         try {
             var jsonData = typeof body === "string" ? JSON.parse(body) : body;
             gpii.schema.tests.hasErrors(jsonData);

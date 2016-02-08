@@ -65,19 +65,9 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 };
 
 fluid.defaults("gpii.schema.middleware", {
-    gradeNames: ["gpii.express.middleware"],
-    responseSchemaKey: "message.json",
-    responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
-    distributeOptions: [
-        {
-            source: "{that}.options.responseSchemaKey",
-            target: "{that gpii.schema.middleware.handler}.options.schemaKey"
-        },
-        {
-            source: "{that}.options.responseSchemaUrl",
-            target: "{that gpii.schema.middleware.handler}.options.schemaUrl"
-        }
-    ],
+    gradeNames: ["gpii.express.middleware", "gpii.schema.handler.base"],
+    schemaKey: "message.json",
+    schemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     messages: {
         error: "The JSON you have provided is not valid."
     },
@@ -109,21 +99,15 @@ fluid.defaults("gpii.schema.middleware", {
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
         }
     },
-    // Approach adapted from `gpii.express.requestAware.router`.
     events: {
         "onInvalidRequest": null
     },
-    dynamicComponents: {
-        requestHandler: {
-            createOnEvent: "onInvalidRequest",
-            type:          "gpii.schema.middleware.handler",
-            options: {
-                request:    "{arguments}.0",
-                response:   "{arguments}.1",
-                statusCode: "{arguments}.2",
-                message:    "{arguments}.3"
-            }
+    listeners: {
+        "onInvalidRequest.sendRejectionResponse": {
+            func: "{that}.sendResponse",
+            // Our function expects a `response` (`{arguments}.1`), `statusCode` (`{arguments}.2`), and `message` (`{arguments}.3`).
+            // If you are wiring in your own replacement, the original request is also available as `{arguments}.0`.
+            args: ["{arguments}.1", "{arguments}.2", "{arguments}.3"] // response, statusCode, body
         }
-
     }
 });

@@ -16,12 +16,16 @@ kettle.loadTestingSupport();
 require("../../");
 
 fluid.registerNamespace("gpii.schema.tests.handler.caseHolder");
-gpii.schema.tests.handler.caseHolder.examineResponse = function (response, body) {
-    var contentType = response.headers["content-type"];
-    jqUnit.assertTrue("The content type header should contain our key...", contentType && contentType.indexOf("sample") !== -1);
+gpii.schema.tests.handler.caseHolder.examineResponse = function (response, body, typePattern, linkPattern) {
+    if (typePattern) {
+        var contentType = response.headers["content-type"];
+        jqUnit.assertTrue("The content type header should contain our key...", contentType && contentType.match(typePattern));
+    }
 
-    var link = response.headers.link;
-    jqUnit.assertTrue("The link header should contain our key...", link && link.indexOf("sample") !== -1);
+    if (linkPattern) {
+        var link = response.headers.link;
+        jqUnit.assertTrue("The link header should contain our key...", link && link.match(linkPattern) !== -1);
+    }
 
     jqUnit.assertNotUndefined("There should be body content", body);
 };
@@ -41,7 +45,7 @@ fluid.defaults("gpii.schema.tests.handler.caseHolder", {
                         {
                             listener: "gpii.schema.tests.handler.caseHolder.examineResponse",
                             event:    "{request}.events.onComplete",
-                            args:     ["{request}.nativeResponse", "{arguments}.0"]
+                            args:     ["{request}.nativeResponse", "{arguments}.0", "sample", "sample"]
                         }
                     ]
                 }
