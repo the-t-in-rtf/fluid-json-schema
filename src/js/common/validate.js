@@ -190,8 +190,7 @@ gpii.schema.validator.ajv.sanitizePathSegment = function (segment) {
     var hasSpecialRegexp = /\['(.+)'\]/;
     var specialMatches = segmentMinusLeadingDot.match(hasSpecialRegexp);
     if (specialMatches) {
-        // unescape the remaining variables by using them to create a new `String`.
-        return String(specialMatches[1]);
+        return specialMatches[1];
     }
 
     return segmentMinusLeadingDot;
