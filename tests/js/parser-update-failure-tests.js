@@ -16,17 +16,10 @@ fluid.defaults("gpii.schema.tests.validator.bornToDie", {
     schemaPath:  "%gpii-json-schema/tests/badSchemas"
 });
 
-fluid.defaults("gpii.fuck.off", {
-    gradeNames: ["fluid.component"],
-    listeners: {
-        "onCreate.misbehave": {
-            funcName: "fluid.fail",
-            args: ["DIE!"]
-        }
-    }
-});
-
+// The constructor itself does not call fluid.fail (or at least at not in the way expected here).  The failure is
+// thrown by a promise, which itself is created by a listener that responds to the loading of template content during
+// startup.
+// TODO:  Review with Antranig.
 jqUnit.test("Testing parser resolutions of failed promise...", function () {
-    //jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.schema.tests.validator.bornToDie, ["ENOENT"]);
-    jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.fuck.off, ["DIE!"]);
+    jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.schema.tests.validator.bornToDie, ["ENOENT"]);
 });
