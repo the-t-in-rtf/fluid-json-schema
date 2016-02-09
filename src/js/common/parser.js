@@ -1,3 +1,6 @@
+/**
+ * {@link ../../../docs/parser.md The documentation...}
+ */
 /*
 
     A parser that resolves `$ref` references in JSON Schema definitions and provides the ability to look up the
@@ -16,7 +19,7 @@ fluid.registerNamespace("gpii.schema.parser");
 
 // Dereference all `$ref` links for a single schema.
 //
-// See [the documentation](../../../docs/parser.md#gpiischemaparserdereferenceschemathat-schemaPath-schemaKey) for details.
+// See [the documentation](../../../docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey) for details.
 //
 gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
     var parser = new $RefParser(); // jshint ignore:line

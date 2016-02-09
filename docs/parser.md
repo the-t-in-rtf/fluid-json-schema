@@ -118,8 +118,8 @@ Say we have a schema like the following:
 ## gpii.schema.parser.lookupDescription(that, schemaKey, schemaFieldPath)
 
 * `that`: The component itself.
-* `schemaKey {String}`: See [gpii.schema.parser.lookupField](#gpiischemaparserlookupdescriptionthat-schemakey-schemafieldpath) above.
-* `schemaFieldPath {String}`: See [gpii.schema.parser.lookupField](#gpiischemaparserlookupdescriptionthat-schemakey-schemafieldpath) above.
+* `schemaKey {String}`: See [gpii.schema.parser.lookupField](#gpiischemaparserlookupfieldthat-schemakey-schemafieldpath) above.
+* `schemaFieldPath {String}`: See [gpii.schema.parser.lookupField](#gpiischemaparserlookupfieldthat-schemakey-schemafieldpath) above.
 * Returns: `String` the text of the description metadata for the field.
 
 Convenience function to lookup the most commonly used field (the description). Typically accessed using the parser component's `lookupDescription` invoker and the last two arguments.
