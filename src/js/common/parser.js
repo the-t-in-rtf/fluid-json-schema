@@ -1,13 +1,12 @@
 /*
 
     A parser that resolves `$ref` references in JSON Schema definitions and provides the ability to look up the
-    dereferenced definition content based on a "dot notation" path within a deep object.
+    dereferenced definition content based on a "dot notation" path within a deep object.  See the documentation for
+    details:
 
-   See [the documentation](../../../docs/parser.md) for details:
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md
 
-   https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md
-
-  */
+*/
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
@@ -16,9 +15,9 @@ var $RefParser = $RefParser ? $RefParser : require("json-schema-ref-parser");
 
 fluid.registerNamespace("gpii.schema.parser");
 
-// Dereference all `$ref` links for a single schema.
+// Dereference all `$ref` links for a single schema.  See the documentation for details:
 //
-// See [the documentation](../../../docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey) for details.
+// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey
 //
 gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
     var parser = new $RefParser(); // jshint ignore:line
@@ -41,9 +40,9 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
     };
 };
 
-// Look up the full dereferenced definition for a single field.
+// Look up the full dereferenced definition for a single field.  See the documentation for details:
 //
-// See [the documentation](../../../docs/parser.md#gpiischemaparserlookupfieldthat-schemakey-schemafieldpath) for details.
+// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserlookupfieldthat-schemakey-schemafieldpath
 //
 gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
     var pathSegments = Array.isArray(schemaFieldPath) ? schemaFieldPath : gpii.schema.validator.ajv.extractPathSegments(schemaFieldPath);
@@ -74,9 +73,9 @@ gpii.schema.parser.lookupField = function (that, schemaKey, schemaFieldPath) {
 };
 
 
-// Look up the description metadata for a single field.
+// Look up the description metadata for a single field. See the documentation for details:
 //
-// See [the documentation](../../../docs/parser.md#gpiischemaparserlookupdescriptionthat-schemakey-schemafieldpath) for details.
+// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserlookupdescriptionthat-schemakey-schemafieldpath
 //
 gpii.schema.parser.lookupDescription = function (that, schemaKey, schemaFieldPath) {
     var pathPlusDescription = Array.isArray(schemaFieldPath) ? schemaFieldPath.concat("description") : schemaFieldPath + ".description";
