@@ -1,13 +1,8 @@
 /*
 
- A server-side wrapper for the validation component.  See `../common/validate.js` for full details.
+    A server-side wrapper for the validation component.  See the documentation for details:
 
- The server-side component will populate `schemaContents` for you on startup based on the contents of
- `options.schemaPath`.  Because of limitations in the current `parser`, the schema key must match the filename.
-
- The server-side component will also resolve dependencies from `schemaContents`.  For example, if you have a
- second schema that has a reference to `#schema-file-name.json`, it will resolve to the contents of
- `schemaContents["schema-file-name.json"]`.
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md
 
  */
 "use strict";
