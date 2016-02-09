@@ -70,7 +70,7 @@ Say we have a schema like the following:
   2.  If `options.schemaPath` is a URL, a full URL will be produced.
   3.  If `options.schemaPath` is empty, paths will be resolved relative to the working directory.
 
-  If you are using this with the `validator`, it takes care of that bit of wiring for you.
+  If you are using this with the `validator`, it takes care of that bit of wiring for you.  See [the validator documentation](validator.md) for details.
 
 # Functions
 
