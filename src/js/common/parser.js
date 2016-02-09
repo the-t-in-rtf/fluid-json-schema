@@ -1,12 +1,11 @@
-/**
- * {@link ../../../docs/parser.md The documentation...}
- */
 /*
 
     A parser that resolves `$ref` references in JSON Schema definitions and provides the ability to look up the
     dereferenced definition content based on a "dot notation" path within a deep object.
 
-   See [the documentation](../../../docs/parser.md) for details.
+   See [the documentation](../../../docs/parser.md) for details:
+
+   https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md
 
   */
 "use strict";
