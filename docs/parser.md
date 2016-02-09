@@ -70,7 +70,15 @@ Say we have a schema like the following:
   2.  If `options.schemaPath` is a URL, a full URL will be produced.
   3.  If `options.schemaPath` is empty, paths will be resolved relative to the working directory.
 
-  If you are using this with the `validator`, it takes care of that bit of wiring for you.  See [the validator documentation](validator.md) for details.
+# Components
+
+## `gpii.schema.parser`
+
+The base component is designed to work both on the client and server side.
+
+## `gpii.schema.parser.server`
+
+A server-side version of the component which can handle package-relative `schemaPath` entries like `%gpii-package-name/path/within/package`.
 
 # Functions
 
