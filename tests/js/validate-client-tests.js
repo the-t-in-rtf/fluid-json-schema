@@ -28,6 +28,9 @@ require("../../src/js/server/validate");
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
+require("gpii-test-browser");
+gpii.tests.browser.loadTestingSupport();
+
 fluid.registerNamespace("gpii.schema.tests.validator.browser");
 
 // A client-side function to submit JSON content to the client-side component via `gpii-test-browser` and return the output.
@@ -139,100 +142,31 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
     return finalSequences;
 };
 
-// A variation on what we do with `gpii.express.tests.caseHolder.base`.  Only the `mergePolicy` is duplicated, so for
-// now it seems a bit much to make a common base grade.  If we use this pattern more often, we will move it some place
-// more general.
-//
+// Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
+// before wiring in the standard start and end sequence steps.
 fluid.defaults("gpii.schema.tests.validator.browser.caseHolder", {
-    gradeNames: ["fluid.test.testCaseHolder"],
-    mergePolicy: {
-        sequenceStart: "noexpand",
-        sequenceEnd:   "noexpand"
-    },
+    gradeNames: ["gpii.tests.browser.caseHolder.withExpress"],
     moduleSource: {
         funcName: "gpii.schema.tests.validator.browser.constructTestSequences",
         args:     ["{that}"]
     },
-    sequenceStart: [
-        {
-            func: "{gpii.schema.tests.validator.browser.environment}.events.constructFixtures.fire"
-        },
-        {
-            listener: "fluid.identity",
-            event: "{gpii.schema.tests.validator.browser.environment}.events.onReady"
-        }
-    ],
-    sequenceEnd: [
-        {
-            func: "{gpii.schema.tests.validator.browser.environment}.harness.destroy"
-        },
-        {
-            func: "{gpii.schema.tests.validator.browser.environment}.browser.end"
-        },
-        {
-            listener: "fluid.identity",
-            event: "{gpii.schema.tests.validator.browser.environment}.events.onAllDone"
-        }
-    ],
     commonTests: gpii.schema.tests.validator.testDefinitions
 });
 
-// A test environment for use with both a browser and express.  There are similar grades in `gpii-handlebars`, we should
-// TODO:  agree where these should live (i.e. in `gpii-express` or `gpii-test-browser` or somewhere else) and consolidate.
 fluid.defaults("gpii.schema.tests.validator.browser.environment", {
-    gradeNames:     ["fluid.test.testEnvironment"],
-    expressPort:   6984,
-    url:           "http://localhost:6984/content/validate-client-tests.html",
-    events: {
-        constructFixtures: null,
-        onBrowserDone:     null,
-        onExpressDone:     null,
-        onBrowserReady:    null,
-        onExpressReady:    null,
-        onReady: {
-            events: {
-                onBrowserReady: "onBrowserReady",
-                onExpressReady: "onExpressReady"
-            }
-        },
-        onAllDone: {
-            events: {
-                onBrowserDone: "onBrowserDone",
-                onExpressDone: "onExpressDone"
-            }
+    gradeNames: ["gpii.tests.browser.environment.withExpress"],
+    port:   6984,
+    url: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args: ["http://localhost:%port/content/validate-client-tests.html", {port: "{that}.options.port"}]
         }
     },
     components: {
-        browser: {
-            type: "gpii.tests.browser",
-            createOnEvent: "constructFixtures",
+        express: {
+            type: "gpii.schema.tests.harness",
             options: {
-                // Uncomment the next line (or add your own options in a derived grade) if you want to see the browser output on your screen.
-                //nightmareOptions: { show: true},
-                listeners: {
-                    "onReady.notifyEnvironment": {
-                        func: "{gpii.schema.tests.validator.browser.environment}.events.onBrowserReady.fire"
-                    },
-                    "onEndComplete.notifyEnvironment": {
-                        func: "{gpii.schema.tests.validator.browser.environment}.events.onBrowserDone.fire"
-                    }
-                }
-            }
-        },
-        harness: {
-            type:          "gpii.schema.tests.harness",
-            createOnEvent: "constructFixtures",
-            options: {
-                expressPort:   "{gpii.schema.tests.validator.browser.environment}.options.expressPort",
-                url:           "{gpii.schema.tests.validator.browser.environment}.options.url",
-                listeners: {
-                    "onStarted.notifyEnvironment": {
-                        func: "{gpii.schema.tests.validator.browser.environment}.events.onExpressReady.fire"
-                    },
-                    "afterDestroy.notifyEnvironment": {
-                        func: "{gpii.schema.tests.validator.browser.environment}.events.onExpressDone.fire"
-                    }
-                }
+                port: "{testEnvironment}.options.port"
             }
         },
         caseHolder: {

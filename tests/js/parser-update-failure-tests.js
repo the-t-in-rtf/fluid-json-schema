@@ -9,18 +9,11 @@ var gpii   = fluid.registerNamespace("gpii");
 
 var jqUnit = require("node-jqunit");
 
-var path   = require("path");
-// TODO: move to using resolveable paths
-var schemaDir = path.resolve(__dirname, "../badSchemas");
-
-// TODO:  Move to using a common server-side include in index.js
-require("../../src/js/common/parser");
-require("../../src/js/common/validate");
-require("../../src/js/server/validate");
+require("../../index");
 
 fluid.defaults("gpii.schema.tests.validator.bornToDie", {
     gradeNames: ["gpii.schema.validator.ajv.server"],
-    schemaDir: schemaDir
+    schemaPath:  "%gpii-json-schema/tests/badSchemas"
 });
 
 fluid.defaults("gpii.fuck.off", {
@@ -34,6 +27,6 @@ fluid.defaults("gpii.fuck.off", {
 });
 
 jqUnit.test("Testing parser resolutions of failed promise...", function () {
-    jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.schema.tests.validator.bornToDie, ["ENOENT"]);
-    //jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.fuck.off, ["DIE!"]);
+    //jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.schema.tests.validator.bornToDie, ["ENOENT"]);
+    jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.fuck.off, ["DIE!"]);
 });

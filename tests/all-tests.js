@@ -4,6 +4,7 @@ require("./js/validate-client-tests");
 require("./js/validate-function-tests");
 
 require("./js/parser-server-tests");
+//require("./js/parser-update-failure-tests");
 
 require("./js/middleware-tests.js");
 require("./js/handler-tests");

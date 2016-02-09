@@ -314,7 +314,7 @@ fluid.defaults("gpii.schema.validator.ajv", {
         parser: {
             type: "gpii.schema.parser",
             options: {
-                schemaDir: "{gpii.schema.validator.ajv}.options.schemaDir",
+                schemaPath: "{gpii.schema.validator.ajv}.options.schemaPath",
                 model: {
                     schemas: "{gpii.schema.validator.ajv}.model.schemas"
                 }

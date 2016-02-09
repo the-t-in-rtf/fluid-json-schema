@@ -3,11 +3,6 @@
 var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var path = require("path");
-var schemaDir = path.resolve(__dirname, "../schemas");
-
-fluid.setLogging(true);
-
 require("./test-harness");
 require("./middleware-caseholder");
 
@@ -24,7 +19,6 @@ fluid.defaults("gpii.schema.tests.middleware.naiveHandler", {
 fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment"],
     port:       7533,
-    baseUrl:    "http://localhost:7533/",
     events: {
         constructServer: null,
         onStarted: null
@@ -34,8 +28,7 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
             createOnEvent: "constructServer",
             type: "gpii.schema.tests.harness",
             options: {
-                "expressPort" : "{testEnvironment}.options.port",
-                "baseUrl":      "{testEnvironment}.options.baseUrl",
+                "port" : "{testEnvironment}.options.port",
                 events: {
                     onStarted: "{testEnvironment}.events.onStarted"
                 },
@@ -52,7 +45,7 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
                         type: "gpii.schema.middleware",
                         options: {
                             schemaKey: "base.json",
-                            schemaDir: schemaDir
+                            schemaPath: "%gpii-json-schema/tests/schemas"
                         }
                     },
                     router: {

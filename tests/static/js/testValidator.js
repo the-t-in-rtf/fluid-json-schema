@@ -127,5 +127,6 @@ var clientValidator = gpii.schema.validator.ajv({ // jshint ignore:line
                 "required": ["[x][x]"]
             }
         }
-    }
+    },
+    schemaPath: "/schemas"
 });

@@ -4,19 +4,15 @@ var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
-var path = require("path");
-
 require("../../src/js/server/validate");
 require("./validate-common-test-definitions");
 require("./lib/errors");
-
-var schemaDir = path.resolve(__dirname, "../schemas");
 
 jqUnit.module("Unit tests for validation component...");
 
 var testValidator = gpii.schema.validator.ajv.server({
     gradeNames: ["gpii.schema.tests.validator"],
-    schemaDir:  schemaDir,
+    schemaPath: "%gpii-json-schema/tests/schemas",
     listeners: {
         "onCreate.runTests": {
             funcName: "gpii.schema.tests.validator.runTests",

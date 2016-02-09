@@ -3,7 +3,6 @@
 "use strict";
 var fluid        =  require("infusion");
 var gpii         = fluid.registerNamespace("gpii");
-var jqUnit       = require("node-jqunit");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();
@@ -13,7 +12,6 @@ require("./lib/errors");
 var kettle = require("kettle");
 kettle.loadTestingSupport();
 
-// The server-side libraries we are testing
 require("../../");
 require("./handler-caseholder");
 

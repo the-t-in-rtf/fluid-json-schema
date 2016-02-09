@@ -3,31 +3,22 @@
  */
 "use strict";
 var fluid = require("infusion");
-var path  = require("path");
 
 require("gpii-express");
 
-// Test content (HTML, JS, templates)
-var testDir    = path.resolve(__dirname, "..");
-var contentDir = path.join(testDir, "static");
-var viewDir    = path.join(testDir, "views");
-
-// Dependencies
-var bcDir      = path.resolve(__dirname, "../../bower_components");
-var modulesDir = path.resolve(__dirname, "../../node_modules");
-
-// Main source to be tested
-var srcDir     = path.resolve(__dirname, "../../src");
-
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express"],
-    expressPort: 6194,
-    baseUrl: "http://localhost:6194/",
+    port: 6194,
+    baseUrl: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
+        }
+    },
     config:  {
         express: {
-            "port" : "{that}.options.expressPort",
-            baseUrl: "{that}.options.baseUrl",
-            views:   viewDir
+            "port" : "{that}.options.port",
+            baseUrl: "{that}.options.url"
         }
     },
     components: {
@@ -35,28 +26,35 @@ fluid.defaults("gpii.schema.tests.harness", {
             type: "gpii.express.router.static",
             options: {
                 path:    "/bc",
-                content: bcDir
+                content: "%gpii-json-schema/bower_components"
             }
         },
         js: {
             type: "gpii.express.router.static",
             options: {
                 path:    "/src",
-                content: srcDir
+                content: "%gpii-json-schema/src"
             }
         },
         modules: {
             type: "gpii.express.router.static",
             options: {
                 path:    "/modules",
-                content: modulesDir
+                content: "%gpii-json-schema/node_modules"
             }
         },
         content: {
             type: "gpii.express.router.static",
             options: {
                 path:    "/content",
-                content: contentDir
+                content: "%gpii-json-schema/tests/static"
+            }
+        },
+        schemas: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/schemas",
+                content: "%gpii-json-schema/tests/schemas"
             }
         }
     }

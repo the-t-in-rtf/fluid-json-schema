@@ -1,5 +1,5 @@
 // "Gatekeeper" middleware that rejects any incoming payloads that are not valid according to the schema set in
-// `options.schemaKey`.  You are required to set `options.schemaDir` to a directory that contains a file matching that
+// `options.schemaKey`.  You are required to set `options.schemaPath` to a directory that contains a file matching that
 // key.
 //
 // Validates information available in the request object, transformed using `options.rules.requestContentToValidate`.
@@ -43,7 +43,7 @@ fluid.defaults("gpii.schema.middleware.handler", {
 fluid.registerNamespace("gpii.schema.middleware");
 
 gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
-    if (that.options.schemaDir && that.options.schemaKey) {
+    if (that.options.schemaPath && that.options.schemaKey) {
         var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
         var results = that.validator.validate(that.options.schemaKey, toValidate);
         if (results) {
@@ -89,7 +89,7 @@ fluid.defaults("gpii.schema.middleware", {
         validator: {
             type: "gpii.schema.validator.ajv.server",
             options: {
-                schemaDir: "{gpii.schema.middleware}.options.schemaDir"
+                schemaPath: "{gpii.schema.middleware}.options.schemaPath"
             }
         }
     },

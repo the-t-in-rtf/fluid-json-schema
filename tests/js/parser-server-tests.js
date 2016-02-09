@@ -9,12 +9,8 @@
 var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
-var path   = require("path");
-var schemaDir = path.resolve(__dirname, "../schemas");
 
-require("../../src/js/common/parser");
-require("../../src/js/common/validate");
-require("../../src/js/server/validate");
+require("../../");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();
@@ -109,12 +105,6 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             }
         }
     },
-    listeners: {
-        onSchemasUpdated: {
-            funcName: "fluid.log",
-            args:     ["The test environment was indeed notified..."]
-        }
-    },
     distributeOptions: {
         target: "{that > gpii.schema.validator.ajv.server}.options.components.parser.options.listeners.onSchemasUpdated",
         record: {
@@ -126,7 +116,7 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             type: "gpii.schema.validator.ajv.server",
             createOnEvent: "constructServer",
             options: {
-                schemaDir: schemaDir
+                schemaPath: "%gpii-json-schema/tests/schemas"
             }
         },
         caseHolder: {

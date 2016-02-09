@@ -21,7 +21,6 @@ fluid.defaults("gpii.schema.tests.handler.schemaHandler", {
 fluid.defaults("gpii.schema.tests.handler.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment"],
     port:       7523,
-    baseUrl:    "http://localhost:7523/",
     events: {
         constructServer: null,
         onStarted: null
@@ -31,8 +30,7 @@ fluid.defaults("gpii.schema.tests.handler.testEnvironment", {
             createOnEvent: "constructServer",
             type: "gpii.schema.tests.harness",
             options: {
-                "expressPort" : "{testEnvironment}.options.port",
-                "baseUrl":      "{testEnvironment}.options.baseUrl",
+                "port" : "{testEnvironment}.options.port",
                 events: {
                     onStarted: "{testEnvironment}.events.onStarted"
                 },

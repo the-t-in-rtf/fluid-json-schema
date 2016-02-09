@@ -53,11 +53,11 @@
   Note that this library expects to be able to resolve external references relative to the first argument passed to its
   `dereference` function, and it expects to load and cache the references itself as needed.  Since we are receiving keys
   from the `validator`, we need to some how convert these to URLs.  We do this using `fluid.stringTemplate` to combine
-  `options.schemaDir` with the individual key, which means:
+  `options.schemaPath` with the individual key, which means:
 
-  1.  If `options.schemaDir` is a directory location, a full path will be produced.
-  2.  If `options.schemaDir` is a URL, a full URL will be produced.
-  3.  If `options.schemaDir` is empty, paths will be resolved relative to the working directory.
+  1.  If `options.schemaPath` is a directory location, a full path will be produced.
+  2.  If `options.schemaPath` is a URL, a full URL will be produced.
+  3.  If `options.schemaPath` is empty, paths will be resolved relative to the working directory.
 
   If you are using this with the `validator`, it takes care of that bit of wiring for you.
 
@@ -77,9 +77,9 @@ fluid.registerNamespace("gpii.schema.parser");
 
  */
 
-gpii.schema.parser.dereference = function (that, schemaKey) {
+gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
     var parser = new $RefParser(); // jshint ignore:line
-    var pathOrUri = fluid.stringTemplate(that.options.uriTemplate, { schemaDir: that.options.schemaDir, schemaKey: schemaKey});
+    var pathOrUri = fluid.stringTemplate(that.options.uriTemplate, { schemaPath: schemaPath, schemaKey: schemaKey});
     var promise = fluid.promise();
     parser.dereference(pathOrUri, that.options.parserOptions, gpii.schema.parser.getParserCallback(that, schemaKey, promise));
     return promise;
@@ -181,7 +181,7 @@ gpii.schema.parser.updateSchemas = function (that) {
     fluid.each(
         that.model.schemas, function (schemaContent, schemaKey) {
         if (!that.dereferencedSchemas[schemaKey]) {
-            promises.push(gpii.schema.parser.dereference(that, schemaKey));
+            promises.push(that.dereferenceSchema(schemaKey));
         }
     });
 
@@ -196,7 +196,7 @@ gpii.schema.parser.updateSchemas = function (that) {
 fluid.defaults("gpii.schema.parser", {
     gradeNames:    ["fluid.modelComponent"],
     parserOptions: {},
-    uriTemplate:   "%schemaDir/%schemaKey",
+    uriTemplate:   "%schemaPath/%schemaKey",
     model: {
         schemas: {}
     },
@@ -208,6 +208,10 @@ fluid.defaults("gpii.schema.parser", {
         dereferencedSchemas: {}
     },
     invokers: {
+        dereferenceSchema: {
+            funcName: "gpii.schema.parser.dereferenceSchema",
+            args: ["{that}", "{that}.options.schemaPath", "{arguments}.0"]
+        },
         lookupField: {
             funcName: "gpii.schema.parser.lookupField",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // schemaKey, schemaFieldPath

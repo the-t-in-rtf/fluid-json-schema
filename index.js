@@ -1,4 +1,14 @@
+"use strict";
+var fluid = require("infusion");
+
+// Expose this package's content so that relative paths can be resolved using `fluid.module.resolvePath`.
+fluid.module.register("gpii-json-schema", __dirname, require);
+
 // Require all of the server-side components at once.
-require("./validator");
+require("./src/js/common/validate");
+require("./src/js/server/validate");
+require("./src/js/common/parser");
+require("./src/js/server/parser");
 require("./src/js/server/schemaMiddleware");
 require("./src/js/server/schemaHandler");
+
