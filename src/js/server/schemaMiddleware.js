@@ -48,9 +48,7 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
         var results = that.validator.validate(that.options.schemaKey, toValidate);
         if (results) {
             var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-
-            // Instantiate a handler that will take care of the rest of the request.
-            that.events.onInvalidRequest.fire(req, res, 400, transformedResults);
+            that.handler.sendResponse(res, 400, transformedResults);
         }
         else {
             next();
@@ -60,14 +58,14 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
         // We choose to fail if we can't validate the body.  That way anything downstream is guaranteed to
         // only receive valid content.
         var message = "Your gpii.schema.middleware instance isn't correctly configured, so it can't validate anything.";
-        that.events.onInvalidRequest.fire(req, res, 500, { ok: false, error: message });
+        that.handler.sendResponse(res, 500, { ok: false, error: message });
     }
 };
 
 fluid.defaults("gpii.schema.middleware", {
     gradeNames: ["gpii.express.middleware", "gpii.schema.handler.base"],
-    schemaKey: "message.json",
-    schemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
+    responseSchemaKey: "message.json",
+    responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     messages: {
         error: "The JSON you have provided is not valid."
     },
@@ -86,6 +84,13 @@ fluid.defaults("gpii.schema.middleware", {
         }
     },
     components: {
+        handler: {
+            type: "gpii.schema.handler.base",
+            options: {
+                schemaKey: "{gpii.schema.middleware}.options.responseSchemaKey",
+                schemaUrl: "{gpii.schema.middleware}.options.responseSchemaUrl"
+            }
+        },
         validator: {
             type: "gpii.schema.validator.ajv.server",
             options: {
@@ -97,17 +102,6 @@ fluid.defaults("gpii.schema.middleware", {
         middleware: {
             funcName: "gpii.schema.middleware.rejectOrForward",
             args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
-        }
-    },
-    events: {
-        "onInvalidRequest": null
-    },
-    listeners: {
-        "onInvalidRequest.sendRejectionResponse": {
-            func: "{that}.sendResponse",
-            // Our function expects a `response` (`{arguments}.1`), `statusCode` (`{arguments}.2`), and `message` (`{arguments}.3`).
-            // If you are wiring in your own replacement, the original request is also available as `{arguments}.0`.
-            args: ["{arguments}.1", "{arguments}.2", "{arguments}.3"] // response, statusCode, body
         }
     }
 });
