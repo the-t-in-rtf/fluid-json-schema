@@ -4,7 +4,8 @@
   "description": "Fluid components to add support for JSON Schema validation.",
   "main": "",
   "scripts": {
-    "test": "node tests/all-tests.js"
+    "test": "node tests/all-tests.js",
+    "postinstall": "grunt exec"
   },
   "repository": {
     "type": "git",
