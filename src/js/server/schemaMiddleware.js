@@ -1,29 +1,11 @@
-// "Gatekeeper" middleware that rejects any incoming payloads that are not valid according to the schema set in
-// `options.schemaKey`.  You are required to set `options.schemaPath` to a directory that contains a file matching that
-// key.
-//
-// Validates information available in the request object, transformed using `options.rules.requestContentToValidate`.
-// The default options validate the request body.  To validate a query instead, you would set that option to something like:
-//
-//  requestContentToValidate: {
-//      "": "query"
-//  }
-//
-// The transformed request data is validated against the schema. Any validation errors are then transformed using
-// `options.rules.validationErrorsToResponse` before they are sent to the user.  The default format looks roughly like:
-//
-// {
-//   ok: false,
-//   message: "The JSON you have provided is not valid.",
-//   errors: {
-//     field1: ["This field is required."]
-//   }
-// }
-//
-// The output of this middleware is itself expected to be valid according to a JSON schema, and to be delivered
-// using a `schemaHandler`.  You are expected to supply `options.responseSchemaKey` and `options.responseSchemaUrl`,
-// which will be distributed to the `schemaHandler` instance.
-//
+/*
+
+    "Gatekeeper" middleware that rejects any request whose JSON payloads are not valid. See this component's
+    documentation for more details:
+
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/middleware.md
+
+ */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

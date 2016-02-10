@@ -29,7 +29,7 @@ gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, bo
         gpii.schema.tests.handler.caseHolder.examineResponse(response, body);
     }
     else {
-        gpii.schema.tests.handler.caseHolder.examineResponse(response, body, "base", "base");
+        gpii.schema.tests.handler.caseHolder.examineResponse(response, body, "message", "message");
 
         try {
             var jsonData = typeof body === "string" ? JSON.parse(body) : body;

@@ -1,16 +1,12 @@
-// An extension of `gpii.express.handler` that adds JSON Schema headers to the outgoing response.  This is intended to
-// be used with a `gpii.express.requestAware.router`.
-//
-// You are expected to provide two key options:
-//
-// 1. `options.schemaKey`: A short key for the schema that will represent it in the `Content-Type` header.
-// 2. `options.schemaUrl`:  A URL for the schema, which will be included in both the `Link` and `Content-Type` headers.
-//
-// Note that this will not actually implement the required `handleRequest` invoker.  You are expected to do that in your
-// own component, but you can use `that.sendResponse` as you would normally with any `gpii.express.handler` grade.
-//
-// See the tests in this package for working examples.
-//
+/*
+
+    An extension of `gpii.express.handler` that adds JSON Schema headers to the outgoing response.
+
+    See this component's documentation for more details:
+
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/handler.md
+
+ */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
