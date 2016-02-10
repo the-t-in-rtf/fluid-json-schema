@@ -22,11 +22,11 @@ fluid.defaults("gpii.schema.tests.harness", {
         }
     },
     components: {
-        bc: {
+        build: {
             type: "gpii.express.router.static",
             options: {
-                path:    "/bc",
-                content: "%gpii-json-schema/bower_components"
+                path:    "/build",
+                content: "%gpii-json-schema/build"
             }
         },
         js: {

@@ -4,7 +4,7 @@ var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
-require("../../src/js/common/validate");
+require("../../");
 
 fluid.registerNamespace("gpii.schema.validator.ajv.tests");
 

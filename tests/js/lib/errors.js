@@ -5,7 +5,7 @@ var gpii  = fluid.registerNamespace("gpii");
 
 var jqUnit = require("node-jqunit");
 
-require("../../../src/js/common/validate");
+require("../../../");
 
 fluid.registerNamespace("gpii.schema.tests");
 gpii.schema.tests.hasFieldErrors = function (results, fieldPaths, multiple) {

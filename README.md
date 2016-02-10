@@ -14,6 +14,16 @@ This package is intended to help with three key use cases:
 2.  Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request).
 3.  Adding appropriate headers to JSON responses so that it is clear what JSON Schema they adhere to.
 
+# Requirements
+
+Before you can install this package, `browserify` must be installed and in your path.  You can install `browserify`
+globally using a command like:
+
+`npm install -g browserify`
+
+See "[Using the validator in a browser](#usingthevalidatorinabrowser)" for details on how `browserify`` is used to
+provide a client-side AJV bundle.
+
 # Validation
 
 JSON is a very flexible format, which allows it to cover a wide range of use cases.  However, in most cases you will
@@ -127,8 +137,9 @@ examples, see the tests in this package.
 
 # Using the validator in a browser
 
-To use this component in a browser, you will need to run `browserify` against ajv and generate a client-side bundle,
-using commands like the following:
+This package depends on AJV.  AJV can be used on the client-side, but must first be bundled using `browserify`.
 
-    npm install -g browserify
-    browserify -r ajv -o ajv.bundle.js
+The AJV package provides an npm script to run `browserify` with the correct options.  We use the `grunt-exec` plugin to
+run this task automatically as part of our `postinstall` tasks.
+
+Once the `postinstall` tasks have completed, the bundled version of AJV can be found in `./node_modules/ajv/ajv.bundle.js`.

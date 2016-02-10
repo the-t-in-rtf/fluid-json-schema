@@ -20,6 +20,7 @@ fluid.defaults("gpii.schema.tests.validator.bornToDie", {
 // thrown by a promise, which itself is created by a listener that responds to the loading of template content during
 // startup.
 // TODO:  Review with Antranig.
-jqUnit.test("Testing parser resolutions of failed promise...", function () {
+jqUnit.asyncTest("Testing parser resolutions of failed promise...", function () {
+
     jqUnit.expectFrameworkDiagnostic("The component should thrown an error on startup...", gpii.schema.tests.validator.bornToDie, ["ENOENT"]);
 });

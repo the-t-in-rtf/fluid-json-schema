@@ -23,7 +23,8 @@ require("gpii-test-browser");
 require("./lib/errors");
 require("./test-harness");
 require("./validate-common-test-definitions");
-require("../../src/js/server/validate");
+
+require("../../");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();

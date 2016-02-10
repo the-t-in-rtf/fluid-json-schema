@@ -5,8 +5,8 @@ var fluid = require("infusion");
 fluid.module.register("gpii-json-schema", __dirname, require);
 
 // Require all of the server-side components at once.
-require("./src/js/common/validate");
-require("./src/js/server/validate");
+require("./src/js/common/validator");
+require("./src/js/server/validator");
 require("./src/js/common/parser");
 require("./src/js/server/parser");
 require("./src/js/server/schemaMiddleware");

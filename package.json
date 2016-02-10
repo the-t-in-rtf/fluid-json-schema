@@ -22,6 +22,7 @@
     "gpii-test-browser": "git://github.com/GPII/gpii-test-browser#37a1102cf7b0f6fe7ff854d673c8c6ec11f1d175",
     "grunt": "~0.4.4",
     "grunt-contrib-jshint": "~0.9.0",
+    "grunt-exec": "0.4.6",
     "grunt-jsonlint": "1.0.4",
     "grunt-shell": "0.6.4",
     "kettle": "git://github.com/amb26/kettle.git#2517cc1d9d047d58aef70db48d1580da718ffc16",
