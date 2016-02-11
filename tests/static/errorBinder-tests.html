@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>Client-side tests for validator...</title>
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="/modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+
+        <!-- Fluid dependencies -->
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidPromises.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidView.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/lib/fastXmlPull/js/fastXmlPull.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/renderer/js/fluidParser.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/renderer/js/fluidRenderer.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/FluidRequests.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script type="text/javascript" src="/modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- gpii-handlebars dependencies -->
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/ajaxCapable.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/binder.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/hasRequiredOptions.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/md-client.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/renderer.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/templateAware.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/templateFormControl.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/templateManager.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/templateMessage.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/client/templateRequestAndRender.js"></script>
+
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/common/equals.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/common/helper.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/common/jsonify.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/src/js/common/md-common.js"></script>
+
+
+        <!-- Bring in Handlebars dependency -->
+        <script type="text/javascript" src="/modules/gpii-handlebars/bower_components/handlebars/handlebars.js"></script>
+
+        <!-- Bring in Pagedown dependencies -->
+        <script type="text/javascript" src="/modules/gpii-handlebars/bower_components/pagedown/Markdown.Converter.js"></script>
+        <script type="text/javascript" src="/modules/gpii-handlebars/bower_components/pagedown/Markdown.Sanitizer.js"></script>
+
+
+        <!-- Client-side parser dependencies -->
+        <script type="text/javascript" src="/modules/json-schema-ref-parser/dist/ref-parser.js"></script>
+        <script src="/src/js/common/parser.js"></script>
+
+        <!-- browserified AJV dependency -->
+        <script type="text/javascript" src="/modules/ajv/ajv.bundle.js"></script>
+
+        <!-- Foundation CSS -->
+        <link type="text/css" rel="stylesheet" href="/modules/gpii-handlebars/bower_components/foundation/css/foundation.css"/>
+
+        <!-- Client-side validator dependencies -->
+        <script src="/src/js/common/validator.js"></script>
+
+        <!-- validation-aware grade -->
+        <script src="/src/js/client/errorBinder.js"></script>
+
+    </head>
+    <body>
+        <div class="errorBinder-viewport">
+            <div class="success error"></div>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+            <p class="panel callout radius">
+                This sample form is used to test the binding between validation errors and onscreen elements, in response
+                to both client-side and server-side feedback.
+            </p>
+        </div>
+
+
+        <script type="text/javascript" src="/content/js/testErrorBinder.js"></script>
+        <script type="text/javascript">
+            var errorBinder = gpii.schema.tests.errorBinder(".errorBinder-viewport");
+        </script>
+    </body>
+</html>
