@@ -125,7 +125,7 @@ input.  Typically accessed using the validator component's `validate` invoker an
 * `schemaKey {String}`: The schema key we are validating against.
 * `errors`: A map of existing error results to be sanitized.
 
- AJV gives us output like:
+AJV gives us output like:
 
 ```
  [
@@ -147,9 +147,46 @@ input.  Typically accessed using the validator component's `validate` invoker an
  ]
 ```
 
- We need to break this down so that the messages can be associated with individual model variables and associated form
- elements.  This allows us to show overall in-context feedback to the user.
+We reorganize this so that the structure matches the original JSON data more closely.  This level of structure helps
+us associate the error message with the correct model data and corresponding onscreen elements.  We also provide the
+description of the original JSON Schema field definition, which can be used instead of the raw output.  The reorganized
+and enhanced output looks like:
 
+```
+{
+    password: {
+        validationErrors: [
+             {
+                 "keyword": "minLength",
+                 "dataPath": ".password",
+                 "message": "should NOT be shorter than 8 characters",
+                 "description": "Passwords must be at least 8 characters long, and must contain at least one uppercase character, lowercase character, and special character or number."
+             },
+             {
+                 "keyword": "pattern",
+                 "dataPath": ".password",
+                 "message": "should match pattern \"[A-Z]+\"",
+                 "description": "Passwords must be at least 8 characters long, and must contain at least one uppercase character, lowercase character, and special character or number."
+             }
+        ]
+    },
+    deep: {
+        required: {
+            validationErrors: [
+                 {
+                     "keyword": "required",
+                     "dataPath": ".deep.required",
+                     "message": "is a required property",
+                     "description": "is a required property"
+                 }
+            ]
+        }
+    }
+}
+```
+
+Note that the key `validationErrors` is used to distinguish validation feedback from deeper structures, and may not
+appear in
 
 ## `gpii.schema.validator.ajv.extractPathSegments(string)`
 
@@ -193,25 +230,25 @@ original unescaped literal key.
 * `createMissingSegments {Boolean}`: Whether or not to create missing segments if they do not already exist.
 * Returns: The portion of the original object located at the selected path.
 
- Resolve the underlying data from a hierarchical object using an array of path segments. Returns the portion of the
- original object at the selected path.  As an example:
+Resolve the underlying data from a hierarchical object using an array of path segments. Returns the portion of the
+original object at the selected path.  As an example:
 
  `resolveOrCreateTargetFromPath({ one: { two: { three: { four: "five"}}}}, ["one", "two", "three"])`
 
- Should return:
+Should return:
 
  `{ four: "five" }`
 
- Note that the relevant portion of the original object is returned, and not just the value.  If
+Note that the relevant portion of the original object is returned, and not just the value.  If
  `createMissingSegments` is set, the deep structure will be created if it doesn't already exist, Thus:
 
  `resolveOrCreateTargetFromPath({}, ["one","two","three"], true)`
 
- Will return:
+Will return:
 
  `{ one: { two: { three: [] }}}`
 
- If you try to resolve a path that does not exist and `createMissingSegments` is not set, `undefined` will be returned.
+If you try to resolve a path that does not exist and `createMissingSegments` is not set, `undefined` will be returned.
 
 ## `gpii.schema.validator.ajv.saveToPath(path, errorString, errorMap, overwriteExisting)`
 
