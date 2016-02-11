@@ -4,7 +4,11 @@
 "use strict";
 var fluid = require("infusion");
 
+require("../../");
 require("gpii-express");
+require("gpii-handlebars");
+
+require("./lib/test-mock-login");
 
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express"],
@@ -56,6 +60,16 @@ fluid.defaults("gpii.schema.tests.harness", {
                 path:    "/schemas",
                 content: "%gpii-json-schema/tests/schemas"
             }
+        },
+        inline: {
+            type: "gpii.express.hb.inline",
+            options: {
+                path: "/hbs",
+                templateDirs: "%gpii-json-schema/tests/templates"
+            }
+        },
+        mockLogin: {
+            type: "gpii.schema.tests.mockLogin.router"
         }
     }
 });
