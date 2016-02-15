@@ -14,11 +14,12 @@
   "author": "Tony Atkins <tony@raisingthefloor.org>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "1.4.5",
+    "ajv": "3.5.3",
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#4d0314d123ccc543da41a4cd1fc5471d4260e24a",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#8f6fb0f94fd70cd82c17070cc13580602861d7d5",
     "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
-    "json-schema-ref-parser": "1.4.0"
+    "json-schema-ref-parser": "1.4.0",
+    "jsonpointer.js": "0.4.0"
   },
   "devDependencies": {
     "gpii-test-browser": "git://github.com/GPII/gpii-test-browser#37a1102cf7b0f6fe7ff854d673c8c6ec11f1d175",

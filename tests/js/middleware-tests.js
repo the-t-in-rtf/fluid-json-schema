@@ -6,14 +6,12 @@ var gpii  = fluid.registerNamespace("gpii");
 require("./test-harness");
 require("./middleware-caseholder");
 
-fluid.defaults("gpii.schema.tests.middleware.naiveHandler", {
-    gradeNames: ["gpii.express.handler"],
-    invokers: {
-        handleRequest: {
-            func: "{that}.sendResponse",
-            args: [200, { ok: true, message: "So nice to hear from you."}]
-        }
-    }
+fluid.defaults("gpii.schema.tests.middleware.gatedRouter", {
+    gradeNames:    ["gpii.schema.middleware.requestAware.router"],
+    handlerGrades: ["gpii.schema.tests.middleware.underlyingHandler"],
+    path:          "/gated",
+    schemaKey:     "gated.json",
+    schemaPath:    "%gpii-json-schema/tests/schemas"
 });
 
 fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
@@ -33,29 +31,7 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
                     onStarted: "{testEnvironment}.events.onStarted"
                 },
                 components: {
-                    // required middleware that provides `req.body`
-                    json: {
-                        type: "gpii.express.middleware.bodyparser.json"
-                    },
-                    urlencoded: {
-                        type: "gpii.express.middleware.bodyparser.urlencoded"
-                    },
-                    // Test middleware, will reject any input that a) is not JSON and b) does not contain a `required` boolean.
-                    gateKeeper: {
-                        type: "gpii.schema.middleware",
-                        options: {
-                            schemaKey: "base.json",
-                            schemaPath: "%gpii-json-schema/tests/schemas"
-                        }
-                    },
-                    router: {
-                        type: "gpii.express.requestAware.router",
-                        options: {
-                            path: "/gated",
-                            // Overly trusting handler that will always say hello if you let it.
-                            handlerGrades: ["gpii.schema.tests.middleware.naiveHandler"]
-                        }
-                    }
+
                 }
             }
         },

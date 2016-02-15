@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "id": "gated.json",
+  "title": "'Gated' schema...",
+  "description": "Schema for use in exercising our middleware and client-side components.",
+  "definitions": {
+    "testString": {
+      "type": "string",
+      "description": "You must enter a string that is at least four characters, no more than nine, and which contains the word \"CAT\".",
+      "minLength": 4,
+      "maxLength": 9,
+      "pattern": ".*CAT.*"
+    },
+    "testAllOf": {
+      "description": "You must enter a string that is at least four characters, no more than nine, and which contains the word \"CAT\".",
+      "allOf": [
+        {
+          "type": "string",
+          "description": "You must enter a string."
+        },
+        {
+          "minLength": 4,
+          "description": "The string must be at least four characters long."
+        },
+        {
+          "maxLength": 9,
+          "description": "The string cannot be longer than nine characters."
+        },
+        {
+          "pattern": ".*CAT.*",
+          "description": "The string must contain the word 'CAT'."
+        }
+      ]
+    },
+    "deep": {
+      "type": "object",
+      "properties": {
+        "deeplyRequired": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "deeplyRequired"
+      ]
+    },
+    "hasNoDescription": {
+      "type": "string",
+      "minLength": 3
+    }
+  },
+  "properties": {
+    "testString": {
+      "$ref": "#/definitions/testString"
+    },
+    "testAllOf": {
+      "$ref": "#/definitions/testAllOf"
+    },
+    "deep": {
+      "$ref": "#/definitions/deep"
+    },
+    "hasNoDescription": {
+      "$ref": "#/definitions/hasNoDescription"
+    },
+    "definedDirectly": {
+      "type": "string",
+      "maxLength": 1,
+      "description": "Enter a single character."
+    },
+    "definedDirectlyHasNoDescription": {
+      "type": "string",
+      "maxLength": 1
+    }
+  },
+  "required": [
+    "shallowlyRequired"
+  ]
+}

@@ -8,7 +8,7 @@ require("../../");
 require("gpii-express");
 require("gpii-handlebars");
 
-require("./lib/test-mock-login");
+require("./middleware-fixtures.js");
 
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express"],
@@ -68,8 +68,8 @@ fluid.defaults("gpii.schema.tests.harness", {
                 templateDirs: "%gpii-json-schema/tests/templates"
             }
         },
-        mockLogin: {
-            type: "gpii.schema.tests.mockLogin.router"
+        gated: {
+            type: "gpii.schema.tests.middleware.router"
         }
     }
 });
