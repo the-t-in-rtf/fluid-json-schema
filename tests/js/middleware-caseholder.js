@@ -1,4 +1,4 @@
-// Test `gpii.schema.middleware` and its subcomponents.
+// Test `gpii.schema.middleware` and its subcomponents for all method types.
 //
 "use strict";
 var fluid        =  require("infusion");
@@ -14,13 +14,6 @@ kettle.loadTestingSupport();
 
 require("../../");
 require("./handler-caseholder");
-
-fluid.defaults("gpii.schema.tests.middleware.request", {
-    gradeNames: ["kettle.test.request.http"],
-    path:       "/gated",
-    port:       "{testEnvironment}.options.port",
-    method:     "POST"
-});
 
 fluid.registerNamespace("gpii.schema.tests.middleware.caseHolder");
 gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, body, shouldBeValid) {
@@ -41,6 +34,32 @@ gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, bo
     }
 };
 
+fluid.defaults("gpii.schema.tests.middleware.request", {
+    gradeNames: ["kettle.test.request.http"],
+    path:       {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args: ["/gated/%method", { method: "{that}.options.method"}]
+        }
+    },
+    port:       "{testEnvironment}.options.port"
+});
+
+fluid.defaults("gpii.schema.tests.middleware.request.post", {
+    gradeNames: ["gpii.schema.tests.middleware.request"],
+    method:     "POST"
+});
+
+fluid.defaults("gpii.schema.tests.middleware.request.get", {
+    gradeNames: ["gpii.schema.tests.middleware.request"],
+    method:     "GET"
+});
+
+fluid.defaults("gpii.schema.tests.middleware.request.put", {
+    gradeNames: ["gpii.schema.tests.middleware.request"],
+    method:     "PUT"
+});
+
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
@@ -48,46 +67,134 @@ fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
         {
             tests: [
                 {
-                    name: "Testing a request with no body...",
+                    name: "Testing a GET request with no body...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{emptyRequest}.send"
+                            func: "{emptyGetRequest}.send"
                         },
                         {
                             listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
-                            event:    "{emptyRequest}.events.onComplete",
-                            args:     ["{emptyRequest}.nativeResponse", "{arguments}.0", true]
+                            event:    "{emptyGetRequest}.events.onComplete",
+                            args:     ["{emptyGetRequest}.nativeResponse", "{arguments}.0", true]
                         }
                     ]
                 },
                 {
-                    name: "Testing a request with bad JSON data...",
+                    name: "Testing a GET request with bad JSON data...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{badJsonRequest}.send",
+                            func: "{badJsonGetRequest}.send",
                             args: [{}]
                         },
                         {
                             listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
-                            event:    "{badJsonRequest}.events.onComplete",
-                            args:     ["{badJsonRequest}.nativeResponse", "{arguments}.0", false]
+                            event:    "{badJsonGetRequest}.events.onComplete",
+                            args:     ["{badJsonGetRequest}.nativeResponse", "{arguments}.0", false]
                         }
                     ]
                 },
                 {
-                    name: "Testing a request with valid JSON data...",
+                    name: "Testing a GET request with valid JSON data...",
                     type: "test",
                     sequence: [
                         {
-                            func: "{goodJsonRequest}.send",
+                            func: "{goodJsonGetRequest}.send",
                             args: [{required: true}]
                         },
                         {
                             listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
-                            event:    "{goodJsonRequest}.events.onComplete",
-                            args:     ["{goodJsonRequest}.nativeResponse", "{arguments}.0", true]
+                            event:    "{goodJsonGetRequest}.events.onComplete",
+                            args:     ["{goodJsonGetRequest}.nativeResponse", "{arguments}.0", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a POST request with no body...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{emptyPostRequest}.send"
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{emptyPostRequest}.events.onComplete",
+                            args:     ["{emptyPostRequest}.nativeResponse", "{arguments}.0", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a POST request with bad JSON data...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{badJsonPostRequest}.send",
+                            args: [{}]
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{badJsonPostRequest}.events.onComplete",
+                            args:     ["{badJsonPostRequest}.nativeResponse", "{arguments}.0", false]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a POST request with valid JSON data...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{goodJsonPostRequest}.send",
+                            args: [{required: true}]
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{goodJsonPostRequest}.events.onComplete",
+                            args:     ["{goodJsonPostRequest}.nativeResponse", "{arguments}.0", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a PUT request with no body...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{emptyPutRequest}.send"
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{emptyPutRequest}.events.onComplete",
+                            args:     ["{emptyPutRequest}.nativeResponse", "{arguments}.0", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a PUT request with bad JSON data...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{badJsonPutRequest}.send",
+                            args: [{}]
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{badJsonPutRequest}.events.onComplete",
+                            args:     ["{badJsonPutRequest}.nativeResponse", "{arguments}.0", false]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a PUT request with valid JSON data...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{goodJsonPutRequest}.send",
+                            args: [{required: true}]
+                        },
+                        {
+                            listener: "gpii.schema.tests.middleware.caseHolder.examineResponse",
+                            event:    "{goodJsonPutRequest}.events.onComplete",
+                            args:     ["{goodJsonPutRequest}.nativeResponse", "{arguments}.0", true]
                         }
                     ]
                 }
@@ -95,17 +202,41 @@ fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
         }
     ],
     components: {
-        emptyRequest: {
-            type: "gpii.schema.tests.middleware.request"
+        emptyGetRequest: {
+            type: "gpii.schema.tests.middleware.request.get"
         },
-        nonJsonRequest: {
-            type: "gpii.schema.tests.middleware.request"
+        nonJsonGetRequest: {
+            type: "gpii.schema.tests.middleware.request.get"
         },
-        badJsonRequest: {
-            type: "gpii.schema.tests.middleware.request"
+        badJsonGetRequest: {
+            type: "gpii.schema.tests.middleware.request.get"
         },
-        goodJsonRequest: {
-            type: "gpii.schema.tests.middleware.request"
+        goodJsonGetRequest: {
+            type: "gpii.schema.tests.middleware.request.get"
+        },
+        emptyPostRequest: {
+            type: "gpii.schema.tests.middleware.request.post"
+        },
+        nonJsonPostRequest: {
+            type: "gpii.schema.tests.middleware.request.post"
+        },
+        badJsonPostRequest: {
+            type: "gpii.schema.tests.middleware.request.post"
+        },
+        goodJsonPostRequest: {
+            type: "gpii.schema.tests.middleware.request.post"
+        },
+        emptyPutRequest: {
+            type: "gpii.schema.tests.middleware.request.put"
+        },
+        nonJsonPutRequest: {
+            type: "gpii.schema.tests.middleware.request.put"
+        },
+        badJsonPutRequest: {
+            type: "gpii.schema.tests.middleware.request.put"
+        },
+        goodJsonPutRequest: {
+            type: "gpii.schema.tests.middleware.request.put"
         }
     }
 });

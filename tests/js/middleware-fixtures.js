@@ -66,19 +66,19 @@ fluid.defaults("gpii.schema.tests.middleware.router.base", {
 fluid.defaults("gpii.schema.tests.middleware.router.post", {
     gradeNames: ["gpii.schema.tests.middleware.router.base"],
     method: "post",
-    path:   "/post"
+    path:   "/POST"
 });
 
 // PUT
 fluid.defaults("gpii.schema.tests.middleware.router.put", {
     gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.middleware.handlesPutMethod"],
-    path:   "/put"
+    path:   "/PUT"
 });
 
 // GET
 fluid.defaults("gpii.schema.tests.middleware.router.get", {
     gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.middleware.handlesGetMethod"],
-    path:   "/get"
+    path:   "/GET"
 });
 
 // A common container for all of the different "method" variations

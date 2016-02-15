@@ -29,14 +29,20 @@ fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
                 "port" : "{testEnvironment}.options.port",
                 events: {
                     onStarted: "{testEnvironment}.events.onStarted"
-                },
-                components: {
-
                 }
             }
         },
         testCaseHolder: {
             type: "gpii.schema.tests.middleware.caseHolder"
+        },
+        getRequest: {
+            type: "gpii.schema.tests.middleware.request.get"
+        },
+        putRequest: {
+            type: "gpii.schema.tests.middleware.request.put"
+        },
+        postRequest: {
+            type: "gpii.schema.tests.middleware.request.post"
         }
     }
 });
