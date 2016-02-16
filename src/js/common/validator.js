@@ -40,18 +40,21 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
 
 /*
 
-    Transform raw validator output into a more human-readable form that corresponds to the structure of the original
-    JSON input.  See the documentation for details:
+    Transform raw validator output and add human-readable errors.
+
+    See the documentation for details:
 
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md#gpiischemavalidatorajvsanitizevalidationerrorsthat-schemakey-errors
 
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
     var errors = fluid.copy(rawErrors);
-    fluid.each(errors, function (error) {
-        error.description = that.parser.lookupDescription(schemaKey, error.schemaPath) || error.message;
+
+    var evolvedErrors = fluid.transform(errors, function (error) {
+        return that.parser.evolveError(schemaKey, error.schemaPath);
     });
-    return errors;
+
+    return evolvedErrors;
 };
 
 /*
