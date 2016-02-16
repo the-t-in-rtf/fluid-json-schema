@@ -45,7 +45,13 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
 //
 // https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserresolvejsonpointerthat-schemakey-schemafieldpath
 //
-gpii.schema.parser.resolveJsonPointer = function (that, schemaKey, jsonPointer) {
+gpii.schema.parser.resolveJsonPointer = function (that, defaultSchemaKey, rawJsonPointer) {
+    // If we are dealing with a remote reference like `filename.json#/definition/foo`, use the remote schema key.
+    // Otherwise, for references like '#/definition/bar` use `defaultSchemaKey`.
+    var segments = rawJsonPointer.split("#");
+    var schemaKey = segments[0] !== "" ? segments[0] : defaultSchemaKey;
+    var jsonPointer = segments[0] !== "" ? "#" + segments[1] : rawJsonPointer;
+
     var dereferencedSchema = that.dereferencedSchemas[schemaKey];
     return jsonpointer.get(dereferencedSchema, jsonPointer);
 };
@@ -61,19 +67,21 @@ gpii.schema.parser.evolveError = function (that, schemaKey, error) {
     // We start with `error.schemaPath`, which will be something like `#/properties/password/allOf/1/pattern`.
     if (error.schemaPath) {
         var isRequiredError = error.schemaPath.match("/required$");
-        var failurePointer = isRequiredError ? gpii.schema.parser.getRequiredFieldPointer(that, schemaKey, failurePointer, error.params.missingProperty) : error.schemaPath;
+        var failurePointer = isRequiredError ? gpii.schema.parser.getRequiredFieldPointer(that, schemaKey, error.schemaPath, error.params.missingProperty) : error.schemaPath;
 
         // Check the document level for definitions first.
-        var documentErrorDefinitions = that.resolveJsonPointer(schemaKey, failurePointer);
+        var documentErrorDefinitions = that.resolveJsonPointer(schemaKey, "#/errors");
         if (documentErrorDefinitions && documentErrorDefinitions[failurePointer]) {
             evolvedError.message = documentErrorDefinitions[failurePointer];
         }
         // If we have not found anything at the document level, inspect the field itself.
         else {
-            var fieldErrorsPointer = gpii.schema.parser.getFieldErrorsFromFailure(failurePointer);
-            var fieldErrorsDefinition = that.resolveJsonPointer(fieldErrorsPointer);
-            if (fieldErrorsDefinition && fieldErrorsDefinition[failurePointer]) {
-                evolvedError.message = fieldErrorsDefinition[failurePointer];
+            var fieldErrorsPointer = gpii.schema.parser.getFieldErrorsFromFailure(error.schemaPath);
+            var fieldErrorsDefinition = that.resolveJsonPointer(schemaKey, fieldErrorsPointer);
+            var failureKey = gpii.schema.parser.getLastJsonPointerSegment(failurePointer);
+
+            if (fieldErrorsDefinition && fieldErrorsDefinition[failureKey]) {
+                evolvedError.message = fieldErrorsDefinition[failureKey];
             }
         }
     }
@@ -95,7 +103,7 @@ gpii.schema.parser.getParentJsonPointer = function (jsonPointer) {
 // slashes in a key name.
 gpii.schema.parser.getChildJsonPointer = function (jsonPointer, childPath) {
     var pointerSegments = (jsonPointer === "#/") ? ["#"] : jsonPointer.split("/");
-    return jsonPointer ? pointerSegments.concat(childPath).join("/") : jsonPointer;
+    return pointerSegments.concat(childPath).join("/");
 };
 
 // Static function to determine the JSON pointer to an error definition given the JSON pointer to the failure returned by AJV.
@@ -115,14 +123,19 @@ gpii.schema.parser.getRequiredFieldPointer = function (that, schemaKey, failureP
     });
 
     // The path to the message is relative to the parent
-    if (requirementIndex) {
+    if (requirementIndex !== undefined && requirementIndex !== null) {
         var parentPointer = gpii.schema.parser.getParentJsonPointer(failurePointer);
-        var errorsPointer = gpii.schema.parser.getChildJsonPointer(parentPointer, "errors");
+        var errorsPointer = gpii.schema.parser.getChildJsonPointer(parentPointer, "required");
         return gpii.schema.parser.getChildJsonPointer(errorsPointer, requirementIndex);
     }
     else {
         return undefined;
     }
+};
+
+gpii.schema.parser.getLastJsonPointerSegment = function (jsonPointer) {
+    var segments = jsonPointer.split("/");
+    return segments[segments.length - 1];
 };
 
 /*
@@ -168,7 +181,7 @@ fluid.defaults("gpii.schema.parser", {
     invokers: {
         dereferenceSchema: {
             funcName: "gpii.schema.parser.dereferenceSchema",
-            args: ["{that}", "{that}.options.schemaPath", "{arguments}.0"]
+            args: ["{that}", "{that}.options.schemaPath", "{arguments}.0"] // schemaPath, callback
         },
         resolveJsonPointer: {
             funcName: "gpii.schema.parser.resolveJsonPointer",

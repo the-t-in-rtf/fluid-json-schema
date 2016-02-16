@@ -23,16 +23,10 @@ gpii.schema.parser.tests.server.testSchemaCaching = function (that) {
     jqUnit.assertTrue("A derived schema should have been correctly dereferenced as well...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas["derived.json"]));
 };
 
-gpii.schema.parser.tests.server.testFieldLookup = function (that, schemaKey, path, expected) {
-    var output = that.lookupField(schemaKey, path);
-    jqUnit.assertDeepEq("The field lookup output should be as expected...", expected, output);
-};
-
 gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey, content, expected) {
     var output = validator.validate(schemaKey, content);
     jqUnit.assertDeepEq("The output should be as expected...", expected, output);
 };
-
 
 fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
@@ -50,55 +44,213 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     ]
                 },
                 {
-                    name: "Testing simple field lookup...",
-                    type: "test",
-                    sequence: [
-                        {
-                            funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.validator.parser", "base.json", ".regex.description", "The string should be five characters long, begin with 'v' and end with 'd'."] // path, expected
-                        }
-                    ]
-                },
-                {
-                    name: "Testing field lookup with square brackets...",
-                    type: "test",
-                    sequence: [
-                        {
-                            funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.validator.parser", "escaped.json", ".['[x][x]'].description", "How do textual cross marks make you feel?"] // path, expected
-                        }
-                    ]
-                },
-                {
-                    name: "Testing deep lookup with dots and single quotes...",
-                    type: "test",
-                    sequence: [
-                        {
-                            funcName: "gpii.schema.parser.tests.server.testFieldLookup",
-                            args:     ["{testEnvironment}.validator.parser", "escaped.json", ".['this.that']['th\'other'].description", "How do increasingly sloppy variable names make you feel?"] // path, expected
-                        }
-                    ]
-                },
-                {
-                    name: "Testing evolution and collapse of multiple failures within a single field...",
+                    name: "Testing a single unevolved failure...",
                     type: "test",
                     sequence: [
                         {
                             funcName: "gpii.schema.parser.tests.server.validateAndTest",
-                            args:     ["{testEnvironment}.validator", "base.json", { required: true, password: "pass" }, { fieldErrors: { password: ["Password must be 8 or more characters, and have at least one uppercase letter, at least one lowercase letter, and at least one number or special character."]}}] // validator, schemaKey, content, expected
+                            args:     ["{testEnvironment}.validator", "base.json", "{that}.options.input.singleRawFailure", "{that}.options.expected.singleRawFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing multiple unevolved `allOf` failures within a single field...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "base.json", "{that}.options.input.multipleRawFailures", "{that}.options.expected.multipleRawFailures"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing evolving a single failure in an immediate child of the root...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedRootFailure", "{that}.options.expected.evolvedRootFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing evolving a failure within a top-level required field...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedRequiredFailure", "{that}.options.expected.evolvedRequiredFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing evolving the message for a deep required field...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.evolvedDeepFailure", "{that}.options.expected.evolvedDeepFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing evolving a failure within an 'allOf' field...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedArrayFailure", "{that}.options.expected.evolvedArrayFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Confirm that a valid record still validates when there is error metadata...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedButValid", "{that}.options.expected.evolvedButValid"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing replacing a message in an underlying schema...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.overlayedRootFailure", "{that}.options.expected.overlayedRootFailure"] // validator, schemaKey, content, expected
+                        }
+                    ]
+                },
+                {
+                    name: "Testing preserving a message in an underlying schema...",
+                    type: "test",
+                    sequence: [
+                        {
+                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.inheritedFailure", "{that}.options.expected.inheritedFailure"] // validator, schemaKey, content, expected
                         }
                     ]
                 }
             ]
         }
-    ]
+    ],
+    input: {
+        singleRawFailure:       {},
+        multipleRawFailures:    { required: true, password: "pass" },
+        evolvedRootFailure:     { shallowlyRequired: true, testString: "ThunderCAT"},
+        overlayedRootFailure:   { shallowlyRequired: true, testString: "ThunderCAT"},
+        inheritedFailure:       { shallowlyRequired: true, testString: "UnderDOG"},
+        evolvedDeepFailure:     { shallowlyRequired: true, deep: {}},
+        evolvedArrayFailure:    { shallowlyRequired: true, testAllOf: "ThunderCAT"},
+        evolvedRequiredFailure: {},
+        evolvedButValid:        { shallowlyRequired: true }
+    },
+    expected: {
+        singleRawFailure: [
+            {
+                "keyword": "required",
+                "dataPath": "",
+                "schemaPath": "#/required",
+                "params": {
+                    "missingProperty": "required"
+                },
+                "message": "should have required property 'required'"
+            }
+        ],
+        multipleRawFailures: [
+            {
+                "keyword": "minLength",
+                "dataPath": ".password",
+                "schemaPath": "#/definitions/password/allOf/0/minLength",
+                "params": {
+                    "limit": 8
+                },
+                "message": "should NOT be shorter than 8 characters"
+            },
+            {
+                "keyword": "pattern",
+                "dataPath": ".password",
+                "schemaPath": "#/definitions/password/allOf/1/pattern",
+                "params": {
+                    "pattern": "[A-Z]+"
+                },
+                "message": "should match pattern \"[A-Z]+\""
+            },
+            {
+                "keyword": "pattern",
+                "dataPath": ".password",
+                "schemaPath": "#/definitions/password/allOf/3/pattern",
+                "params": {
+                    "pattern": "[^a-zA-Z]"
+                },
+                "message": "should match pattern \"[^a-zA-Z]\""
+            }
+        ],
+        evolvedRootFailure: [{
+            "keyword": "maxLength",
+            "dataPath": ".testString",
+            "schemaPath": "#/definitions/testString/maxLength",
+            "params": {
+                "limit": 9
+            },
+            "message": "You must enter a string that is no more than nine characters long."
+        }],
+        overlayedRootFailure: [{
+            "keyword": "maxLength",
+            "dataPath": ".testString",
+            "schemaPath": "evolved.json#/definitions/testString/maxLength",
+            "params": {
+                "limit": 9
+            },
+            "message": "You must enter a BETTER string that is no more than nine characters long."
+        }],
+        inheritedFailure: [{
+            "keyword": "pattern",
+            "dataPath": ".testString",
+            "schemaPath": "evolved.json#/definitions/testString/pattern",
+            "params": {
+                "pattern": ".*CAT.*"
+            },
+            "message": "You must enter a string which contains the word \"CAT\"."
+        }],
+        evolvedDeepFailure: [{
+            "keyword": "required",
+            "dataPath": ".deep",
+            "schemaPath": "evolved.json#/definitions/deep/required",
+            "params": {
+                "missingProperty": "deeplyRequired"
+            },
+            "message": "should have required property 'deeplyRequired'"
+        }],
+        evolvedArrayFailure: [{
+            "keyword": "maxLength",
+            "dataPath": ".testAllOf",
+            "schemaPath": "#/definitions/testAllOf/allOf/2/maxLength",
+            "params": {
+                "limit": 9
+            },
+            "message": "The string cannot be longer than nine characters."
+        }],
+        evolvedRequiredFailure: [{
+            "keyword": "required",
+            "dataPath": "",
+            "schemaPath": "#/required",
+            "params": {
+                "missingProperty": "shallowlyRequired"
+            },
+            "message": "The 'shallowlyRequired' field is required."
+        }],
+        evolvedButValid: undefined
+    }
 });
 
 fluid.defaults("gpii.schema.parser.tests.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
-        constructServer: null,
-        onSchemasUpdated:    null,
+        constructServer:  null,
+        onSchemasUpdated: null,
         onStarted: {
             events: {
                 onSchemasUpdated: "onSchemasUpdated"

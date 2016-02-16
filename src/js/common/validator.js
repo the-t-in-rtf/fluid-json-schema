@@ -48,10 +48,8 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
 
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
-    var errors = fluid.copy(rawErrors);
-
-    var evolvedErrors = fluid.transform(errors, function (error) {
-        return that.parser.evolveError(schemaKey, error.schemaPath);
+    var evolvedErrors = fluid.transform(rawErrors, function (error) {
+        return that.parser.evolveError(schemaKey, error);
     });
 
     return evolvedErrors;
@@ -84,6 +82,7 @@ gpii.schema.validator.ajv.refreshSchemas = function (that) {
 fluid.defaults("gpii.schema.validator.ajv", {
     gradeNames: ["fluid.modelComponent"],
     validatorOptions: {
+        v5:      true,   // enable "v5" support for $data references
         verbose: false,  // Prevent invalid data (such as passwords) from being displayed in error messages
         messages: true,  // Display human-readable error messages
         allErrors: true  // Generate a complete list of errors and not just the first failure.

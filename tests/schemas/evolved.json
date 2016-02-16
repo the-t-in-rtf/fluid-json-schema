@@ -1,34 +1,36 @@
 {
   "type": "object",
-  "id": "gated-with-document-errors.json",
-  "title": "'Gated' schema...",
-  "description": "Schema for use in exercising our middleware and client-side components.",
+  "id": "evolved.json",
+  "title": "'Evolved' schema for use in testing v5 emulation...",
   "definitions": {
     "testString": {
       "type": "string",
-      "description": "You must enter a string that is at least four characters, no more than nine, and which contains the word \"CAT\".",
       "minLength": 4,
       "maxLength": 9,
-      "pattern": ".*CAT.*"
+      "pattern": ".*CAT.*",
+      "errors": {
+        "minLength": "You must enter a string that is at least four characters long.",
+        "maxLength": "You must enter a string that is no more than nine characters long.",
+        "pattern":   "You must enter a string which contains the word \"CAT\"."
+      }
     },
     "testAllOf": {
-      "description": "You must enter a string that is at least four characters, no more than nine, and which contains the word \"CAT\".",
       "allOf": [
         {
           "type": "string",
-          "description": "You must enter a string."
+          "errors": { "type" : "You must enter a string." }
         },
         {
           "minLength": 4,
-          "description": "The string must be at least four characters long."
+          "errors": { "minLength": "The string must be at least four characters long." }
         },
         {
           "maxLength": 9,
-          "description": "The string cannot be longer than nine characters."
+          "errors": { "maxLength": "The string cannot be longer than nine characters." }
         },
         {
           "pattern": ".*CAT.*",
-          "description": "The string must contain the word 'CAT'."
+          "errors": { "pattern": "The string must contain the word 'CAT'." }
         }
       ]
     },
@@ -43,7 +45,7 @@
         "deeplyRequired"
       ]
     },
-    "hasNoDescription": {
+    "hasNoErrorsMetadata": {
       "type": "string",
       "minLength": 3
     }
@@ -58,20 +60,23 @@
     "deep": {
       "$ref": "#/definitions/deep"
     },
-    "hasNoDescription": {
-      "$ref": "#/definitions/hasNoDescription"
+    "hasNoErrorsMetadata": {
+      "$ref": "#/definitions/hasNoErrorsMetadata"
     },
     "definedDirectly": {
       "type": "string",
       "maxLength": 1,
-      "description": "Enter a single character."
+      "errors": { "maxLength": "Enter a single character."}
     },
-    "definedDirectlyHasNoDescription": {
+    "definedDirectlyHasNoErrorsMetadata": {
       "type": "string",
       "maxLength": 1
     }
   },
   "required": [
     "shallowlyRequired"
-  ]
+  ],
+  "errors": {
+    "#/required/0": "The 'shallowlyRequired' field is required."
+  }
 }
