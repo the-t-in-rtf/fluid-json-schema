@@ -218,7 +218,7 @@ The `parser` component provides the following invokers:
 
 ## `{parser}.dereferenceSchema(schemaPath, schemaKey)`
 
- * `schemaPath {String}`:  A path or URI to the directory or base URL where the schema can be found.
+ * `schemaPath {String}`:  A path (server side )or URI (client side) to the directory or base URL where the schema can be found.  Will be combined with `schemaKey` to construct the full location of the schema.
  * `schemaKey {String}`: The filename of the schema relative to `schemaPath`.
  * Returns: A `promise` that will be satisfied when the parser finishes its work.  The promise itself does not return any value.
 
