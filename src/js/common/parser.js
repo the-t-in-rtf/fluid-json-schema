@@ -53,7 +53,12 @@ gpii.schema.parser.resolveJsonPointer = function (that, defaultSchemaKey, rawJso
     var jsonPointer = segments[0] !== "" ? "#" + segments[1] : rawJsonPointer;
 
     var dereferencedSchema = that.dereferencedSchemas[schemaKey];
-    return jsonpointer.get(dereferencedSchema, jsonPointer);
+    if (dereferencedSchema) {
+        return jsonpointer.get(dereferencedSchema, jsonPointer);
+    }
+    else {
+        fluid.fail("Cannot find schema '" + schemaKey + "', which is required to resolve the given JSON pointer...");
+    }
 };
 
 
