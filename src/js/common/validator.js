@@ -10,7 +10,7 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var Ajv = require("ajv");
+var Ajv = Ajv || require("ajv");
 
 fluid.registerNamespace("gpii.schema.validator.ajv");
 
