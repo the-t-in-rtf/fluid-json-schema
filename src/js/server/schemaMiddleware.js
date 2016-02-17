@@ -50,7 +50,7 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 
  */
 fluid.defaults("gpii.schema.middleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.schema.handler.base"],
+    gradeNames: ["gpii.express.middleware"],
     responseSchemaKey: "message.json",
     responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     messages: {
