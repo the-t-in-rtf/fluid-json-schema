@@ -175,6 +175,9 @@ of how this module expects `errors` data to be entered for required fields:
 }
 ```
 
+Note that all of the "keys" used in an `errors` block are [relative JSON Pointers](https://tools.ietf.org/html/rfc6901).
+Slashes within keys should be escaped as `~1`.  Tildes within keys should be escaped as `~0`.
+
 # Requirements
 
 To use this component, you will need to instantiate it and make it aware of your schemas.  These will be dereferenced
