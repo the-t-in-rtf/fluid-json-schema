@@ -76,9 +76,9 @@ The following component configuration options are supported:
 | `schemaPath`        | `String` | The path to a directory that contains a file matching `options.schemaKey`.  On the client-side, this is expected to be a full or relative URI.  On the server-side, this is expected to be a package-relative path such as `%gpii-handlebars/tests/schemas`. |
 | `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
 | `responseSchemaUrl` | `String` |  A base URL where `responseSchemaKey` can be found. |
-| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
+| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
 the incoming data before validation (see above). |
-| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
+| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
 validation errors before they are sent to the user (see above). |
 
 # Invokers
