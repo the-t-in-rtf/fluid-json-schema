@@ -76,14 +76,45 @@ Inheritance is still a sticking point at least in v4 of the draft standard.   Yo
 multiple schemas on top of each other.  Best practice for now is to only reuse individual definitions between schemas,
 and to explicitly specify each schema's required properties.
 
-A limitation of this implementation is that it expects external references to use filenames rather than ids,
-as in:
+Inheritance within and between schemas is handled using `$ref` references, as in:
 
     $ref: "filename.json#/definitions/field"
 
-This is a byproduct of `json-schema-ref-parser`, the library we use to evolve the error output. As this may change, best
-practice is for the `id` in the schema to exactly match the filename.  See the `derived.json` and `base.json` test
-schemas for an example.
+These values are expected to be relative or absolute URLs, in our case the exactly correspond to the filename of the schema.
+
+To give an example, suppose we have a simple `person` schema:
+
+```
+{
+  "id": "person.json",
+  "definitions": {
+    "firstname": { type: "string" },
+    "lastname":  { type: "string" }
+  },
+  properties: {
+    "firstname": { "$ref": "#/definitions/firstname" },
+    "lastname":  { "$ref": "#/definitions/lastname" }
+  }
+}
+```
+
+We can add our own properties in a number of ways, but here is the approach we favor at the moment:
+
+```
+{
+  "id": "reachable-person.json",
+  "definitions": {
+    "email": { "type": "string", "format": "email" }
+  },
+  properties: {
+    "firstname": { "$ref": "person.json#/definitions/firstname" },
+    "lastname":  { "$ref": "person.json#/definitions/lastname" },
+    "email":     { "$ref": "#/definitions/email" }
+  }
+}
+```
+
+See the test schemas (particularly `derived.json` and `evolved-overlay.json`) for additional examples.
 
 # Components
 

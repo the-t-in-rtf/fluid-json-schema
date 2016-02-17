@@ -178,6 +178,45 @@ of how this module expects `errors` data to be entered for required fields:
 Note that all of the "keys" used in an `errors` block are [relative JSON Pointers](https://tools.ietf.org/html/rfc6901).
 Slashes within keys should be escaped as `~1`.  Tildes within keys should be escaped as `~0`.
 
+## The `errors` block and inheritance.
+
+Although this has not yet been established in the standard or in AJV, we have chosen to resolve
+`errors` in a way that will allow overlaying errors on an existing schema, as in the following
+example:
+
+```
+{
+  "id": "person.json",
+  "definitions": {
+    "firstname": { type: "string" },
+    "lastname":  { type: "string" }
+  },
+  "properties": {
+    "firstname": { "$ref": "#/definitions/firstname" },
+    "lastname":  { "$ref": "#/definitions/lastname" }
+  }
+}
+```
+
+Here is a schema with overlayed error messages in English:
+
+```
+{
+  "id": "person-en.json",
+  "properties": {
+    "firstname": { "$ref": "person.json#/definitions/firstname" },
+    "lastname":  { "$ref": "person.json#/definitions/lastname" }
+  },
+  "errors": {
+    "#/definitions/firstname/type": "The first name must be a string.",
+    "#/definitions/lastname/type":  "The last name must be a string."
+  }
+}
+```
+
+If you're having trouble figuring out what key to use in the document's `errors` block, use the schema to validate a
+document in which the rule has been broken, and look at the `schemaPath` variable in the raw validator output.
+
 # Requirements
 
 To use this component, you will need to instantiate it and make it aware of your schemas.  These will be dereferenced
