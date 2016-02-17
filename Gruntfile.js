@@ -2,12 +2,6 @@
 
 module.exports = function (grunt) {
     grunt.initConfig({
-        exec: {
-            browserify_ajv: {
-                cwd: "./node_modules/ajv",
-                cmd: "npm run bundle"
-            }
-        },
         jshint: {
             src: ["src/**/*.js", "tests/js/**/*.js"],
             buildScripts: ["Gruntfile.js"],
@@ -21,7 +15,6 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks("grunt-contrib-jshint");
-    grunt.loadNpmTasks("grunt-exec");
     grunt.loadNpmTasks("grunt-jsonlint");
     grunt.loadNpmTasks("grunt-shell");
 
