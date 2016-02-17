@@ -204,21 +204,29 @@ The base component is designed to work both on the client and server side.
 
 A server-side version of the component which can handle package-relative `schemaPath` entries like `%gpii-package-name/path/within/package`.
 
-# Functions
+# Component Options
 
-## gpii.schema.parser.dereferenceSchema(that, schemaPath, schemaKey)
+The following component configuration options are supported:
 
- * `that`: The parser component itself.
+|      Option        |   Type   | Description |
+| ------------------ | -------- | ----------- |
+| `schemaPath`       | `String` or `Array` | The location of the directory or directories containing all schemas used by the parser.   Each entry should be a package-relative path such as `%gpii-handlebars/tests/schemas`.|
+
+# Invokers
+
+The `parser` component provides the following invokers:
+
+## `{parser}.dereferenceSchema(schemaPath, schemaKey)`
+
  * `schemaPath {String}`:  A path or URI to the directory or base URL where the schema can be found.
  * `schemaKey {String}`: The filename of the schema relative to `schemaPath`.
- * Returns: A `promise` that will be satisfied when the parser finishes its work.
+ * Returns: A `promise` that will be satisfied when the parser finishes its work.  The promise itself does not return any value.
 
  Dereference a single schema.  As the process is asynchronous, this function returns a promise.  Typically accessed
  using the parser component's `dereferenceSchema` invoker and the `schemaKey` attribute.
 
-## gpii.schema.parser.evolveError(that, schemaKey, error)
+## `{parser}.evolveError(schemaKey, error)`
 
-* `that`: The parser component itself.
 * `schemaKey {String}`: The `key` of the schema (generally the filename, i.e. `base.json`).
 * `error {object}`: The original error returned by AJV.
 * Returns: `Object` The "evolved" error with an updated message based on the `errors` definitions (if there are any).

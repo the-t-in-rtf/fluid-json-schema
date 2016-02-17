@@ -69,10 +69,12 @@ where possible.  See [the parser documentation](parser.md) for details.
 
 # Configuration Options
 
-You are expected to configure one or more schemas which will be read from `options.schemaContents`.  The `schemaKey`
-value passed to `validate` is expected to match one of the keys in `options.schemaContent`.
+The following component configuration options are supported:
 
-You can change the behavior of AJV by updating `options.validatorOptions` (check their documentation for the syntax).
+| Option             | Type     | Description |
+| ------------------ | -------- | ----------- |
+| `schemaContents`   | `Object` | A map of raw JSON Schema content, keyed by filename. The `schemaKey` value passed to `validate` is expected to match one of the keys in `schemaContent`. |
+| `validatorOptions` | `Object` | Options to be passed to our AJV validator instance (check [the AJV options documentation](https://github.com/epoberezkin/ajv#options) for the syntax and available options). |
 
 # Reusing Content between Schemas
 
@@ -106,11 +108,10 @@ A server-side component which additionally populates `schemaContents` for you on
 The server-side component will also resolve dependencies from `schemaContents`.  For example, if you have a second
 schema that has a reference to `#schema-file-name.json`, it will resolve to the contents of `schemaContents["schema-file-name.json"]`.
 
-# Functions
+# Invokers
 
-## `gpii.schema.validator.ajv.validate(that, key, content)`
+## `gpii.schema.validator.ajv.validate(key, content)`
 
-* `that`: The component itself.
 * `key {String}`:  The schema key we are validating against.
 * `content {Object}`: The JSON content we are validating.
 * Returns: An `{Object}` describing the errors, or `undefined` if there are no errors.
@@ -119,9 +120,8 @@ Transform raw validator output into a more human-readable form that corresponds 
 input.  Typically accessed using the validator component's `validate` invoker and the last two arguments.
 
 
-## `gpii.schema.validator.ajv.sanitizeValidationErrors(that, schemaKey, errors)`
+## `gpii.schema.validator.ajv.sanitizeValidationErrors(schemaKey, errors)`
 
-* `that`: The component itself.
 * `schemaKey {String}`: The schema key we are validating against.
 * `errors`: A map of existing error results to be sanitized.
 
@@ -147,46 +147,10 @@ AJV gives us output like:
  ]
 ```
 
-We reorganize this so that the structure matches the original JSON data more closely.  This level of structure helps
-us associate the error message with the correct model data and corresponding onscreen elements.  We also provide the
-description of the original JSON Schema field definition, which can be used instead of the raw output.  The reorganized
-and enhanced output looks like:
+This invoker uses the [`parser`](parser.md) component in this package to replace `message` with custom error messages.  See that
+module for details.
 
-```
-{
-    password: {
-        validationErrors: [
-             {
-                 "keyword": "minLength",
-                 "dataPath": ".password",
-                 "message": "should NOT be shorter than 8 characters",
-                 "description": "Passwords must be at least 8 characters long, and must contain at least one uppercase character, lowercase character, and special character or number."
-             },
-             {
-                 "keyword": "pattern",
-                 "dataPath": ".password",
-                 "message": "should match pattern \"[A-Z]+\"",
-                 "description": "Passwords must be at least 8 characters long, and must contain at least one uppercase character, lowercase character, and special character or number."
-             }
-        ]
-    },
-    deep: {
-        required: {
-            validationErrors: [
-                 {
-                     "keyword": "required",
-                     "dataPath": ".deep.required",
-                     "message": "is a required property",
-                     "description": "is a required property"
-                 }
-            ]
-        }
-    }
-}
-```
-
-Note that the key `validationErrors` is used to distinguish validation feedback from deeper structures, and may not
-appear in
+# Static Functions
 
 ## `gpii.schema.validator.ajv.extractPathSegments(string)`
 
