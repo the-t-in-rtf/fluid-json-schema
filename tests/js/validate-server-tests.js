@@ -13,8 +13,9 @@ jqUnit.module("Unit tests for validation component...");
 var testValidator = gpii.schema.validator.ajv.server({
     gradeNames: ["gpii.schema.tests.validator"],
     schemaPath: "%gpii-json-schema/tests/schemas",
+    schemaKey:  "base.json",
     listeners: {
-        "onCreate.runTests": {
+        "onSchemasUpdated.runTests": {
             funcName: "gpii.schema.tests.validator.runTests",
             args:     ["{that}"]
         }
