@@ -224,11 +224,12 @@ A server-side version of the component which can handle package-relative `schema
 * Returns: `Object` The "evolved" error with an updated message based on the `errors` definitions (if there are any).
 
 This function used by the validator to transform the full set of raw validation results using `fluid.transform`.  It
-tries to look up the v5 draft proposal `errors` definition for a given `error`.  It starts by looking for the relevant
-error definition in the document, i.e. at `#/errors`.
+tries to look up the v5 draft proposal `errors` definition for a given `error`.  A copy of the original `error` is
+returned, with an updated `error.message` if a custom error definition was found.
 
-If that fails, look for a relevant definition at the field.  This involves navigating from the failing rule
-to the relevant `errors` block.  There are two variations:
+The parser starts by looking for the relevant error definition in the document, i.e. at `#/errors`.  If that fails, look
+for a relevant definition at the field.  This involves navigating from the failing rule to the relevant `errors` block.
+There are two variations:
 
 1. All required data has been entered but a field is invalid.  In those cases, `schemaPath` is something like
    `#/properties/password/allOf/1/pattern` and the relevant `errors` block is something like
@@ -242,6 +243,3 @@ to the relevant `errors` block.  There are two variations:
 In both cases we navigate to the parent element immediately above the reported failure, and then to its `errors`
 block.  If we find an error definition that matches the failure, we add that to a modified copy of the error and return
 that.
-
-If no match is found, a copy of the original record is returned.
-
