@@ -18,27 +18,28 @@ fluid.registerNamespace("gpii.schema.validator.ajv.server");
 
 // Load any schema files on startup.
 gpii.schema.validator.ajv.server.init = function (that) {
-    if (that.options.schemaPath) {
-        var resolvedPath = fluid.module.resolvePath(that.options.schemaPath);
-        var schemas = {};
-        fluid.each(fs.readdirSync(resolvedPath), function (filename) {
-            if (filename.match(/.json$/i)) {
-                var schemaPath = path.resolve(resolvedPath, filename);
-                var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+    var resolvedPath = fluid.module.resolvePath(that.options.schemaPath);
+    var schemas = {};
+    fluid.each(fs.readdirSync(resolvedPath), function (filename) {
+        if (filename.match(/.json$/i)) {
+            var schemaPath = path.resolve(resolvedPath, filename);
+            var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 
-                schemas[filename] = content;
-            }
-        });
+            schemas[filename] = content;
+        }
+    });
 
-        that.applier.change("schemas", schemas);
-    }
-    else {
-        fluid.fail("You have not provided the location of your schema directory.");
-    }
+    that.applier.change("schemas", schemas);
 };
 
 fluid.defaults("gpii.schema.validator.ajv.server", {
-    gradeNames: ["gpii.schema.validator.ajv"],
+    gradeNames: ["gpii.schema.validator.ajv", "gpii.hasRequiredOptions"],
+    requiredFields: {
+        "schemaPath": true
+    },
+    events: {
+        onSchemasUpdated: null
+    },
     listeners: {
         "onCreate.loadSchemas": {
             funcName: "gpii.schema.validator.ajv.server.init",
@@ -52,6 +53,11 @@ fluid.defaults("gpii.schema.validator.ajv.server", {
                 schemaPath: "{gpii.schema.validator.ajv}.options.schemaPath",
                 model: {
                     schemas: "{gpii.schema.validator.ajv}.model.schemas"
+                },
+                listeners: {
+                    "onSchemasUpdated.notifyValidator": {
+                        func: "{gpii.schema.validator.ajv.server}.events.onSchemasUpdated.fire"
+                    }
                 }
             }
         }
