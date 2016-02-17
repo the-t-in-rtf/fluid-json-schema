@@ -67,15 +67,6 @@ Assuming that each value was invalid, you might see validation output like the f
 This component is configured to work together with a `gpii.schema.parser` and to further evolve the error messages
 where possible.  See [the parser documentation](parser.md) for details.
 
-# Configuration Options
-
-The following component configuration options are supported:
-
-| Option             | Type     | Description |
-| ------------------ | -------- | ----------- |
-| `schemaContents`   | `Object` | A map of raw JSON Schema content, keyed by filename. The `schemaKey` value passed to `validate` is expected to match one of the keys in `schemaContent`. |
-| `validatorOptions` | `Object` | Options to be passed to our AJV validator instance (check [the AJV options documentation](https://github.com/epoberezkin/ajv#options) for the syntax and available options). |
-
 # Reusing Content between Schemas
 
 One of the key strengths of JSON Schema is that it allows you to compose a complex schema out of parts taken from
@@ -107,6 +98,16 @@ A server-side component which additionally populates `schemaContents` for you on
 
 The server-side component will also resolve dependencies from `schemaContents`.  For example, if you have a second
 schema that has a reference to `#schema-file-name.json`, it will resolve to the contents of `schemaContents["schema-file-name.json"]`.
+
+# Component Options
+
+The following component configuration options are supported:
+
+| Option             | Type     | Description |
+| ------------------ | -------- | ----------- |
+| `schemaContents`   | `Object` | A map of raw JSON Schema content, keyed by filename. The `schemaKey` value passed to `validate` is expected to match one of the keys in `schemaContent`. |
+| `validatorOptions` | `Object` | Options to be passed to our AJV validator instance (check [the AJV options documentation](https://github.com/epoberezkin/ajv#options) for the syntax and available options). |
+
 
 # Invokers
 
