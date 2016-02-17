@@ -16,13 +16,15 @@ require("../common/hasRequiredOptions");
 
 fluid.registerNamespace("gpii.schema.handler");
 
+var quotedPrintable = require("quoted-printable");
+
 // Send the appropriate headers and then let the underlying grade's `sendResponse` function take over.
 gpii.schema.handler.sendResponse = function (that, response, statusCode, body) {
     if (response.headersSent) {
         fluid.log("Can't set headers, they have already been sent.");
     }
     else {
-        response.type("application/" + that.options.schemaKey + "+json; profile=\"" + that.options.schemaUrl + "\"");
+        response.type("application/" + quotedPrintable.encode(that.options.schemaKey) + "+json; profile=\"" + that.options.schemaUrl + "\"");
         response.set("Link", that.options.schemaUrl + "; rel=\"describedBy\"");
     }
 
