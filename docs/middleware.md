@@ -66,40 +66,32 @@ the payload is not valid according to the configured JSON Schema.
  The output of this middleware is itself expected to be valid according to a JSON schema, and is delivered using a
  [`schemaHandler`](./handler.md).
 
-# Configuration Options
+# Component Options
 
-## `options.schemaKey`
-The key (also the filename) of the schema to be used for validation.
+The following component configuration options are supported:
 
-## `options.schemaPath`
-The path (URI or filesystem) to a directory that contains a file matching `options.schemaKey`.
+| Option              | Type     | Description |
+| ------------------- | -------- | ----------- |
+| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
+| `schemaPath`        | `String` | The path to a directory that contains a file matching `options.schemaKey`.  On the client-side, this is expected to be a full or relative URI.  On the server-side, this is expected to be a package-relative path such as `%gpii-handlebars/tests/schemas`. |
+| `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
+| `responseSchemaUrl` | `String` |  A base URL where `responseSchemaKey` can be found. |
+| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
+the incoming data before validation (see above). |
+| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
+validation errors before they are sent to the user (see above). |
 
-## `options.responseSchemaKey`
-The schema key that [our handler](./handler.md) will use in constructing response headers.
+# Invokers
 
-## `options.responseSchemaUrl`
-A base URL where `options.responseSchemaKey` can be found.
+## `{middleware}.middleware(req, res, next)`
 
-## `options.rules.requestContentToValidate`
-The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
-the incoming data before validation (see above).
-
-## `options.rules.validationErrorsToResponse`
-
-The [rules to use in transforming](https://github.com/fluid-project/infusion-docs/blob/0e3862aaab38742c71f8f6e3e155a3b6d5199ad4/src/documents/ModelTransformationAPI.md#fluidmodeltransformwithrulessource-rules-options)
-validation errors before they are sent to the user (see above).
-
-# Functions
-
-## `gpii.schema.middleware.rejectOrForward(that, req, res, next)`
-
-* `that`: The component itself.
 * `req`: The [request object](http://expressjs.com/en/api.html#req) provided by Express.
 * `res`: The [response object](http://expressjs.com/en/api.html#res) provided by Express.
 * `next`: The next Express middleware or router function in the chain.
 * Returns: Nothing.
 
-Step in and interrupt the conversation if the JSON data supplied as part of `req` is not valid according to the JSON
+This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It examines the `req` content
+and interrupts the conversation if the JSON data supplied as part of `req` is not valid according to the JSON
 Schema `options.schemaKey` found at `options.schemaPath`.  If the content is valid, execute the supplied `next` function
 and let some other downstream piece of middleware continue the conversation.
 
