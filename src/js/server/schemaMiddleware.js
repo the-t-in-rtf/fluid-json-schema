@@ -11,6 +11,7 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("./schemaHandler");
+require("../common/hasRequiredOptions");
 
 fluid.defaults("gpii.schema.middleware.handler", {
     gradeNames: ["gpii.schema.handler"],
@@ -25,22 +26,14 @@ fluid.defaults("gpii.schema.middleware.handler", {
 fluid.registerNamespace("gpii.schema.middleware");
 
 gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
-    if (that.options.schemaPath && that.options.schemaKey) {
-        var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
-        var results = that.validator.validate(that.options.schemaKey, toValidate);
-        if (results) {
-            var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-            that.handler.sendResponse(res, 400, transformedResults);
-        }
-        else {
-            next();
-        }
+    var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
+    var results = that.validator.validate(that.options.schemaKey, toValidate);
+    if (results) {
+        var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
+        that.handler.sendResponse(res, 400, transformedResults);
     }
     else {
-        // We choose to fail if we can't validate the body.  That way anything downstream is guaranteed to
-        // only receive valid content.
-        var message = "Your gpii.schema.middleware instance isn't correctly configured, so it can't validate anything.";
-        that.handler.sendResponse(res, 500, { ok: false, error: message });
+        next();
     }
 };
 
@@ -50,7 +43,11 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 
  */
 fluid.defaults("gpii.schema.middleware", {
-    gradeNames: ["gpii.express.middleware"],
+    gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
+    requiredFields: {
+        "schemaPath": true,
+        "schemaKey": true
+    },
     responseSchemaKey: "message.json",
     responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     messages: {
