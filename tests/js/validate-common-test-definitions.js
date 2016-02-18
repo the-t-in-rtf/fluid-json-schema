@@ -3,53 +3,6 @@
 //
 "use strict";
 var fluid = require("infusion");
-var gpii = fluid.registerNamespace("gpii");
-var jqUnit = require("node-jqunit");
-
-fluid.registerNamespace("gpii.schema.tests.validator");
-
-// We are working with test definitions that look like:
-//
-//  emptyDerived: {
-//    message:     "Validate an empty 'derived' record....",
-//    schema:      "derived.json",
-//    content:     {},
-//    errors:      true,
-//    errorPaths: [".required", ".deeply.nested.additionalRequired"]
-//  }
-//
-// See `options.tests` below for examples.
-//
-gpii.schema.tests.validator.singleTest = function (that, message, schema, content, errors, errorPaths, multipleErrorPaths) {
-    jqUnit.test(message, function () {
-        var result = that.validate(schema, content);
-
-        if (errors) {
-            if (errorPaths) {
-                gpii.schema.tests.hasFieldErrors(result, errorPaths);
-            }
-            if (multipleErrorPaths) {
-                gpii.schema.tests.hasFieldErrors(result, multipleErrorPaths, true);
-            }
-        }
-        else {
-            jqUnit.assertUndefined("There should be no validation errors...", result);
-        }
-    });
-};
-
-gpii.schema.tests.validator.runTests = function (that) {
-    fluid.each(that.options.tests, function (test) {
-        gpii.schema.tests.validator.singleTest(that, test.message, test.schema, test.content, test.errors, test.errorPaths, test.multipleErrorPaths);
-    });
-
-    // This last test is the only one that can't use `hasFieldErrors`
-    jqUnit.test("Test handling of non-JSON content....", function () {
-        var bogus = "{}";
-        var result = that.validate("base.json", bogus);
-        jqUnit.assertNotUndefined("There should be validation errors...", result);
-    });
-};
 
 // A convenience grade that holds our "dehydrated" test definitions.
 fluid.defaults("gpii.schema.tests.validator.hasDehydratedTests", {
