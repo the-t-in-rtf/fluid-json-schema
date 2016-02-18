@@ -49,11 +49,6 @@ gpii.schema.tests.validator.browser.validateContent = function (schema, content)
     return clientValidator.validate(schema, content);
 };
 
-// A function to evaluate whether the correct errors were returned
-gpii.schema.tests.validator.browser.hasCorrectErrors = function (validatorOutput, errorFields, multiple) {
-    gpii.schema.tests.hasFieldErrors(validatorOutput, errorFields, multiple);
-};
-
 // A function to wire up a series of test sequences based on our "common" (to this package) test format:
 //
 //  emptyDerived: {
@@ -80,14 +75,14 @@ gpii.schema.tests.validator.browser.hasCorrectErrors = function (validatorOutput
 //      },
 //      {
 //        event:    "{gpii.templates.tests.browser.environment}.browser.events.onEvaluateComplete",
-//        listener: "gpii.schema.tests.validator.browser.hasCorrectErrors",
+//        listener: "gpii.schema.tests.hasFieldErrors",
 //        args:     ["The correct errors should be returned...", [".required", ".deeply.nested.additionalRequired"]]
 //      },
 //    ]
 //  }
 //
 // The checks for multiples are similar, but add a final `true` argument to the call to
-// `gpii.schema.tests.validator.browser.hasCorrectErrors`.
+// `gpii.schema.tests.hasFieldErrors`.
 //
 // The checks for tests that do not have errors would look even simpler, as we are expecting `undefined` to be the
 // output and can simply use `jqUnit.assertUndefined` to test that..
@@ -106,9 +101,14 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
                 func: "{gpii.schema.tests.validator.browser.environment}.browser.goto",
                 args: ["{gpii.schema.tests.validator.browser.environment}.options.url"]
             },
-
+            // TODO:  Listenfor the client-side component's `onTemplatesLoaded` event once https://issues.gpii.net/browse/GPII-1574 is fixed.
             {
                 event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onLoaded",
+                listener: "{gpii.schema.tests.validator.browser.environment}.browser.wait",
+                args:     [500]
+            },
+            {
+                event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onWaitComplete",
                 listener: "{gpii.schema.tests.validator.browser.environment}.browser.evaluate",
                 args:     [gpii.schema.tests.validator.browser.validateContent, testDefinition.schema, testDefinition.content]
             }
@@ -119,7 +119,7 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
 
             sequence.push({
                 event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onEvaluateComplete",
-                listener: "gpii.schema.tests.validator.browser.hasCorrectErrors",
+                listener: "gpii.schema.tests.hasFieldErrors",
                 args:     ["{arguments}.0", errorPaths, hasMultiples]
             });
         }
@@ -143,15 +143,15 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
     return finalSequences;
 };
 
+
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
 fluid.defaults("gpii.schema.tests.validator.browser.caseHolder", {
-    gradeNames: ["gpii.tests.browser.caseHolder.withExpress"],
+    gradeNames: ["gpii.tests.browser.caseHolder.withExpress", "gpii.schema.tests.validator.hasDehydratedTests"],
     moduleSource: {
         funcName: "gpii.schema.tests.validator.browser.constructTestSequences",
         args:     ["{that}"]
-    },
-    commonTests: gpii.schema.tests.validator.testDefinitions
+    }
 });
 
 fluid.defaults("gpii.schema.tests.validator.browser.environment", {
@@ -168,6 +168,16 @@ fluid.defaults("gpii.schema.tests.validator.browser.environment", {
             type: "gpii.schema.tests.harness",
             options: {
                 port: "{testEnvironment}.options.port"
+            }
+        },
+        browser: {
+            options: {
+                listeners: {
+                    "onError": {
+                        funcName: "fluid.log",
+                        args: ["BROWSER ERROR:", "{arguments}.0"]
+                    }
+                }
             }
         },
         caseHolder: {

@@ -8,17 +8,22 @@ var jqUnit = require("node-jqunit");
 require("../../../");
 
 fluid.registerNamespace("gpii.schema.tests");
-gpii.schema.tests.hasFieldErrors = function (results, fieldPaths, multiple) {
-    if (fieldPaths) {
-        fluid.each(fieldPaths, function (path) {
-            var pathSegments = gpii.schema.validator.ajv.extractPathSegments(path);
-            var target = gpii.schema.validator.ajv.resolveOrCreateTargetFromPath(results.fieldErrors, pathSegments);
 
+// Inspects a response body (`results`) looking for errors that match the paths specified in `fieldPaths` (dot notation paths within `fieldErrors`.  If `multiple`
+// is specified, there should be more than one error at each `fieldPath`.
+gpii.schema.tests.hasFieldErrors = function (results, fieldPointers, multiple) {
+    if (fieldPointers) {
+        var errorsFound = {};
+        fluid.each(results, function (error) {
+            errorsFound[error.schemaPath] = !isNaN(errorsFound[error.schemaPath]) ? errorsFound[error.schemaPath]++ : 1;
+        });
+
+        fluid.each(fieldPointers, function (pointer) {
             if (multiple) {
-                jqUnit.assertTrue("There should be multiple errors for the field at path '" + path + "'...", target && target.length >= 1);
+                jqUnit.assertTrue("There should be multiple errors for field '" + pointer + "'...", errorsFound[pointer] >= 1);
             }
             else {
-                jqUnit.assertTrue("There should be a single error for the field at path '" + path + "'...", target && target.length === 1);
+                jqUnit.assertEquals("There should be a single error for field '" + pointer + "'...", 1, errorsFound[pointer]);
             }
         });
     }
@@ -26,12 +31,3 @@ gpii.schema.tests.hasFieldErrors = function (results, fieldPaths, multiple) {
         jqUnit.assertTrue("There should be field errors...", results.fieldErrors && results.fieldErrors.length > 0);
     }
 };
-
-gpii.schema.tests.hasDocumentErrors = function (results) {
-    jqUnit.assertTrue("There should be document errors...", results.documentErrors && results.documentErrors.length > 0);
-};
-
-gpii.schema.tests.hasErrors = function (results) {
-    jqUnit.assertTrue("There should be errors...", fluid.makeArray(results.documentErrors).length > 0 || fluid.makeArray(results.fieldErrors).length > 0);
-};
-
