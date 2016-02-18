@@ -96,7 +96,7 @@ fluid.defaults("gpii.schema.validator.ajv", {
     invokers: {
         validate: {
             funcName: "gpii.schema.validator.ajv.validate",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1"]
+            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // schemaKey, schemaContent
         }
     },
     listeners: {
