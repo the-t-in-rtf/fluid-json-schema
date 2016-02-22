@@ -2,33 +2,50 @@
 (function () {
     "use strict";
     fluid.defaults("gpii.schema.tests.errorBinder", {
-        gradeNames: ["gpii.schemas.client.errorAwareForm"],
+        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation"],
         hideOnSuccess: false,
         ajaxOptions: {
-            url: "/login",
+            url:    "/gated/POST",
             method: "POST"
         },
+        schemaKey: "evolved.json",
         templates: {
-            initial:     "errorBinder-viewport",
-            success:     "common-success",
-            error:       "common-error",
-            inlineError: "inline-error"
+            initial:     "errorBinder-viewport"
+        },
+        rules: {
+            modelToRequestPayload: {
+                "":                "notfound",
+                shallowlyRequired: "shallowlyRequired",
+                testString:        "testString",
+                testAllOf:         "testAllOf",
+                succeed:           "succeed",
+                deep: {
+                    deeplyRequired:    "deeplyRequired"
+                }
+            },
+            successResponseToModel: {
+                successMessage: { literalValue: "Record validated on the server side."}
+            }
         },
         model: {
         },
         bindings: {
             // We use both styles of bindings to confirm that they each work with the `errorBinder`.
-            username: "username",
-            password: {
-                selector: "password",
-                path:     "password"
-            }
+            shallowlyRequired: "shallowlyRequired",
+            testString: {
+                selector: "testString",
+                path:     "testString"
+            },
+            testAllOf: "testAllOf",
+            deeplyRequired: "deeplyRequired",
+            succeed: "succeed"
         },
         selectors: {
-            username: "input[name='username']",
-            password: "input[name='password']",
-            // TODO: Wire this up to submit even if there are errors
-            forceSubmit: ".forceSubmit"
+            shallowlyRequired: "input[name='shallowlyRequired']",
+            testString:        "input[name='testString']",
+            testAllOf:         "input[name='testAllOf']",
+            deeplyRequired:    "input[name='deeplyRequired']",
+            succeed:           "input[name='succeed']"
         }
     });
 })(jQuery);

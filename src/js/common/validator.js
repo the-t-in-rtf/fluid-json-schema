@@ -48,11 +48,16 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
 
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
-    var evolvedErrors = fluid.transform(rawErrors, function (error) {
-        return that.parser.evolveError(schemaKey, error);
-    });
+    if (that.parser.isReady) {
+        var evolvedErrors = fluid.transform(rawErrors, function (error) {
+            return that.parser.evolveError(schemaKey, error);
+        });
 
-    return evolvedErrors;
+        return evolvedErrors;
+    }
+    else {
+        return rawErrors;
+    }
 };
 
 /*

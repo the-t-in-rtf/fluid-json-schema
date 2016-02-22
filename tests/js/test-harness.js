@@ -64,8 +64,14 @@ fluid.defaults("gpii.schema.tests.harness", {
         inline: {
             type: "gpii.express.hb.inline",
             options: {
-                path: "/hbs",
+                path:         "/hbs",
                 templateDirs: "%gpii-json-schema/tests/templates"
+            }
+        },
+        inlineSchemas: {
+            type: "gpii.schema.inline.router",
+            options: {
+                schemaDirs: "%gpii-json-schema/tests/schemas"
             }
         },
         gated: {

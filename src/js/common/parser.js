@@ -11,8 +11,8 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var $RefParser = $RefParser ? $RefParser : require("json-schema-ref-parser");
-var jsonpointer = jsonpointer ? jsonpointer : require("jsonpointer.js");
+var $RefParser = $RefParser || require("json-schema-ref-parser");
+var jsonpointer = jsonpointer || require("jsonpointer.js");
 
 fluid.registerNamespace("gpii.schema.parser");
 
@@ -181,7 +181,8 @@ fluid.defaults("gpii.schema.parser", {
     },
     members: {
         parser: null,
-        dereferencedSchemas: {}
+        dereferencedSchemas: {},
+        isReady: false
     },
     invokers: {
         dereferenceSchema: {
@@ -195,6 +196,13 @@ fluid.defaults("gpii.schema.parser", {
         evolveError: {
             funcName: "gpii.schema.parser.evolveError",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // schemaKey, jsonPointer
+        }
+    },
+    listeners: {
+        "onSchemasUpdated.indicateReadiness": {
+            funcName: "fluid.set",
+            args:     ["{that}", "isReady", true]
+
         }
     },
     modelListeners: {

@@ -11,5 +11,6 @@ require("./src/js/server/validator");
 require("./src/js/common/parser");
 require("./src/js/server/parser");
 require("./src/js/server/schemaMiddleware");
+require("./src/js/server/schemaInlineRouter");
 require("./src/js/server/schemaHandler");
 

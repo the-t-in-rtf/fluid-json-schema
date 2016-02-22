@@ -13,10 +13,10 @@
             var selector     = typeof value === "string" ? key   : value.selector;
             var element      = that.locate(selector);
             if (element) {
-                // TODO:  Make an expander to automatically convert paths in binder definitions to usable dataPath values.
                 var expectedPath = "." + (typeof value === "string" ? value : value.path);
                 fluid.each(that.model.fieldErrors, function (error) {
-                    if (error.dataPath === expectedPath) {
+                    var errorDataPath = error.keyword === "required" ? error.dataPath + "." + error.params.missingProperty : error.dataPath;
+                    if (errorDataPath === expectedPath) {
                         // element, key, context
                         that.renderer.before(element, that.options.templates.inlineError, error);
                     }
@@ -35,24 +35,22 @@
         selectors: {
             "validationError": ".validationError"
         },
+        templates: {
+            inlineError: "validation-error-inline"
+        },
         model: {
-            fieldErrors: [
-                {
-                    "keyword": "required",
-                    "dataPath": ".username",
-                    "message": "Username is a required field."
-                },
-                {
-                    "keyword": "pattern",
-                    "dataPath": ".password",
-                    "message": "Passwords must be at least 8 characters long, and must contain at least one uppercase character, lowercase character, and special character or number."
-                }
-            ]
+            fieldErrors: []
         },
         components: {
-            // This very much will not work unless you pass in template content yourself.
             renderer: {
                 type: "gpii.templates.renderer"
+            },
+            error: {
+                options: {
+                    model: {
+                        message: "{gpii.schemas.client.errorBinder}.model.fieldErrors"
+                    }
+                }
             }
         },
         modelListeners: {
@@ -64,50 +62,48 @@
         }
     });
 
-/*
+    /*
 
-    These client side grades use model->view bindings like those used with `gpii.templates.binder` to associate
-    validation errors reported by the validator with onscreen elements.  That "binding" structure looks something like:
+        These client side grades use model->view bindings like those used with `gpii.templates.binder` to associate
+        validation errors reported by the validator with onscreen elements.  That "binding" structure looks something like:
 
-    ```
-    bindings: {
-        "key": {
-            selector: "selector1",
-            path:     "path1"
-        },
-        "selector2": "path2"
-    }
-    ```
+        ```
+        bindings: {
+            "key": {
+                selector: "selector1",
+                path:     "path1"
+            },
+            "selector2": "path2"
+        }
+        ```
 
-    The map of bindings used by the base component are stored under `options.errorBindings`.  By default, the component
-    tries to pick up the existing value from `options.bindings`, so that you can easily reuse existing bindings from
-    grades like 'templateFormControl`.
+        The map of bindings used by the base component are stored under `options.errorBindings`.  By default, the component
+        tries to pick up the existing value from `options.bindings`, so that you can easily reuse existing bindings from
+        grades like 'templateFormControl`.
 
-    The core grade requires a `gpii-handlebars` `renderer` component.  An extended version of the `templateFormControl`
-    grade that performs all the necessary wiring is also included here.
+        The core grade requires a `gpii-handlebars` `renderer` component.  An extended version of the `templateFormControl`
+        grade that performs all the necessary wiring is also included here.
 
- */
-/* global fluid */
+     */
 
     // TODO: revalidate using client-side validation when the model changes.
-
-    // TODO: Prevent the form from submitting via the normal submit button if there are validation errors.
-
     // TODO: Create a version of this form that includes client-side validation
+    /* global fluid */
     fluid.defaults("gpii.schemas.client.errorAwareForm", {
         gradeNames: ["gpii.schemas.client.errorBinder", "gpii.templates.templateFormControl"],
+        templates: {
+            error:   "validation-error-summary"
+        },
+        model: {
+            errorMessage: "{that}.model.fieldErrors"
+        },
         rules: {
             successResponseToModel: {
                 fieldErrors: { literalValue: null }
             },
             errorResponseToModel: {
-                errorMessage: "responseJSON.message",
-                fieldErrors:  "responseJSON.fieldErrors"
-            },
-            modelToRequestPayload: {
-                "": "notfound",
-                "username": "username",
-                "password": "password"
+                "":             "notfound",
+                fieldErrors:    "responseJSON.fieldErrors"
             }
         },
         components: {
@@ -124,6 +120,64 @@
                         }
                     }
                 }
+            }
+        }
+    });
+
+    fluid.registerNamespace("gpii.schemas.client.errorAwareForm.clientSideValidation");
+
+    gpii.schemas.client.errorAwareForm.clientSideValidation.submitForm = function (that, event) {
+        if (event) { event.preventDefault(); }
+
+        if (!that.model.fieldErrors || that.model.fieldErrors.length === 0) {
+            // Let the `ajaxCapable` grade handle the request and response.
+            that.makeRequest();
+        }
+    };
+
+    gpii.schemas.client.errorAwareForm.clientSideValidation.validateContent = function (that) {
+        // We assume that the content we will transmit is governed by the rule system from the `ajaxCapable` grade.
+        var dataToValidate = fluid.model.transformWithRules(that.model, that.options.rules.modelToRequestPayload);
+        var validatorResults = that.validator.validate(that.options.schemaKey, dataToValidate);
+        that.applier.change("fieldErrors", validatorResults);
+    };
+
+    // A grade that adds client-side validation.  The form cannot be submitted if there are validation errors.  When the
+    // model changes, content is revalidated.
+    //
+    // You must be able to reach an instance of the `inlineSchema` router as well as individual schemas to use this grade.
+    fluid.defaults("gpii.schemas.client.errorAwareForm.clientSideValidation", {
+        gradeNames:      ["gpii.hasRequiredOptions", "gpii.schemas.client.errorAwareForm"],
+        requiredOptions: ["inlineSchemaUrl", "schemaKey", "rules.modelToRequestPayload"],
+        inlineSchemaUrl: "/allSchemas",
+        invokers: {
+            submitForm: {
+                funcName: "gpii.schemas.client.errorAwareForm.clientSideValidation.submitForm",
+                args:     ["{that}", "{arguments}.0"]
+            },
+            validateContent: {
+                funcName: "gpii.schemas.client.errorAwareForm.clientSideValidation.validateContent",
+                args:     ["{that}"]
+            }
+        },
+        components: {
+            validator: {
+                type: "gpii.schema.validator.ajv.client",
+                options: {
+                    inlineSchemaUrl: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.options.inlineSchemaUrl",
+                    // perform an initial validation pass once the validator is ready
+                    listeners: {
+                        "onSchemasUpdated": {
+                            func: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.validateContent"
+                        }
+                    }
+                }
+            }
+        },
+        modelListeners: {
+            "": {
+                func:          "{that}.validateContent",
+                excludeSource: "init" // The validator will take care of the first pass once it's ready.
             }
         }
     });

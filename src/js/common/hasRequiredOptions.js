@@ -15,13 +15,13 @@
 var fluid = fluid || require("infusion"); // Can also be used within client-side components.
 var gpii = fluid.registerNamespace("gpii");
 
-gpii.checkRequiredOptions = function (options, requiredFields, location, suffix) {
+gpii.checkRequiredOptions = function (options, requiredFields, component) {
     var errors = [];
 
     fluid.each(requiredFields, function (value, path) {
         var requiredValue = fluid.get(options, path);
         if (requiredValue === undefined) {
-            errors.push("You have not supplied the required option '" + path + "'...");
+            errors.push("You have not supplied the required option '" + path + "' in component '" + component.typeName + "'...");
         }
     });
 
