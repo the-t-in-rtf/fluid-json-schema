@@ -1,8 +1,8 @@
 /* global fluid, jQuery */
 (function () {
     "use strict";
-    fluid.defaults("gpii.schema.tests.errorBinder", {
-        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation"],
+
+    fluid.defaults("gpii.schema.tests.errorBinder.base", {
         hideOnSuccess: false,
         ajaxOptions: {
             url:    "/gated/POST",
@@ -44,6 +44,14 @@
             deeplyRequired:    "input[name='deeplyRequired']",
             succeed:           "input[name='succeed']"
         }
+    });
+
+    fluid.defaults("gpii.schema.tests.errorBinder", {
+        gradeNames: ["gpii.schemas.client.errorAwareForm", "gpii.schema.tests.errorBinder.base"]
+    });
+
+    fluid.defaults("gpii.schema.tests.errorBinder.clientSideValidation", {
+        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation", "gpii.schema.tests.errorBinder.base"]
     });
 })(jQuery);
 

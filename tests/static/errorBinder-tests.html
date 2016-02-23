@@ -65,6 +65,16 @@
 
     </head>
     <body>
+        <h3 class="row">Client side validation</h3>
+
+        <div class="errorBinder-clientSideValidation-viewport">
+            <div class="success error"></div>
+        </div>
+
+        <hr/>
+
+        <h3 class="row">Server side validation</h3>
+
         <div class="errorBinder-viewport">
             <div class="success error"></div>
         </div>
@@ -78,10 +88,10 @@
             </p>
         </div>
 
-
         <script type="text/javascript" src="/content/js/testErrorBinder.js"></script>
         <script type="text/javascript">
-            var errorBinder = gpii.schema.tests.errorBinder(".errorBinder-viewport");
+            var errorBinder           = gpii.schema.tests.errorBinder(".errorBinder-viewport");
+            var clientSideErrorBinder = gpii.schema.tests.errorBinder.clientSideValidation(".errorBinder-clientSideValidation-viewport");
         </script>
     </body>
 </html>

@@ -1,3 +1,16 @@
+/*
+
+    This package provides client side components that:
+
+    1. Bind validation errors to onscreen elements.
+    2. Display server-side validation feedback.
+    3. Perform client-side validation and prevent submission if the data is invalid.
+
+    See the documentation for more details:
+
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md
+
+ */
 /* globals fluid */
 (function () {
     "use strict";

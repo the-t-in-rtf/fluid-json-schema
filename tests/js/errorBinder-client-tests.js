@@ -9,9 +9,9 @@ require("./test-harness");
 
 fluid.registerNamespace("gpii.schema.tests.errorBinder");
 
+/*  globals $ */
 // Client side function to count the errors (requires jQuery)
 gpii.schema.tests.errorBinder.countSelectors = function (selector) {
-    /*  globals $ */
     return $(selector).length;
 };
 
@@ -45,11 +45,11 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
     rawModules: [{
         tests: [
             {
-                name: "Confirm that initial validation errors appear correctly after startup...",
+                name: "Confirm that initial client-side validation errors appear correctly after startup...",
                 sequence: [
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.browser.tests.lookupFunction, ".fieldErrors", "innerText"]
+                        args: [gpii.tests.browser.tests.lookupFunction, ".errorBinder-clientSideValidation-viewport .fieldErrors", "innerText"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -58,7 +58,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.browser.tests.lookupFunction, ".shallowlyRequired-block .fieldError", "innerText"]
+                        args: [gpii.tests.browser.tests.lookupFunction, ".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError", "innerText"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -72,18 +72,18 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                 sequence: [
                     {
                         func: "{testEnvironment}.browser.type",
-                        args: ["input[name='shallowlyRequired']", "There is text now."]
+                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
                     },
                     // We have to click somewhere else to change focus and trigger a binder update.
                     {
                         event:    "{testEnvironment}.browser.events.onTypeComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".focusPoint"]
+                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
                     },
                     {
                         event:    "{testEnvironment}.browser.events.onClickComplete",
                         listener: "{testEnvironment}.browser.exists",
-                        args:     [".fieldErrors"]
+                        args:     [".errorBinder-clientSideValidation-viewport .fieldErrors"]
                     },
                     {
                         listener: "jqUnit.assertFalse",
@@ -93,7 +93,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
 
                     {
                         func: "{testEnvironment}.browser.exists",
-                        args: [".fieldError"]
+                        args: [".errorBinder-clientSideValidation-viewport .fieldError"]
                     },
                     {
                         listener: "jqUnit.assertFalse",
@@ -104,18 +104,18 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     // TODO: Enable these steps once https://issues.gpii.net/browse/GPII-1580 is resolved.
                     //{
                     //    func: "{testEnvironment}.browser.insert",
-                    //    args: ["input[name='shallowlyRequired']", null]
+                    //    args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", null]
                     //},
                     //// We have to click somewhere else to change focus and trigger a binder update.
                     //{
                     //    event: "{testEnvironment}.browser.events.onTypeComplete",
                     //    func: "{testEnvironment}.browser.click",
-                    //    args: [".focusPoint"]
+                    //    args: [".errorBinder-clientSideValidation-viewport .focusPoint"]
                     //},
                     //{
                     //    event: "{testEnvironment}.browser.events.onClickComplete",
                     //    listener: "{testEnvironment}.browser.exists",
-                    //    args: [".fieldErrors"]
+                    //    args: [".errorBinder-clientSideValidation-viewport .fieldErrors"]
                     //},
                     //{
                     //    listener: "jqUnit.assertTrue",
@@ -125,7 +125,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     //
                     //{
                     //    func: "{testEnvironment}.browser.exists",
-                    //    args: [".shallowlyRequired-block .fieldError"]
+                    //    args: [".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError"]
                     //},
                     //{
                     //    listener: "jqUnit.assertTrue",
@@ -139,13 +139,13 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                 sequence: [
                     {
                         func: "{testEnvironment}.browser.type",
-                        args:     ["input[name='testAllOf']", "CAT"]
+                        args:     [".errorBinder-clientSideValidation-viewport input[name='testAllOf']", "CAT"]
                     },
                     // We have to click somewhere else to change focus and trigger a binder update.
                     {
                         event:    "{testEnvironment}.browser.events.onTypeComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".focusPoint"]
+                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
                     },
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
@@ -159,18 +159,18 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.type",
-                        args: ["input[name='shallowlyRequired']", "There is text now."]
+                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
                     },
                     {
                         event:    "{testEnvironment}.browser.events.onTypeComplete",
                         listener: "{testEnvironment}.browser.type",
-                        args:     ["input[name='testAllOf']", "CATs"]
+                        args:     [".errorBinder-clientSideValidation-viewport input[name='testAllOf']", "CATs"]
                     },
                     // We have to click somewhere else to change focus and trigger a binder update.
                     {
                         event:    "{testEnvironment}.browser.events.onTypeComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".focusPoint"]
+                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
                     },
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
@@ -189,12 +189,12 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                 sequence: [
                     {
                         func: "{testEnvironment}.browser.click",
-                        args:     [".submit"]
+                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
                     },
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".fieldError"]
+                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .fieldError"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -203,7 +203,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".success .alert-box"]
+                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -212,7 +212,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".error .alert-box"]
+                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -227,17 +227,17 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     // Test a single successful submission
                     {
                         func: "{testEnvironment}.browser.type",
-                        args: ["input[name='shallowlyRequired']", "There is text now."]
+                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
                     },
                     {
                         event:    "{testEnvironment}.browser.events.onTypeComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".submit"]
+                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
                     },
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".success .alert-box"]
+                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -247,18 +247,18 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     // Test a success response followed by a failure, to confirm that the right response (and only that one) is displayed.
                     {
                         func: "{testEnvironment}.browser.uncheck",
-                        args: ["input[name='succeed']"]
+                        args: [".errorBinder-clientSideValidation-viewport input[name='succeed']"]
                     },
                     // We have to click somewhere else to change focus and trigger a binder update.
                     {
                         event:    "{testEnvironment}.browser.events.onUncheckComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".submit"]
+                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
                     },
                     {
                         event:    "{testEnvironment}.browser.events.onClickComplete",
                         listener: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".error .alert-box"]
+                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -267,7 +267,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".success .alert-box"]
+                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -277,17 +277,17 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     // Test an error response followed by a success, to confirm that the right response (and only that one) is displayed.
                     {
                         func: "{testEnvironment}.browser.check",
-                        args: ["input[name='succeed']"]
+                        args: [".errorBinder-clientSideValidation-viewport input[name='succeed']"]
                     },
                     {
                         event:    "{testEnvironment}.browser.events.onCheckComplete",
                         listener: "{testEnvironment}.browser.click",
-                        args:     [".submit"]
+                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
                     },
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".success .alert-box"]
+                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -296,12 +296,46 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".error .alert-box"]
+                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
                         event: "{testEnvironment}.browser.events.onEvaluateComplete",
                         args: ["There should no longer be an error message...", undefined, "{arguments}.0"]
+                    }
+                ]
+            },
+            {
+                name: "Confirm that server-side validation errors are displayed correctly...",
+                sequence: [
+                    // Submit a form with multiple server-side errors.
+                    {
+                        func: "{testEnvironment}.browser.type",
+                        args: [".errorBinder-viewport input[name='testAllOf']", "CAT"]
+                    },
+                    {
+                        event:    "{testEnvironment}.browser.events.onTypeComplete",
+                        listener: "{testEnvironment}.browser.click",
+                        args:     [".errorBinder-viewport .submit"]
+                    },
+                    {
+                        event:    "{testEnvironment}.browser.events.onClickComplete",
+                        listener: "{testEnvironment}.browser.evaluate",
+                        args:     [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-viewport .error .alert-box"]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event:    "{testEnvironment}.browser.events.onEvaluateComplete",
+                        args:     ["There should be an error summary and the server's `message` as well...", 2, "{arguments}.0"]
+                    },
+                    {
+                        func: "{testEnvironment}.browser.evaluate",
+                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-viewport .fieldError"]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event:    "{testEnvironment}.browser.events.onEvaluateComplete",
+                        args:     ["There should be two field-level errors...", 2, "{arguments}.0"]
                     }
                 ]
             }
