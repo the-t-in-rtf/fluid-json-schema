@@ -26,7 +26,7 @@ gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, bo
 
         try {
             var jsonData = typeof body === "string" ? JSON.parse(body) : body;
-            gpii.schema.tests.hasErrors(jsonData);
+            gpii.schema.tests.hasFieldErrors(jsonData);
         }
         catch (e) {
             fluid.fail("There should be no parsing errors:\n" + e);

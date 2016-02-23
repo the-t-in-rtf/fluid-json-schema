@@ -195,7 +195,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             "params": {
                 "limit": 9
             },
-            "message": "You must enter a string that is no more than nine characters long."
+            "message": "You must enter a test string that is no more than nine characters long."
         }],
         overlayedRootFailure: [{
             "keyword": "maxLength",
@@ -213,7 +213,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             "params": {
                 "pattern": ".*CAT.*"
             },
-            "message": "You must enter a string which contains the word \"CAT\"."
+            "message": "You must enter a test string which contains the word \"CAT\"."
         }],
         evolvedDeepFailure: [{
             "keyword": "required",
@@ -231,7 +231,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             "params": {
                 "limit": 9
             },
-            "message": "The string cannot be longer than nine characters."
+            "message": "The 'allOf' string cannot be longer than nine characters."
         }],
         evolvedRequiredFailure: [{
             "keyword": "required",
