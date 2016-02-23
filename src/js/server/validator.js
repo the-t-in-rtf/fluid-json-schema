@@ -16,7 +16,13 @@ require("../../../index");
 
 fluid.registerNamespace("gpii.schema.validator.ajv.server");
 
-// Load any schema files on startup.
+/**
+ *
+ * Load any schema files on startup.
+ *
+ * @param that -  The validator component itself.
+ *
+ */
 gpii.schema.validator.ajv.server.init = function (that) {
     var resolvedPath = fluid.module.resolvePath(that.options.schemaPath);
     var schemas = {};

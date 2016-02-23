@@ -16,10 +16,17 @@ var jsonpointer = jsonpointer || require("jsonpointer.js");
 
 fluid.registerNamespace("gpii.schema.parser");
 
-// Dereference all `$ref` links for a single schema.  See the documentation for details:
-//
-// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey
-//
+/**
+ * Dereference all `$ref` links for a single schema. See the documentation for details.
+ *
+ * https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey
+ *
+ * @param that - The parser component itself.
+ * @param schemaPath {String} - The filesystem path or URI where we can find the schema referenced by `schemaKey`.
+ * @param schemaKey {String} - The filename/id of the schema we are dereferencing.
+ * @returns A `fluid.promise` that will be resolved once the parser has finished dereferencing the schema.
+ *
+ */
 gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
     var parser = new $RefParser(); // jshint ignore:line
     var pathOrUri = fluid.stringTemplate(that.options.uriTemplate, { schemaPath: schemaPath, schemaKey: schemaKey});
@@ -28,7 +35,16 @@ gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
     return promise;
 };
 
-// Wrap the normal callback used by the parser in a `fluid.promise`.
+/**
+ *
+ * Wrap the normal callback used by the parser in a `fluid.promise`.
+ *
+ * @param that - The parser component itself.
+ * @param schemaKey - The filename/id of the schema we are dereferencing.
+ * @param promise - The promise the parser will either resolve or reject once it completes its work.
+ * @returns A {Function} that can be passed directly to the parser as a callback.
+ *
+ */
 gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
     return function (error, schema) {
         if (error) {
@@ -41,10 +57,17 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
     };
 };
 
-// Look up the full dereferenced definition for a single field.  See the documentation for details:
-//
-// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserresolvejsonpointerthat-schemakey-schemafieldpath
-//
+/**
+ *
+ * Look up the full dereferenced definition for a single field.  See the documentation for details:
+ *
+ * https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserresolvejsonpointerthat-schemakey-schemafieldpath
+ *
+ * @param that - The parser component itself.
+ * @param defaultSchemaKey {String} - The schema key to use when referring to pointers like `#/`
+ * @param rawJsonPointer {String} - The JSON pointer to resolve.
+ * @returns The piece of the JSON Schema referred to by rawJonPointer, or undefined if that cannot be found.
+ */
 gpii.schema.parser.resolveJsonPointer = function (that, defaultSchemaKey, rawJsonPointer) {
     // If we are dealing with a remote reference like `filename.json#/definition/foo`, use the remote schema key.
     // Otherwise, for references like '#/definition/bar` use `defaultSchemaKey`.
@@ -61,11 +84,18 @@ gpii.schema.parser.resolveJsonPointer = function (that, defaultSchemaKey, rawJso
     }
 };
 
-
-// Look up the error metadata for a single field. See the documentation for details:
-//
-// https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserevolveerrormessagethat-schemakey-error
-//
+/**
+ *
+ * Look up the error metadata for a single field and use that to "evolve" the raw validator output. See the
+ * documentation for details:
+ *
+ * https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserevolveerrormessagethat-schemakey-error
+ *
+ * @param that - The parser component itself.
+ * @param schemaKey {String} - The filename/id of the JSON Schema we are working with.
+ * @param error {Object} - The validator error to be evolved.
+ * @returns An "evolved" copy of the original error.
+ */
 gpii.schema.parser.evolveError = function (that, schemaKey, error) {
     var evolvedError = fluid.copy(error);
 
@@ -94,7 +124,13 @@ gpii.schema.parser.evolveError = function (that, schemaKey, error) {
     return evolvedError;
 };
 
-// Static function to strip the last part of a JSON pointer. If we are already at the top (i.e. `#/`), we will stay at the top.
+/**
+ *
+ * Static function to strip the last part of a JSON pointer. If we are already at the top (i.e. `#/`), we will stay at the top.
+ *
+ * @param jsonPointer {String} - The original JSON pointer.
+ * @returns A {string} representing the immediate parent of the original pointer.
+ */
 gpii.schema.parser.getParentJsonPointer = function (jsonPointer) {
     if (jsonPointer) {
         var allButLastSegment = jsonPointer.split("/").slice(0, -1).join("/");
@@ -103,24 +139,49 @@ gpii.schema.parser.getParentJsonPointer = function (jsonPointer) {
     }
 };
 
-// Static function to add a `childPath` to an existing JSON pointer.  If keys in the path contain literal slashes
-// or tildes, you are expected to escape them yourself, ~0 in place of literal tildes, and ~1 in place of literal
-// slashes in a key name.
+/**
+ *
+ * Static function to add a `childPath` to an existing JSON pointer.  If keys in the path contain literal slashes
+ * or tildes, you are expected to escape them yourself, ~0 in place of literal tildes, and ~1 in place of literal
+ * slashes in a key name.
+ *
+ * @param jsonPointer {String} - The original JSON pointer.
+ * @param childPath {String} - The child segment(s) to add to the original pointer.
+ * @returns A {string} representing the child JSON pointer.
+ *
+ */
 gpii.schema.parser.getChildJsonPointer = function (jsonPointer, childPath) {
     var pointerSegments = (jsonPointer === "#/") ? ["#"] : jsonPointer.split("/");
     return pointerSegments.concat(childPath).join("/");
 };
 
-// Static function to determine the JSON pointer to an error definition given the JSON pointer to the failure returned by AJV.
-// We will begin with something like `#/field1/type` and return something like `#/field1/errors`.
+/**
+ *
+ * Static function to determine the JSON pointer to an error definition given the JSON pointer to the failure returned
+ * by AJV. We will begin with something like `#/field1/type` and return something like `#/field1/errors`.
+ *
+ * @param failurePointer {String} - A JSON pointer representing the failing rule as reporting by AJV.
+ * @returns An {Object} representing the `errors` block for the given field.
+ *
+ */
 gpii.schema.parser.getFieldErrorsFromFailure = function (failurePointer) {
     var parentJsonPointer = gpii.schema.parser.getParentJsonPointer(failurePointer);
     return gpii.schema.parser.getChildJsonPointer(parentJsonPointer, "errors");
 };
 
 
-// Static function to determine the JSON pointer that points to a missing required field.
-//
+/**
+ *
+ * Static function to determine the JSON pointer that points to a missing required field.  Since required fields are
+ * defined in arrays within the enclosing object, these will be references like `#/required/1`.
+ *
+ * @param that - The parser component itself.
+ * @param schemaKey {String} - The filename/id of the schema we are working with.
+ * @param failurePointer {String} - A JSON pointer representing the validation rule that was broken.
+ * @param propertyToMatch {String} - The missing property as reported by AJV.
+ * @returns A JSON pointer {String} that can be used to look up the relevant error data from the schema.
+ *
+ */
 gpii.schema.parser.getRequiredFieldPointer = function (that, schemaKey, failurePointer, propertyToMatch) {
     var requireDefinitions = that.resolveJsonPointer(schemaKey, failurePointer);
     var requirementIndex = fluid.find(requireDefinitions, function (value, index) {
@@ -138,15 +199,21 @@ gpii.schema.parser.getRequiredFieldPointer = function (that, schemaKey, failureP
     }
 };
 
+/**
+ *
+ * A static function to return the last segment of a given JSON pointer.
+ *
+ * @param jsonPointer {String} - The original JSON pointer.
+ * @returns A {String} representing the last segment of the original pointer.
+ */
 gpii.schema.parser.getLastJsonPointerSegment = function (jsonPointer) {
     var segments = jsonPointer.split("/");
     return segments[segments.length - 1];
 };
 
-/*
-
-  A model listener to dereference and cache a dereferenced version of schemas as they are added to `model.schemas`.
-
+/**
+ *
+ * A model listener to dereference and cache a dereferenced version of schemas as they are added to `model.schemas`.
  */
 gpii.schema.parser.updateSchemas = function (that) {
     var promises = [];

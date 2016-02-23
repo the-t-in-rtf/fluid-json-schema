@@ -12,6 +12,12 @@
 
     fluid.registerNamespace("gpii.schema.validator.ajv.client");
 
+    /**
+     *
+     * Fire off a jQuery AJAX request to retrieve our schemas from the server-side `inlineSchema` router.
+     *
+     * @param that - The client-side validator component.
+     */
     gpii.schema.validator.ajv.client.retrieveSchemas = function (that) {
         $.ajax({
             url:     that.options.inlineSchemaUrl,
@@ -21,6 +27,13 @@
         });
     };
 
+    /**
+     *
+     * Save the schemas returned by the server-side `inlineSchema` router to our model.
+     *
+     * @param that - The client-side validator component.
+     * @param jqXHR - The full jQuery jqXHR response, including the JSON payload containing our schemas.
+     */
     gpii.schema.validator.ajv.client.saveSchemas = function (that, jqXHR) {
         var schemas = jqXHR.responseJSON;
         if (schemas) {

@@ -18,11 +18,13 @@ fluid.registerNamespace("gpii.schema.inline.router");
 var fs   = require("fs");
 var path = require("path");
 
-/*
-
-    Loads all .json files in each `options.schemaDirs` into a map, keyed by filename.  Does not recurse. Only the first
-    entry with a given filename is imported, so entries from the first `schemaDirs` take precedence.
-
+/**
+ *
+ * Loads all .json files in each `options.schemaDirs` into a map, keyed by filename.  Does not recurse. Only the first
+ * entry with a given filename is imported, so entries from the first `schemaDirs` take precedence.
+ *
+ * @param that - The router component itself.
+ *
  */
 gpii.schema.inline.router.loadSchemas = function (that) {
     var schemaDirArray = fluid.makeArray(that.options.schemaDirs);
@@ -44,6 +46,15 @@ gpii.schema.inline.router.loadSchemas = function (that) {
     that.events.onSchemasLoaded.fire(that);
 };
 
+/**
+ *
+ * Send our map of JSON Schemas to the client.
+ *
+ * @param that - The router component.
+ * @param req {Object} - The Express `request` object: http://expressjs.com/en/api.html#req
+ * @param res {Object} - The Express `response` object: http://expressjs.com/en/api.html#res
+ *
+ */
 gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
     res.status(200).send(that.schemas);
 };

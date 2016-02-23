@@ -17,6 +17,13 @@
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.schemas.client.errorBinder");
 
+    /**
+     *
+     * Iterate through the list of validation errors and insert error feedback before the appropriate views.
+     *
+     * @param that - The errorBinder component.
+     *
+     */
     gpii.schemas.client.errorBinder.displayErrors = function (that) {
         // Get rid of any previous validation errors.
         that.locate("fieldError").remove();
@@ -41,6 +48,7 @@
         that.events.onDomBind.fire(that);
     };
 
+    // The base component used to actually display validation errors.
     fluid.defaults("gpii.schemas.client.errorBinder", {
         gradeNames: ["fluid.component"],
         errorBindings: "{that}.options.bindings",
@@ -67,33 +75,7 @@
         }
     });
 
-    /*
-
-        These client side grades use model->view bindings like those used with `gpii.templates.binder` to associate
-        validation errors reported by the validator with onscreen elements.  That "binding" structure looks something like:
-
-        ```
-        bindings: {
-            "key": {
-                selector: "selector1",
-                path:     "path1"
-            },
-            "selector2": "path2"
-        }
-        ```
-
-        The map of bindings used by the base component are stored under `options.errorBindings`.  By default, the component
-        tries to pick up the existing value from `options.bindings`, so that you can easily reuse existing bindings from
-        grades like 'templateFormControl`.
-
-        The core grade requires a `gpii-handlebars` `renderer` component.  An extended version of the `templateFormControl`
-        grade that performs all the necessary wiring is also included here.
-
-     */
-
-    // TODO: revalidate using client-side validation when the model changes.
-    // TODO: Create a version of this form that includes client-side validation
-    /* global fluid */
+    // An instance of `templateFormControl` that uses the `errorBinder` to display server-side errors.
     fluid.defaults("gpii.schemas.client.errorAwareForm", {
         gradeNames: ["gpii.schemas.client.errorBinder", "gpii.templates.templateFormControl"],
         templates: {
@@ -146,6 +128,13 @@
 
     fluid.registerNamespace("gpii.schemas.client.errorAwareForm.clientSideValidation");
 
+    /**
+     *
+     * A gatekeeper function that only allows form submission if there are no validation errors.
+     *
+     * @param that - The clientSideValidation component itself.
+     * @param event - The jQuery Event (see http://api.jquery.com/Types/#Event) passed by the DOM element we're bound to.
+     */
     gpii.schemas.client.errorAwareForm.clientSideValidation.submitForm = function (that, event) {
         if (event) { event.preventDefault(); }
 
@@ -155,6 +144,13 @@
         }
     };
 
+    /**
+     *
+     * Validate client-side model content and display any errors.
+     *
+     * @param that - The clientSideValidation component itself.
+     *
+     */
     gpii.schemas.client.errorAwareForm.clientSideValidation.validateContent = function (that) {
         // We assume that the content we will transmit is governed by the rule system from the `ajaxCapable` grade.
         var dataToValidate = fluid.model.transformWithRules(that.model, that.options.rules.modelToRequestPayload);

@@ -88,25 +88,7 @@ fluid.defaults("gpii.schema.middleware", {
 });
 
 /*
-    TODO: Move this to the documentation.
-
     A wrapper for the `gpii.express.requestAware.router` grade that seamlessly wires in JSON Schema validation.
-
-    The underlying router is an "inner" router component that can only be reached if valid JSON data is passed.  Unlike
-    the raw grade, only the following options are distributed automatically:
-
-    * `options.handlerGrades`: See above.
-    * `options.schemaKey`: See above.
-    * `options.schemaPath`: See above.
-    * `options.method`: Controls what method(s) the inner router will respond to.
-    * `options.rules`: Controls what part of the request is validated.
-
-    Anything else you want to make the "inner" router aware of will need to be distributed or otherwise passed to
-    this grade's `innerRouter` component.
-
-    This grade and derived grades handle `POST` requests by default.  See below for mix-in grades that handle `GET` or
-    `PUT` requests.
-
  */
 fluid.defaults("gpii.schema.middleware.requestAware.router", {
     gradeNames: ["gpii.express.router.passthrough"],
@@ -144,9 +126,7 @@ fluid.defaults("gpii.schema.middleware.requestAware.router", {
 });
 
 /*
-
     A wrapper for the `gpii.express.contentAware.router` grade.
-
  */
 fluid.defaults("gpii.schema.middleware.contentAware.router", {
     gradeNames: ["gpii.schema.middleware.requestAware.router"],

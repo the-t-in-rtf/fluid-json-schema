@@ -11,6 +11,14 @@ var gpii  = fluid.registerNamespace("gpii");
 
 fluid.registerNamespace("gpii.schema.parser.server");
 
+/**
+ *
+ * Dereference a single schema.
+ *
+ * @param that - The parser component itself.
+ * @param schemaKey {String} - The filename|id of the JSON Schema we are working with.
+ * @returns An {Object} representing the dereferenced Schema content.
+ */
 gpii.schema.parser.server.dereferenceSchema = function (that, schemaKey) {
     var resolvedPath = fluid.module.resolvePath(that.options.schemaPath);
     return gpii.schema.parser.dereferenceSchema(that, resolvedPath, schemaKey);

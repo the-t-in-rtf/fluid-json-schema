@@ -40,12 +40,21 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
 
 /*
 
-    Transform raw validator output and add human-readable errors.
-
-    See the documentation for details:
+    Transform raw validator output and add human-readable errors.  See the documentation for details:
 
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md#gpiischemavalidatorajvsanitizevalidationerrorsthat-schemakey-errors
 
+ */
+
+/**
+ *
+ * Iterate through the raw validation errors and evolve them if possible.  This is gated and will abort if the parser is
+ * not yet ready.  This function is called once the parser is ready.
+ *
+ * @param that - The validator component itself.
+ * @param schemaKey {String} - The filename/id of the schema we are working with.
+ * @param rawErrors {Object} - The raw error data returned by AJV.
+ * @returns An {Object} representing the original error data combined with any "evolved" error messages we were able to find.
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
     if (that.parser.isReady) {
@@ -60,10 +69,12 @@ gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, 
     }
 };
 
-/*
-
-If we receive new schemas, make the validator aware of them so that we can simply validate using their key.
-
+/**
+ *
+ * If we receive new schemas, make the validator aware of them so that we can simply validate using their key.
+ *
+ * @param that - The validator component itself.
+ *
  */
 gpii.schema.validator.ajv.refreshSchemas = function (that) {
     // Update the list of schemas using the supplied content

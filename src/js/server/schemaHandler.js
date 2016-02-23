@@ -18,7 +18,15 @@ fluid.registerNamespace("gpii.schema.handler");
 
 var quotedPrintable = require("quoted-printable");
 
-// Send the appropriate headers and then let the underlying grade's `sendResponse` function take over.
+/**
+ *
+ * Send the appropriate headers and then let the underlying grade's `sendResponse` function take over.
+ *
+ * @param that - The handler component itself.
+ * @param response {Object} - The Express `response` object: http://expressjs.com/en/api.html#res
+ * @param statusCode - The numeric HTTP status code.
+ * @param body {Object} - The response payload to send to the browser.
+ */
 gpii.schema.handler.sendResponse = function (that, response, statusCode, body) {
     if (response.headersSent) {
         fluid.log("Can't set headers, they have already been sent.");

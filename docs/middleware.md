@@ -72,14 +72,16 @@ The following component configuration options are supported:
 
 | Option              | Type     | Description |
 | ------------------- | -------- | ----------- |
-| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
-| `schemaPath`        | `String` | The path to a directory that contains a file matching `options.schemaKey`.  On the client-side, this is expected to be a full or relative URI.  On the server-side, this is expected to be a package-relative path such as `%gpii-handlebars/tests/schemas`. |
+| `handlerGrades` | `Array` | An array of grade names that will be used in constructing our request handler. |
+| `method` | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
 | `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
 | `responseSchemaUrl` | `String` |  A base URL where `responseSchemaKey` can be found. |
 | `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
 the incoming data before validation (see above). |
 | `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
 validation errors before they are sent to the user (see above). |
+| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
+| `schemaPath`        | `String` | The path to a directory that contains a file matching `options.schemaKey`.  On the client-side, this is expected to be a full or relative URI.  On the server-side, this is expected to be a package-relative path such as `%gpii-handlebars/tests/schemas`. |
 
 # Invokers
 
@@ -96,3 +98,5 @@ Schema `options.schemaKey` found at `options.schemaPath`.  If the content is val
 and let some other downstream piece of middleware continue the conversation.
 
 This function is expected to be called by Express (or by an instance of `gpii.express`).
+
+
