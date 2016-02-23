@@ -6,7 +6,7 @@
 
     gpii.schemas.client.errorBinder.displayErrors = function (that) {
         // Get rid of any previous validation errors.
-        that.locate("validationError").remove();
+        that.locate("fieldError").remove();
 
         // Step through the list of bindings and look for anything that matches the current validation errors.
         fluid.each(that.options.errorBindings, function (value, key) {
@@ -31,9 +31,8 @@
     fluid.defaults("gpii.schemas.client.errorBinder", {
         gradeNames: ["fluid.component"],
         errorBindings: "{that}.options.bindings",
-        validationErrorClass: "validationError",
         selectors: {
-            "validationError": ".validationError"
+            "fieldError": ".fieldError"
         },
         templates: {
             inlineError: "validation-error-inline"
@@ -44,13 +43,6 @@
         components: {
             renderer: {
                 type: "gpii.templates.renderer"
-            },
-            error: {
-                options: {
-                    model: {
-                        message: "{gpii.schemas.client.errorBinder}.model.fieldErrors"
-                    }
-                }
             }
         },
         modelListeners: {
@@ -94,15 +86,15 @@
         templates: {
             error:   "validation-error-summary"
         },
-        model: {
-            errorMessage: "{that}.model.fieldErrors"
-        },
         rules: {
             successResponseToModel: {
-                fieldErrors: { literalValue: null }
+                fieldErrors:  { literalValue: [] },
+                errorMessage: { literalValue: false }
             },
             errorResponseToModel: {
                 "":             "notfound",
+                successMessage: { literalValue: false},
+                errorMessage:   "responseJSON.message",
                 fieldErrors:    "responseJSON.fieldErrors"
             }
         },
@@ -118,6 +110,21 @@
                             funcName: "gpii.schemas.client.errorBinder.displayErrors",
                             args: ["{gpii.schemas.client.errorAwareForm}"]
                         }
+                    }
+                }
+            },
+            success: {
+                options: {
+                    model: {
+                        message:    "{gpii.schemas.client.errorAwareForm}.model.successMessage"
+                    }
+                }
+            },
+            error: {
+                options: {
+                    model: {
+                        message:    "{gpii.schemas.client.errorAwareForm}.model.errorMessage",
+                        fieldErrors: "{gpii.schemas.client.errorAwareForm}.model.fieldErrors"
                     }
                 }
             }
@@ -138,7 +145,8 @@
     gpii.schemas.client.errorAwareForm.clientSideValidation.validateContent = function (that) {
         // We assume that the content we will transmit is governed by the rule system from the `ajaxCapable` grade.
         var dataToValidate = fluid.model.transformWithRules(that.model, that.options.rules.modelToRequestPayload);
-        var validatorResults = that.validator.validate(that.options.schemaKey, dataToValidate);
+        // The trailing empty array seems to avoid problems in relaying the data to the errors component.
+        var validatorResults = that.validator.validate(that.options.schemaKey, dataToValidate) || [];
         that.applier.change("fieldErrors", validatorResults);
     };
 

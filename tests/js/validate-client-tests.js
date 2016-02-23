@@ -101,7 +101,7 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
                 func: "{gpii.schema.tests.validator.browser.environment}.browser.goto",
                 args: ["{gpii.schema.tests.validator.browser.environment}.options.url"]
             },
-            // TODO:  Listenfor the client-side component's `onTemplatesLoaded` event once https://issues.gpii.net/browse/GPII-1574 is fixed.
+            // TODO:  Listen for the client-side component's `onTemplatesLoaded` event once https://issues.gpii.net/browse/GPII-1574 is fixed.
             {
                 event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onLoaded",
                 listener: "{gpii.schema.tests.validator.browser.environment}.browser.wait",

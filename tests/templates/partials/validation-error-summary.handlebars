@@ -1,9 +1,14 @@
-<div data-alert class="alert-box alert validationError" tabindex="0" aria-live="assertive" role="alertdialog">
-    <p>The information you provided is incomplete or incorrect.  Please check the following:</p>
+{{#if message}}
+    <div class="alert-box alert">{{message}}</div>
+{{/if}}
+{{#if fieldErrors}}
+    <div data-alert class="alert-box alert fieldErrors" tabindex="0" aria-live="assertive" role="alertdialog">
+        <p>The information you provided is incomplete or incorrect.  Please check the following:</p>
 
-    <ul>
-        {{#each message}}
-            <li>{{message}}</li>
-        {{/each}}
-    </ul>
-</div>
+        <ul>
+            {{#each fieldErrors}}
+                <li>{{message}}</li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

@@ -22,9 +22,6 @@
                 deep: {
                     deeplyRequired:    "deeplyRequired"
                 }
-            },
-            successResponseToModel: {
-                successMessage: { literalValue: "Record validated on the server side."}
             }
         },
         model: {

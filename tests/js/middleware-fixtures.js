@@ -12,7 +12,8 @@ fluid.registerNamespace("gpii.schema.tests.middleware.underlyingHandler");
 gpii.schema.tests.middleware.underlyingHandler.handleRequest = function (that) {
     // Reuse the validation rules to get a consistent payload across all methods.
     var data = fluid.model.transformWithRules(that.request, that.options.rules.requestContentToValidate);
-    if (data.succeed) {
+    // TODO:  Simplify this once the binder properly supports checkboxes: https://issues.gpii.net/browse/GPII-1577
+    if (data.succeed || data["succeed[]"]) {
         that.sendResponse(200, { ok: true, message: that.options.messages.success});
     }
     else {
