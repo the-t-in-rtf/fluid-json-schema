@@ -18,7 +18,7 @@ fluid.defaults("gpii.schema.middleware.handler", {
     invokers: {
         handleRequest: {
             func: "{that}.sendResponse",
-            args: ["{that}.options.statusCode", "{that}.options.message"]
+            args: [400, "{that}.options.body"]
         }
     }
 });
@@ -30,7 +30,7 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     var results = that.validator.validate(that.options.schemaKey, toValidate);
     if (results) {
         var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-        that.handler.sendResponse(res, 400, transformedResults);
+        that.events.onInvalidRequest.fire(req, res, transformedResults);
     }
     else {
         next();
@@ -39,11 +39,12 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 
 /*
 
-    The `gpii.express.middleware` that rejects invalid responses.
+    The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
+    Express router or middleware function.
 
  */
 fluid.defaults("gpii.schema.middleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
+    gradeNames: ["gpii.express.middleware", "gpii.express.requestAware.base", "gpii.hasRequiredOptions"],
     requiredFields: {
         "schemaPath": true,
         "schemaKey": true
@@ -64,14 +65,21 @@ fluid.defaults("gpii.schema.middleware", {
             "fieldErrors": ""
         }
     },
-    components: {
-        handler: {
-            type: "gpii.schema.handler.base",
+    events: {
+        "onInvalidRequest": null
+    },
+    handlerGrades: ["gpii.schema.middleware.handler"],
+    dynamicComponents: {
+        requestHandler: {
+            createOnEvent: "onInvalidRequest",
             options: {
+                body: "{arguments}.2",
                 schemaKey: "{gpii.schema.middleware}.options.responseSchemaKey",
                 schemaUrl: "{gpii.schema.middleware}.options.responseSchemaUrl"
             }
-        },
+        }
+    },
+    components: {
         validator: {
             type: "gpii.schema.validator.ajv.server",
             options: {
@@ -109,6 +117,7 @@ fluid.defaults("gpii.schema.middleware.requestAware.router", {
         gateKeeper: {
             type: "gpii.schema.middleware",
             options: {
+                method:     "{gpii.schema.middleware.requestAware.router}.options.method",
                 rules:      "{gpii.schema.middleware.requestAware.router}.options.rules",
                 schemaKey:  "{gpii.schema.middleware.requestAware.router}.options.schemaKey",
                 schemaPath: "{gpii.schema.middleware.requestAware.router}.options.schemaPath"

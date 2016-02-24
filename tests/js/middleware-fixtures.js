@@ -22,7 +22,9 @@ gpii.schema.tests.middleware.underlyingHandler.handleRequest = function (that) {
 };
 
 fluid.defaults("gpii.schema.tests.middleware.underlyingHandler", {
-    gradeNames: ["gpii.express.handler"],
+    gradeNames: ["gpii.schema.handler"],
+    schemaKey: "message.json",
+    schemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     invokers: {
         handleRequest: {
             funcName: "gpii.schema.tests.middleware.underlyingHandler.handleRequest",

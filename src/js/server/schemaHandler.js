@@ -39,28 +39,12 @@ gpii.schema.handler.sendResponse = function (that, response, statusCode, body) {
     gpii.express.handler.sendResponse(that, response, statusCode, body);
 };
 
-// Common shared definitions used in both final grades below
-fluid.defaults("gpii.schema.handler.common", {
-    gradeNames: ["gpii.hasRequiredOptions"],
+fluid.defaults("gpii.schema.handler", {
+    gradeNames: ["gpii.schema.handler.common", "gpii.express.handler", "gpii.hasRequiredOptions"],
     requiredFields: {
         "schemaKey": true,
         "schemaUrl": true
-    }
-});
-
-// A companion grade designed for use with `gpii.express.base`.  Intended for static rather than dynamic use.
-fluid.defaults("gpii.schema.handler.base", {
-    gradeNames: ["gpii.schema.handler.common", "gpii.express.handler.base"],
-    invokers: {
-        sendResponse: {
-            funcName: "gpii.schema.handler.sendResponse",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // response, statusCode, body
-        }
-    }
-});
-
-fluid.defaults("gpii.schema.handler", {
-    gradeNames: ["gpii.schema.handler.common", "gpii.express.handler"],
+    },
     invokers: {
         sendResponse: {
             funcName: "gpii.schema.handler.sendResponse",
