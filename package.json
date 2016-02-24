@@ -14,8 +14,9 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "3.6.0",
+    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#c83ff8cde8ba37c72f7e26bebf81c44d1a681c36",
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#4d0314d123ccc543da41a4cd1fc5471d4260e24a",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#8f6fb0f94fd70cd82c17070cc13580602861d7d5",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#828917e540e79d94fd7fbc19af4fcef54fb26e62",
     "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",
