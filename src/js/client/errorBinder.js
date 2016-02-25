@@ -183,13 +183,7 @@
             validator: {
                 type: "gpii.schema.validator.ajv.client",
                 options: {
-                    inlineSchemaUrl: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.options.inlineSchemaUrl",
-                    // perform an initial validation pass once the validator is ready
-                    listeners: {
-                        "onSchemasUpdated": {
-                            func: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.validateContent"
-                        }
-                    }
+                    inlineSchemaUrl: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.options.inlineSchemaUrl"
                 }
             }
         }
@@ -203,6 +197,19 @@
                 func:          "{that}.validateContent",
                 excludeSource: "init" // The validator will take care of the first pass once it's ready.
             }
+        },
+        components: {
+            validator: {
+                options: {
+                    // perform an initial validation pass once the validator is ready
+                    listeners: {
+                        "onSchemasUpdated.validateContent": {
+                            func: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.validateContent"
+                        }
+                    }
+                }
+            }
         }
+
     });
 })();
