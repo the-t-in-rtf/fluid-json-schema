@@ -192,12 +192,6 @@
                     }
                 }
             }
-        },
-        modelListeners: {
-            "": {
-                func:          "{that}.validateContent",
-                excludeSource: "init" // The validator will take care of the first pass once it's ready.
-            }
         }
     });
 
