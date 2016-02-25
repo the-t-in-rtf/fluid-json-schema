@@ -61,8 +61,8 @@ for more details about supported options.
 
 # `gpii.schemas.client.errorAwareForm.clientSideValidation`
 
-This is an extended version of the `errorAwareForm` grade that adds client-side validation.  It listens for all
-model changes, validating the model and updating the onscreen error messages.
+This is an extended version of the `errorAwareForm` grade that adds client-side validation.  It validates the model
+content before submitting and prevents form submission if there are any errors.
 
 ## Component options
 
@@ -84,3 +84,8 @@ binding this to your own elements, see the `templateFormControl` documentation i
 
 Validate client-side model content and display any errors.  It expects to validate the same transformed model data the
 form transmits (see the `rules.modelToRequestPayload` option above).
+
+# `gpii.schemas.client.errorAwareForm.clientSideValidation.realTime`
+
+This is an extended version of the `clientSideValidation` grade that listens for all model changes, revalidates the
+model and updates the onscreen error messages in real time.

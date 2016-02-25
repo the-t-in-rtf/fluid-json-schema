@@ -51,7 +51,7 @@
     });
 
     fluid.defaults("gpii.schema.tests.errorBinder.clientSideValidation", {
-        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation", "gpii.schema.tests.errorBinder.base"]
+        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation.realTime", "gpii.schema.tests.errorBinder.base"]
     });
 })(jQuery);
 

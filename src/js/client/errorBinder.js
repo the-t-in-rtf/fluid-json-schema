@@ -138,6 +138,9 @@
     gpii.schemas.client.errorAwareForm.clientSideValidation.submitForm = function (that, event) {
         if (event) { event.preventDefault(); }
 
+        // Validate our data at least once before attempting to submit it.
+        that.validateContent();
+
         if (!that.model.fieldErrors || that.model.fieldErrors.length === 0) {
             // Let the `ajaxCapable` grade handle the request and response.
             that.makeRequest();
@@ -159,8 +162,7 @@
         that.applier.change("fieldErrors", validatorResults);
     };
 
-    // A grade that adds client-side validation.  The form cannot be submitted if there are validation errors.  When the
-    // model changes, content is revalidated.
+    // A grade that adds client-side validation before the form is submitted.  The form cannot be submitted if there are validation errors.
     //
     // You must be able to reach an instance of the `inlineSchema` router as well as individual schemas to use this grade.
     fluid.defaults("gpii.schemas.client.errorAwareForm.clientSideValidation", {
@@ -191,6 +193,17 @@
                 }
             }
         },
+        modelListeners: {
+            "": {
+                func:          "{that}.validateContent",
+                excludeSource: "init" // The validator will take care of the first pass once it's ready.
+            }
+        }
+    });
+
+    // A "real time" validation grade that extends the `clientSideValidation` grade to revalidate when the model changes.
+    fluid.defaults("gpii.schemas.client.errorAwareForm.clientSideValidation.realTime", {
+        gradeNames:      ["gpii.schemas.client.errorAwareForm.clientSideValidation"],
         modelListeners: {
             "": {
                 func:          "{that}.validateContent",
