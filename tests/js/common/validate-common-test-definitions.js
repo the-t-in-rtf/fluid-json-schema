@@ -45,21 +45,21 @@ fluid.defaults("gpii.schema.tests.validator.hasDehydratedTests", {
             schema:     "base.json",
             content:    { required: "bogus"},
             errors:     true,
-            errorPaths: ["#/definitions/required/type"]
+            errorPaths: ["#/properties/required/type"]
         },
         invalidDerived: {
             message:    "Validate an invalid 'derived' record....",
             schema:     "derived.json",
             content:    { required: "bogus", additionalRequired: "also bogus" },
             errors:     true,
-            errorPaths: ["base.json#/definitions/required/type", "#/properties/additionalRequired/type"]
+            errorPaths: ["#/properties/required/type", "#/properties/additionalRequired/type"]
         },
         badRawMultiple: {
             message:    "Validate a field that fails multiple rules (raw output)...",
             schema:     "base.json",
             content:    { required: true, rawMultiple: "bogus" },
             errors:     true,
-            errorPaths: ["#/definitions/rawMultiple/allOf/0/minLength", "#/definitions/rawMultiple/allOf/1/pattern", "#/definitions/rawMultiple/allOf/3/pattern"]
+            errorPaths: ["#/properties/rawMultiple/allOf/0/minLength", "#/properties/rawMultiple/allOf/1/pattern", "#/properties/rawMultiple/allOf/3/pattern"]
         },
         goodMultiple: {
             message: "Validate a field that passes multiple rules...",
@@ -81,7 +81,7 @@ fluid.defaults("gpii.schema.tests.validator.hasDehydratedTests", {
                 regex:     "bogus"
             },
             errors: true,
-            errorPaths: ["#/definitions/number/type", "#/definitions/date/format", "#/definitions/array/type", "#/definitions/boolean/type", "#/definitions/regex/pattern"]
+            errorPaths: ["#/properties/number/type", "#/properties/date/format", "#/properties/array/type", "#/properties/boolean/type", "#/properties/regex/pattern"]
         }
     }
 });

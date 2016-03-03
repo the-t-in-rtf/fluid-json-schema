@@ -4,6 +4,7 @@
 
     fluid.defaults("gpii.schema.tests.errorBinder.base", {
         hideOnSuccess: false,
+        inlineSchemaUrl: "/allSchemas",
         ajaxOptions: {
             url:    "/gated/POST",
             method: "POST"

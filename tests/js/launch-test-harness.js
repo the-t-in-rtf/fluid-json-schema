@@ -4,7 +4,7 @@ fluid.setLogging(true);
 
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./test-harness");
+require("./lib/harness");
 
 gpii.schema.tests.harness({
     "expressPort" :   6904,

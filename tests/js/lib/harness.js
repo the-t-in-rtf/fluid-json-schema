@@ -1,11 +1,12 @@
 /*
-    Test harness common to all Zombie tests.  Loads all required server-side components.
+    Test harness common to all tests that use `gpii-express`.  Loads all required server-side components.
  */
 "use strict";
 var fluid = require("infusion");
 
-require("../../");
+require("../../../");
 require("gpii-express");
+
 require("gpii-handlebars");
 
 require("./middleware-fixtures.js");
@@ -13,6 +14,17 @@ require("./middleware-fixtures.js");
 fluid.defaults("gpii.schema.tests.harness", {
     gradeNames: ["gpii.express"],
     port: 6194,
+    events: {
+        onInlineRouterReady: null,
+        onGatedRouterReady: null,
+        onAllReady: {
+            events: {
+                "onStarted":           "onStarted",
+                "onInlineRouterReady": "onInlineRouterReady",
+                "onGatedRouterReady":  "onGatedRouterReady"
+            }
+        }
+    },
     baseUrl: {
         expander: {
             funcName: "fluid.stringTemplate",
@@ -54,13 +66,6 @@ fluid.defaults("gpii.schema.tests.harness", {
                 content: "%gpii-json-schema/tests/static"
             }
         },
-        schemas: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/schemas",
-                content: "%gpii-json-schema/tests/schemas"
-            }
-        },
         inline: {
             type: "gpii.express.hb.inline",
             options: {
@@ -71,11 +76,23 @@ fluid.defaults("gpii.schema.tests.harness", {
         inlineSchemas: {
             type: "gpii.schema.inline.router",
             options: {
-                schemaDirs: "%gpii-json-schema/tests/schemas"
+                schemaDirs: "%gpii-json-schema/tests/schemas",
+                listeners: {
+                    "onSchemasDereferenced.notifyEnvironment": {
+                        func: "{gpii.schema.tests.harness}.events.onInlineRouterReady.fire"
+                    }
+                }
             }
         },
         gated: {
-            type: "gpii.schema.tests.middleware.router"
+            type: "gpii.schema.tests.middleware.router",
+            options: {
+                listeners: {
+                    "onSchemasDereferenced.notifyEnvironment": {
+                        func: "{gpii.schema.tests.harness}.events.onGatedRouterReady.fire"
+                    }
+                }
+            }
         }
     }
 });

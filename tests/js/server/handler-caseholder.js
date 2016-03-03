@@ -1,37 +1,22 @@
 // Test `gpii.schema.middleware` and its subcomponents.
 //
 "use strict";
-var fluid        =  require("infusion");
-var gpii         = fluid.registerNamespace("gpii");
-var jqUnit       = require("node-jqunit");
+var fluid = require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
-// We use just the request-handling bits of the kettle stack in our tests, but we include the whole thing to pick up the base grades
 var kettle = require("kettle");
 kettle.loadTestingSupport();
 
+require("../lib/checkResponseHeaders");
+
 // The server-side libraries we are testing
-require("../../");
-
-fluid.registerNamespace("gpii.schema.tests.handler.caseHolder");
-gpii.schema.tests.handler.caseHolder.examineResponse = function (response, body, typePattern, linkPattern) {
-    if (typePattern) {
-        var contentType = response.headers["content-type"];
-        jqUnit.assertTrue("The content type header should contain our key...", contentType && contentType.match(typePattern));
-    }
-
-    if (linkPattern) {
-        var link = response.headers.link;
-        jqUnit.assertTrue("The link header should contain our key...", link && link.match(linkPattern) !== -1);
-    }
-
-    jqUnit.assertNotUndefined("There should be body content", body);
-};
+require("../../../");
 
 fluid.defaults("gpii.schema.tests.handler.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder"],
+    gradeNames: ["gpii.schema.tests.caseHolder"],
     rawModules: [
         {
             tests: [
@@ -43,7 +28,7 @@ fluid.defaults("gpii.schema.tests.handler.caseHolder", {
                             func: "{request}.send"
                         },
                         {
-                            listener: "gpii.schema.tests.handler.caseHolder.examineResponse",
+                            listener: "gpii.schema.tests.checkResponseHeaders",
                             event:    "{request}.events.onComplete",
                             args:     ["{request}.nativeResponse", "{arguments}.0", "sample", "sample"]
                         }

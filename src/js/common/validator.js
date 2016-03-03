@@ -30,6 +30,7 @@ gpii.schema.validator.ajv.init = function (that) {
  */
 gpii.schema.validator.ajv.validate = function (that, key, content) {
     var contentValid = that.ajv.validate(key, content);
+
     if (!contentValid) {
         return (gpii.schema.validator.ajv.sanitizeValidationErrors(that, key, that.ajv.errors));
     }
@@ -57,16 +58,12 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
  * @returns An {Object} representing the original error data combined with any "evolved" error messages we were able to find.
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
-    if (that.parser.isReady) {
-        var evolvedErrors = fluid.transform(rawErrors, function (error) {
-            return that.parser.evolveError(schemaKey, error);
-        });
+    var schemaContent = that.model.schemas[schemaKey];
+    var evolvedErrors = fluid.transform(rawErrors, function (error) {
+        return gpii.schema.errors.evolveError(schemaContent, error);
+    });
 
-        return evolvedErrors;
-    }
-    else {
-        return rawErrors;
-    }
+    return evolvedErrors;
 };
 
 /**
@@ -92,7 +89,7 @@ gpii.schema.validator.ajv.refreshSchemas = function (that) {
         }
     });
 
-    that.events.schemasLoaded.fire(that);
+    that.events.onSchemasRefreshed.fire(that);
 };
 
 fluid.defaults("gpii.schema.validator.ajv", {
@@ -103,11 +100,12 @@ fluid.defaults("gpii.schema.validator.ajv", {
         messages: true,  // Display human-readable error messages
         allErrors: true  // Generate a complete list of errors and not just the first failure.
     },
-    events: {
-        schemasLoaded: null
-    },
     model: {
         schemas: {}
+    },
+    events: {
+        onSchemasLoaded:    null,
+        onSchemasRefreshed: null
     },
     invokers: {
         validate: {
@@ -119,24 +117,10 @@ fluid.defaults("gpii.schema.validator.ajv", {
         "onCreate.init": {
             funcName: "gpii.schema.validator.ajv.init",
             args:     ["{that}"]
-        }
-    },
-    modelListeners: {
-        "schemas": {
+        },
+        "onSchemasLoaded.refreshSchemas": {
             funcName:      "gpii.schema.validator.ajv.refreshSchemas",
-            excludeSource: "init",
             args:          ["{that}"]
-        }
-    },
-    components: {
-        parser: {
-            type: "gpii.schema.parser",
-            options: {
-                schemaPath: "{gpii.schema.validator.ajv}.options.schemaPath",
-                model: {
-                    schemas: "{gpii.schema.validator.ajv}.model.schemas"
-                }
-            }
         }
     }
 });

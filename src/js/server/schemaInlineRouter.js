@@ -15,37 +15,6 @@ require("../common/hasRequiredOptions");
 
 fluid.registerNamespace("gpii.schema.inline.router");
 
-var fs   = require("fs");
-var path = require("path");
-
-/**
- *
- * Loads all .json files in each `options.schemaDirs` into a map, keyed by filename.  Does not recurse. Only the first
- * entry with a given filename is imported, so entries from the first `schemaDirs` take precedence.
- *
- * @param that - The router component itself.
- *
- */
-gpii.schema.inline.router.loadSchemas = function (that) {
-    var schemaDirArray = fluid.makeArray(that.options.schemaDirs);
-    fluid.each(schemaDirArray, function (schemaDirs) {
-        var resolvedschemaDirs = fluid.module.resolvePath(schemaDirs);
-        var dirContents = fs.readdirSync(resolvedschemaDirs);
-        fluid.each(dirContents, function (directoryEntry) {
-            if (directoryEntry.match(/.json$/i)) {
-                if (!that.schemas[directoryEntry]) {
-                    var filePath = path.resolve(resolvedschemaDirs, directoryEntry);
-                    var schemaStringContent = fs.readFileSync(filePath, { encoding: "utf8"});
-                    var schemaContent = JSON.parse(schemaStringContent);
-                    that.schemas[directoryEntry] = schemaContent;
-                }
-            }
-        });
-    });
-
-    that.events.onSchemasLoaded.fire(that);
-};
-
 /**
  *
  * Send our map of JSON Schemas to the client.
@@ -56,7 +25,7 @@ gpii.schema.inline.router.loadSchemas = function (that) {
  *
  */
 gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
-    res.status(200).send(that.schemas);
+    res.status(200).send(that.model.schemas);
 };
 
 /*
@@ -65,16 +34,16 @@ gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
 
  */
 fluid.defaults("gpii.schema.inline.router", {
-    gradeNames: ["gpii.express.router", "gpii.hasRequiredOptions"],
+    gradeNames: ["gpii.express.router", "gpii.hasRequiredOptions", "fluid.modelComponent"],
     path: "/allSchemas",
     events: {
-        onSchemasLoaded: null
+        onSchemasDereferenced: null
     },
     requiredFields: {
         "schemaDirs": true
     },
-    members: {
-        schemas: {}
+    model: {
+        schemas: "{parser}.model.dereferencedSchemas"
     },
     invokers: {
         route: {
@@ -82,10 +51,17 @@ fluid.defaults("gpii.schema.inline.router", {
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `request`, `response`
         }
     },
-    listeners: {
-        "onCreate.loadSchemas": {
-            funcName: "gpii.schema.inline.router.loadSchemas",
-            args:     ["{that}"]
+    components: {
+        parser: {
+            type: "gpii.schema.parser",
+            options: {
+                schemaDirs: "{gpii.schema.inline.router}.options.schemaDirs",
+                listeners: {
+                    "onSchemasDereferenced.notifyRouter": {
+                        func: "{gpii.schema.inline.router}.events.onSchemasDereferenced.fire"
+                    }
+                }
+            }
         }
     }
 });

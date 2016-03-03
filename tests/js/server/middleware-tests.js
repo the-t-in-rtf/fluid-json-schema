@@ -1,28 +1,32 @@
-// Test `gpii.schema.middleware` and its subcomponents for all method types.
-//
+/*
+
+    Tests for the "schema Middleware" that rejects requests with invalid JSON payloads.
+
+*/
 "use strict";
-var fluid        =  require("infusion");
-var gpii         = fluid.registerNamespace("gpii");
+var fluid =  require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
-require("./lib/errors");
+require("../lib/errors");
+require("../lib/checkResponseHeaders");
+require("../lib/fixtures");
 
 var kettle = require("kettle");
 kettle.loadTestingSupport();
 
-require("../../");
-require("./handler-caseholder");
+require("../../../");
 
 fluid.registerNamespace("gpii.schema.tests.middleware.caseHolder");
 gpii.schema.tests.middleware.caseHolder.examineResponse = function (response, body, shouldBeValid) {
 
     if (shouldBeValid) {
-        gpii.schema.tests.handler.caseHolder.examineResponse(response, body);
+        gpii.schema.tests.checkResponseHeaders(response, body);
     }
     else {
-        gpii.schema.tests.handler.caseHolder.examineResponse(response, body, "message", "message");
+        gpii.schema.tests.checkResponseHeaders(response, body, "message", "message");
 
         try {
             var jsonData = typeof body === "string" ? JSON.parse(body) : body;
@@ -62,7 +66,7 @@ fluid.defaults("gpii.schema.tests.middleware.request.put", {
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder"],
+    gradeNames: ["gpii.schema.tests.caseHolder"],
     rawModules: [
         {
             tests: [
@@ -240,3 +244,15 @@ fluid.defaults("gpii.schema.tests.middleware.caseHolder", {
         }
     }
 });
+
+fluid.defaults("gpii.schema.tests.middleware.testEnvironment", {
+    gradeNames: ["gpii.schema.tests.testEnvironment"],
+    port:       7533,
+    components: {
+        caseHolder: {
+            type: "gpii.schema.tests.middleware.caseHolder"
+        }
+    }
+});
+
+gpii.schema.tests.middleware.testEnvironment();

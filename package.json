@@ -14,7 +14,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "3.6.0",
-    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#c83ff8cde8ba37c72f7e26bebf81c44d1a681c36",
+    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#53c0038d3c4334b210f8f5a19f1f5d9e9c39e167",
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#d4eee18a0f2286624fe70c7e0565a51a9fda3d0e",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#ec9b56e0987a766c7b9d7c1b216704d541dbfcec",
     "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",

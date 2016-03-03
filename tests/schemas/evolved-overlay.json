@@ -20,11 +20,11 @@
     "shallowlyRequired"
   ],
   "errors": {
-    "evolved.json#/definitions/testString/minLength":        "You must enter a BETTER string that is at least four characters long.",
-    "evolved.json#/definitions/testString/maxLength":        "You must enter a BETTER string that is no more than nine characters long.",
-    "evolved.json#/definitions/testAllOf/allOf/0/type":      "You must enter a BETTER string.",
-    "evolved.json#/definitions/testAllOf/allOf/1/minLength": "The BETTER string must be at least four characters long.",
-    "evolved.json#/definitions/testAllOf/allOf/2/maxLength": "The BETTER string cannot be longer than nine characters.",
-    "evolved.json#/definitions/testAllOf/allOf/3/pattern":   "The BETTER string must contain the word 'CAT'."
+    "#/properties/testString/minLength":        "You must enter a BETTER string that is at least four characters long.",
+    "#/properties/testString/maxLength":        "You must enter a BETTER string that is no more than nine characters long.",
+    "#/properties/testAllOf/allOf/0/type":      "You must enter a BETTER string.",
+    "#/properties/testAllOf/allOf/1/minLength": "The BETTER string must be at least four characters long.",
+    "#/properties/testAllOf/allOf/2/maxLength": "The BETTER string cannot be longer than nine characters.",
+    "#/properties/testAllOf/allOf/3/pattern":   "The BETTER string must contain the word 'CAT'."
   }
 }

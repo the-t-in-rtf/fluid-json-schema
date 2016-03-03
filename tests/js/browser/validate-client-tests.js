@@ -20,11 +20,11 @@ var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-test-browser");
 
-require("./lib/errors");
-require("./test-harness");
-require("./validate-common-test-definitions");
+require("../lib/errors");
+require("../lib/harness");
+require("../common/validate-common-test-definitions");
 
-require("../../");
+require("../../../");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();

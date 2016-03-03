@@ -3,7 +3,7 @@
 var fluid        =  require("infusion");
 var gpii         = fluid.registerNamespace("gpii");
 
-require("./test-harness");
+require("../lib/fixtures");
 require("./handler-caseholder");
 
 fluid.defaults("gpii.schema.tests.handler.schemaHandler", {
@@ -19,21 +19,11 @@ fluid.defaults("gpii.schema.tests.handler.schemaHandler", {
 });
 
 fluid.defaults("gpii.schema.tests.handler.testEnvironment", {
-    gradeNames: ["fluid.test.testEnvironment"],
+    gradeNames: ["gpii.schema.tests.testEnvironment"],
     port:       7523,
-    events: {
-        constructServer: null,
-        onStarted: null
-    },
     components: {
         harness: {
-            createOnEvent: "constructServer",
-            type: "gpii.schema.tests.harness",
             options: {
-                "port" : "{testEnvironment}.options.port",
-                events: {
-                    onStarted: "{testEnvironment}.events.onStarted"
-                },
                 components: {
                     router: {
                         type: "gpii.express.requestAware.router",

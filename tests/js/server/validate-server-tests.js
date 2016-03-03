@@ -12,9 +12,9 @@ var jqUnit = require("node-jqunit");
 //    setTimeout(function () { jqUnit.start(); jqUnit.assertTrue("Stuff has started", true); }, 2000);
 //});
 
-require("../../");
-require("./validate-common-test-definitions");
-require("./lib/errors");
+require("../../../");
+require("../common/validate-common-test-definitions");
+require("../lib/errors");
 
 fluid.registerNamespace("gpii.schema.tests.validator.server");
 
@@ -66,7 +66,7 @@ gpii.schema.tests.validator.server.constructTestSequences = function (that) {
                     func: "{testEnvironment}.events.onConstructFixtures.fire"
                 },
                 {
-                    event:    "{testEnvironment}.events.onSchemasUpdated",
+                    event:    "{testEnvironment}.events.onSchemasLoaded",
                     listener: "gpii.schema.tests.validator.server.singleTest",
                     args:     ["{testEnvironment}.validator", testDefinition]
                 }
@@ -83,7 +83,7 @@ gpii.schema.tests.validator.server.constructTestSequences = function (that) {
                 func: "{testEnvironment}.events.onConstructFixtures.fire"
             },
             {
-                event:    "{testEnvironment}.events.onSchemasUpdated",
+                event:    "{testEnvironment}.events.onSchemasLoaded",
                 listener: "gpii.schema.tests.validator.server.invalidJsonTest",
                 args:     ["{testEnvironment}.validator"]
             }
@@ -109,7 +109,7 @@ fluid.defaults("gpii.schema.tests.validator.server.caseHolder", {
 fluid.defaults("gpii.schema.tests.validator.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
-        onSchemasUpdated:    null,
+        onSchemasLoaded:    null,
         onConstructFixtures: null
     },
     components: {
@@ -117,11 +117,11 @@ fluid.defaults("gpii.schema.tests.validator.server.environment", {
             type: "gpii.schema.validator.ajv.server",
             createOnEvent: "onConstructFixtures",
             options: {
-                schemaPath: "%gpii-json-schema/tests/schemas",
+                schemaDirs: "%gpii-json-schema/tests/schemas",
                 schemaKey:  "base.json",
                 listeners: {
-                    "onSchemasUpdated.notifyEnvironment": {
-                        func: "{testEnvironment}.events.onSchemasUpdated.fire"
+                    "onSchemasLoaded.notifyEnvironment": {
+                        func: "{testEnvironment}.events.onSchemasLoaded.fire"
                     }
                 }
             }

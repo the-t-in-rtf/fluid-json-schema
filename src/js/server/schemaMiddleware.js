@@ -46,8 +46,8 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 fluid.defaults("gpii.schema.middleware", {
     gradeNames: ["gpii.express.middleware", "gpii.express.requestAware.base", "gpii.hasRequiredOptions"],
     requiredFields: {
-        "schemaPath": true,
-        "schemaKey": true
+        schemaDirs: true,
+        schemaKey: true
     },
     responseSchemaKey: "message.json",
     responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
@@ -56,17 +56,18 @@ fluid.defaults("gpii.schema.middleware", {
     },
     rules: {
         validationErrorsToResponse: {
-            "ok": {
+            ok: {
                 literalValue: false
             },
-            "message": {
+            message: {
                 literalValue: "{that}.options.messages.error"
             },
-            "fieldErrors": ""
+            fieldErrors: ""
         }
     },
     events: {
-        "onInvalidRequest": null
+        onInvalidRequest: null,
+        onSchemasDereferenced: null
     },
     handlerGrades: ["gpii.schema.middleware.handler"],
     dynamicComponents: {
@@ -83,7 +84,12 @@ fluid.defaults("gpii.schema.middleware", {
         validator: {
             type: "gpii.schema.validator.ajv.server",
             options: {
-                schemaPath: "{gpii.schema.middleware}.options.schemaPath"
+                schemaDirs: "{gpii.schema.middleware}.options.schemaDirs",
+                listeners: {
+                    "onSchemasDereferenced.notifyMiddleware": {
+                        func: "{gpii.schema.middleware}.events.onSchemasDereferenced.fire"
+                    }
+                }
             }
         }
     },
@@ -101,6 +107,9 @@ fluid.defaults("gpii.schema.middleware", {
 fluid.defaults("gpii.schema.middleware.requestAware.router", {
     gradeNames: ["gpii.express.router.passthrough"],
     method:     "post",
+    events: {
+        onSchemasDereferenced: null
+    },
     rules: {
         requestContentToValidate: {
             "": "body"
@@ -120,7 +129,12 @@ fluid.defaults("gpii.schema.middleware.requestAware.router", {
                 method:     "{gpii.schema.middleware.requestAware.router}.options.method",
                 rules:      "{gpii.schema.middleware.requestAware.router}.options.rules",
                 schemaKey:  "{gpii.schema.middleware.requestAware.router}.options.schemaKey",
-                schemaPath: "{gpii.schema.middleware.requestAware.router}.options.schemaPath"
+                schemaDirs: "{gpii.schema.middleware.requestAware.router}.options.schemaDirs",
+                listeners: {
+                    "onSchemasDereferenced.notifyRouter": {
+                        func: "{gpii.schema.middleware.requestAware.router}.events.onSchemasDereferenced.fire"
+                    }
+                }
             }
         },
         innerRouter: {

@@ -38,12 +38,12 @@
         var schemas = jqXHR.responseJSON;
         if (schemas) {
             that.applier.change("schemas", schemas);
+            that.events.onSchemasLoaded.fire();
         }
     };
 
     fluid.defaults("gpii.schema.validator.ajv.client", {
         gradeNames: ["gpii.schema.validator.ajv", "gpii.hasRequiredOptions"],
-        schemaPath: "/schemas",
         requiredFields: {
             "inlineSchemaUrl": true
         },
@@ -60,22 +60,6 @@
             saveSchemas: {
                 funcName: "gpii.schema.validator.ajv.client.saveSchemas",
                 args:     ["{that}", "{arguments}.2"]
-            }
-        },
-        components: {
-            parser: {
-                type: "gpii.schema.parser",
-                options: {
-                    schemaPath: "{gpii.schema.validator.ajv}.options.schemaPath",
-                    model: {
-                        schemas: "{gpii.schema.validator.ajv}.model.schemas"
-                    },
-                    listeners: {
-                        "onSchemasUpdated.notifyValidator": {
-                            func: "{gpii.schema.validator.ajv.client}.events.onSchemasUpdated.fire"
-                        }
-                    }
-                }
             }
         }
     });

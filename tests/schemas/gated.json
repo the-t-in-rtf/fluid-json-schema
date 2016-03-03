@@ -39,15 +39,9 @@
     }
   },
   "properties": {
-    "testString": {
-      "$ref": "#/definitions/testString"
-    },
-    "testAllOf": {
-      "$ref": "#/definitions/testAllOf"
-    },
-    "deep": {
-      "$ref": "#/definitions/deep"
-    }
+    "testString": { "$ref": "#/definitions/testString" },
+    "testAllOf":  { "$ref": "#/definitions/testAllOf" },
+    "deep":       { "$ref": "#/definitions/deep" }
   },
   "required": [
     "shallowlyRequired"

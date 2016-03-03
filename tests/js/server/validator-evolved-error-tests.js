@@ -10,18 +10,12 @@ var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
-require("../../");
+require("../../../");
 
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
 fluid.registerNamespace("gpii.schema.parser.tests.server");
-
-gpii.schema.parser.tests.server.testSchemaCaching = function (that) {
-    jqUnit.assertTrue("There should be a dereferenced schema after startup...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas["base.json"]));
-
-    jqUnit.assertTrue("A derived schema should have been correctly dereferenced as well...", Boolean(that.dereferencedSchemas && that.dereferencedSchemas["derived.json"]));
-};
 
 gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey, content, expected) {
     var output = validator.validate(schemaKey, content);
@@ -33,16 +27,6 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
     rawModules: [
         {
             tests: [
-                {
-                    name: "Testing the initial dereferencing of schema content...",
-                    type: "test",
-                    sequence: [
-                        {
-                            funcName: "gpii.schema.parser.tests.server.testSchemaCaching",
-                            args:     ["{testEnvironment}.validator.parser"]
-                        }
-                    ]
-                },
                 {
                     name: "Testing a single unevolved failure...",
                     type: "test",
@@ -163,7 +147,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             {
                 "keyword": "minLength",
                 "dataPath": ".password",
-                "schemaPath": "#/definitions/password/allOf/0/minLength",
+                "schemaPath": "#/properties/password/allOf/0/minLength",
                 "params": {
                     "limit": 8
                 },
@@ -172,7 +156,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             {
                 "keyword": "pattern",
                 "dataPath": ".password",
-                "schemaPath": "#/definitions/password/allOf/1/pattern",
+                "schemaPath": "#/properties/password/allOf/1/pattern",
                 "params": {
                     "pattern": "[A-Z]+"
                 },
@@ -181,7 +165,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
             {
                 "keyword": "pattern",
                 "dataPath": ".password",
-                "schemaPath": "#/definitions/password/allOf/3/pattern",
+                "schemaPath": "#/properties/password/allOf/3/pattern",
                 "params": {
                     "pattern": "[^a-zA-Z]"
                 },
@@ -191,7 +175,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
         evolvedRootFailure: [{
             "keyword": "maxLength",
             "dataPath": ".testString",
-            "schemaPath": "#/definitions/testString/maxLength",
+            "schemaPath": "#/properties/testString/maxLength",
             "params": {
                 "limit": 9
             },
@@ -200,7 +184,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
         overlayedRootFailure: [{
             "keyword": "maxLength",
             "dataPath": ".testString",
-            "schemaPath": "evolved.json#/definitions/testString/maxLength",
+            "schemaPath": "#/properties/testString/maxLength",
             "params": {
                 "limit": 9
             },
@@ -209,7 +193,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
         inheritedFailure: [{
             "keyword": "pattern",
             "dataPath": ".testString",
-            "schemaPath": "evolved.json#/definitions/testString/pattern",
+            "schemaPath": "#/properties/testString/pattern",
             "params": {
                 "pattern": ".*CAT.*"
             },
@@ -218,7 +202,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
         evolvedDeepFailure: [{
             "keyword": "required",
             "dataPath": ".deep",
-            "schemaPath": "evolved.json#/definitions/deep/required",
+            "schemaPath": "#/properties/deep/required",
             "params": {
                 "missingProperty": "deeplyRequired"
             },
@@ -227,7 +211,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
         evolvedArrayFailure: [{
             "keyword": "maxLength",
             "dataPath": ".testAllOf",
-            "schemaPath": "#/definitions/testAllOf/allOf/2/maxLength",
+            "schemaPath": "#/properties/testAllOf/allOf/2/maxLength",
             "params": {
                 "limit": 9
             },
@@ -250,17 +234,17 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
         constructServer:  null,
-        onSchemasUpdated: null,
+        onSchemasLoaded: null,
         onStarted: {
             events: {
-                onSchemasUpdated: "onSchemasUpdated"
+                onSchemasLoaded: "onSchemasLoaded"
             }
         }
     },
     distributeOptions: {
-        target: "{that > gpii.schema.validator.ajv.server}.options.components.parser.options.listeners.onSchemasUpdated",
+        target: "{that > gpii.schema.validator.ajv.server}.options.listeners.onSchemasLoaded",
         record: {
-            func: "{testEnvironment}.events.onSchemasUpdated.fire"
+            func: "{testEnvironment}.events.onSchemasLoaded.fire"
         }
     },
     components: {
@@ -268,7 +252,7 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             type: "gpii.schema.validator.ajv.server",
             createOnEvent: "constructServer",
             options: {
-                schemaPath: "%gpii-json-schema/tests/schemas"
+                schemaDirs: "%gpii-json-schema/tests/schemas"
             }
         },
         caseHolder: {

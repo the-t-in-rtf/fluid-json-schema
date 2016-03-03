@@ -1,68 +1,46 @@
 /*
 
-    A server-side wrapper for the validation component.  See the documentation for details:
+    A server-side wrapper for the validation component.  The server-side parser loads the schema content used here. See
+    the documentation for details:
 
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md
 
  */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
-
-var path    = require("path");
-var fs      = require("fs");
 
 require("../../../index");
 
 fluid.registerNamespace("gpii.schema.validator.ajv.server");
 
-/**
- *
- * Load any schema files on startup.
- *
- * @param that -  The validator component itself.
- *
- */
-gpii.schema.validator.ajv.server.init = function (that) {
-    var resolvedPath = fluid.module.resolvePath(that.options.schemaPath);
-    var schemas = {};
-    fluid.each(fs.readdirSync(resolvedPath), function (filename) {
-        if (filename.match(/.json$/i)) {
-            var schemaPath = path.resolve(resolvedPath, filename);
-            var content    = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
-
-            schemas[filename] = content;
-        }
-    });
-
-    that.applier.change("schemas", schemas);
-};
-
 fluid.defaults("gpii.schema.validator.ajv.server", {
     gradeNames: ["gpii.schema.validator.ajv", "gpii.hasRequiredOptions"],
     requiredFields: {
-        "schemaPath": true
+        schemaDirs: true
     },
     events: {
-        onSchemasUpdated: null
-    },
-    listeners: {
-        "onCreate.loadSchemas": {
-            funcName: "gpii.schema.validator.ajv.server.init",
-            args:     ["{that}"]
+        onSchemasDereferenced: null,
+        // Map the common `onSchemasLoaded` event to `onSchemasReferenced`, as the parser loaded them for us.
+        onSchemasLoaded: {
+            events: {
+                onSchemasDereferenced: "onSchemasDereferenced"
+            }
         }
+    },
+    model: {
+        schemas: {}
     },
     components: {
         parser: {
-            type: "gpii.schema.parser.server",
+            type: "gpii.schema.parser",
             options: {
-                schemaPath: "{gpii.schema.validator.ajv}.options.schemaPath",
+                schemaDirs: "{gpii.schema.validator.ajv}.options.schemaDirs",
                 model: {
-                    schemas: "{gpii.schema.validator.ajv}.model.schemas"
+                    dereferencedSchemas: "{gpii.schema.validator.ajv.server}.model.schemas"
                 },
                 listeners: {
-                    "onSchemasUpdated.notifyValidator": {
-                        func: "{gpii.schema.validator.ajv.server}.events.onSchemasUpdated.fire"
+                    "onSchemasDereferenced.notifyValidator": {
+                        func: "{gpii.schema.validator.ajv.server}.events.onSchemasDereferenced.fire"
                     }
                 }
             }

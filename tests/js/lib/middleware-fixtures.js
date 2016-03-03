@@ -4,7 +4,7 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-express");
-require("../../");
+require("../../../");
 
 // A handler which delivers a "success" or "failure" message depending on a single user-supplied flag.
 fluid.registerNamespace("gpii.schema.tests.middleware.underlyingHandler");
@@ -36,7 +36,7 @@ fluid.defaults("gpii.schema.tests.middleware.underlyingHandler", {
 // A base grade for all the "method" variations on our router.
 fluid.defaults("gpii.schema.tests.middleware.router.base", {
     gradeNames: ["gpii.schema.middleware.requestAware.router"],
-    schemaPath: "%gpii-json-schema/tests/schemas",
+    schemaDirs: "%gpii-json-schema/tests/schemas",
     schemaKey:  "gated.json",
     handlerGrades: ["gpii.schema.tests.middleware.underlyingHandler"],
     messages: {
@@ -89,15 +89,48 @@ fluid.defaults("gpii.schema.tests.middleware.router", {
     gradeNames: ["gpii.express.router.passthrough"],
     path: "/gated",
     method: "use",
+    events: {
+        onGetSchemasDereferenced:  null,
+        onPostSchemasDereferenced: null,
+        onPutSchemasDereferenced:  null,
+        onSchemasDereferenced: {
+            events: {
+                onGetSchemasDereferenced:  "onGetSchemasDereferenced",
+                onPostSchemasDereferenced: "onPostSchemasDereferenced",
+                onPutSchemasDereferenced:  "onPutSchemasDereferenced"
+            }
+        }
+    },
     components: {
         get: {
-            type: "gpii.schema.tests.middleware.router.get"
+            type: "gpii.schema.tests.middleware.router.get",
+            options: {
+                listeners: {
+                    "onSchemasDereferenced.notifyParent": {
+                        func: "{gpii.schema.tests.middleware.router}.events.onGetSchemasDereferenced.fire"
+                    }
+                }
+            }
         },
         post: {
-            type: "gpii.schema.tests.middleware.router.post"
+            type: "gpii.schema.tests.middleware.router.post",
+            options: {
+                listeners: {
+                    "onSchemasDereferenced.notifyParent": {
+                        func: "{gpii.schema.tests.middleware.router}.events.onPostSchemasDereferenced.fire"
+                    }
+                }
+            }
         },
         put: {
-            type: "gpii.schema.tests.middleware.router.put"
+            type: "gpii.schema.tests.middleware.router.put",
+            options: {
+                listeners: {
+                    "onSchemasDereferenced.notifyParent": {
+                        func: "{gpii.schema.tests.middleware.router}.events.onPutSchemasDereferenced.fire"
+                    }
+                }
+            }
         }
     }
 });

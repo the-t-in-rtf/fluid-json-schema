@@ -5,7 +5,7 @@ var gpii  = fluid.registerNamespace("gpii");
 require("gpii-test-browser");
 gpii.tests.browser.loadTestingSupport();
 
-require("./test-harness");
+require("../lib/harness");
 
 fluid.registerNamespace("gpii.schema.tests.errorBinder");
 
