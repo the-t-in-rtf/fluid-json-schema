@@ -208,6 +208,17 @@
                         }
                     }
                 }
+            },
+            error: {
+                options: {
+                    // Override the default model listener, as (unlike the defaults) our error component might already
+                    // have model data (validation errors) on startup.
+                    modelListeners: {
+                        "": {
+                            func: "{that}.renderInitialMarkup"
+                        }
+                    }
+                }
             }
         }
 
