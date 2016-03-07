@@ -21,12 +21,13 @@ gpii.schema.validator.ajv.init = function (that) {
     gpii.schema.validator.ajv.refreshSchemas(that);
 };
 
-/*
-
- Validate JSON content against a known Schema.  See the documentation for details:
-
- https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md#gpiischemavalidatorajvvalidatethat-key-content
-
+/**
+ *
+ * @param that {Object} the validator component itself.
+ * @param key {String} The key of the JSON Schema we are validating against.
+ * @param content {Object} The JSON data to be validated.
+ * @returns `{Object}` sanitized validation errors, if there are any, or `undefined` if there are no validation errors.
+ *
  */
 gpii.schema.validator.ajv.validate = function (that, key, content) {
     var contentValid = that.ajv.validate(key, content);
@@ -38,14 +39,6 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
     return undefined;
 };
 
-
-/*
-
-    Transform raw validator output and add human-readable errors.  See the documentation for details:
-
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md#gpiischemavalidatorajvsanitizevalidationerrorsthat-schemakey-errors
-
- */
 
 /**
  *

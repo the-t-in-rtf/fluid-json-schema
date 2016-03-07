@@ -25,6 +25,13 @@ fluid.defaults("gpii.schema.middleware.handler", {
 
 fluid.registerNamespace("gpii.schema.middleware");
 
+/**
+ *
+ * @param that {Object} The middleware component itself.
+ * @param req {Object} The Express request object.
+ * @param res {Object} The Express response object.
+ * @param next {Function} The function to be executed next in the middleware chain.
+ */
 gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
     var results = that.validator.validate(that.options.schemaKey, toValidate);
@@ -102,7 +109,9 @@ fluid.defaults("gpii.schema.middleware", {
 });
 
 /*
+
     A wrapper for the `gpii.express.requestAware.router` grade that seamlessly wires in JSON Schema validation.
+
  */
 fluid.defaults("gpii.schema.middleware.requestAware.router", {
     gradeNames: ["gpii.express.router.passthrough"],
@@ -147,19 +156,6 @@ fluid.defaults("gpii.schema.middleware.requestAware.router", {
         }
     }
 });
-
-/*
-    A wrapper for the `gpii.express.contentAware.router` grade.
- */
-fluid.defaults("gpii.schema.middleware.contentAware.router", {
-    gradeNames: ["gpii.schema.middleware.requestAware.router"],
-    components: {
-        innerRouter: {
-            type: "gpii.express.contentAware.router"
-        }
-    }
-});
-
 
 /*
 

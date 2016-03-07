@@ -6,7 +6,7 @@ component provides a consistent means of associating errors returned by the vali
 This component does not expose any invokers.  Instead, it listens for changes to the `fieldErrors` model variable and
 updates the display if needed.
 
-## How do "bindings"" work?
+## How do "bindings" work?
 
 The `errorBinder` uses model->view bindings like those used with [`gpii-binder`](https://github.com/GPII/gpii-binder) to
 associate validation errors reported by the validator with onscreen elements.  That "binding" structure looks something
