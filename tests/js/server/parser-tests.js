@@ -16,12 +16,12 @@ gpii.express.loadTestingSupport();
 fluid.registerNamespace("gpii.schema.parser.tests");
 
 gpii.schema.parser.tests.testSchemaCaching = function (that) {
-    jqUnit.assertTrue("There should be dereferenced schemas...", that.dereferencedSchemas && Object.keys(that.dereferencedSchemas).length > 0);
+    jqUnit.assertTrue("There should be dereferenced schemas...", that.model && that.model.dereferencedSchemas && Object.keys(that.model.dereferencedSchemas).length > 0);
 
     // There should no longer be any $ref values in any of our schemas.  We check the `properties` structure, which in
     // our original schemas contains $ref values.
     //
-    fluid.each(that.dereferencedSchemas, function (schemaContent) {
+    fluid.each(that.model.dereferencedSchemas, function (schemaContent) {
         fluid.each(schemaContent.properties, function (property) {
             jqUnit.assertUndefined("There should not be a $ref property after dereferencing...", property.$ref);
         });
