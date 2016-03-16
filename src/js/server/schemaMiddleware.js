@@ -18,7 +18,7 @@ fluid.defaults("gpii.schema.middleware.handler", {
     invokers: {
         handleRequest: {
             func: "{that}.sendResponse",
-            args: [400, "{that}.options.body"]
+            args: [400, "{that}.options.validationErrors"]
         }
     }
 });
@@ -37,7 +37,12 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     var results = that.validator.validate(that.options.schemaKey, toValidate);
     if (results) {
         var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-        that.events.onInvalidRequest.fire(req, res, transformedResults);
+
+        // For `contentAware` grades, there will be custom handlerGrades based on the accepted content type.
+        // For everything else this will be `null`.
+        var handlerGrades = gpii.express.contentAware.router.getHandlerGradesByContentType(that, req) || that.options.handlerGrades;
+
+        that.events.onInvalidRequest.fire(req, res, transformedResults, handlerGrades);
     }
     else {
         next();
@@ -47,11 +52,12 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
 /*
 
     The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
-    Express router or middleware function.
+    Express router or middleware function.  Must be combined with either the `requestAware` or `contentAware` grades
+    to function properly.  See the grades below for an example.
 
  */
 fluid.defaults("gpii.schema.middleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.express.requestAware.base", "gpii.hasRequiredOptions"],
+    gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
     requiredFields: {
         schemaDirs: true,
         schemaKey: true
@@ -79,11 +85,15 @@ fluid.defaults("gpii.schema.middleware", {
     handlerGrades: ["gpii.schema.middleware.handler"],
     dynamicComponents: {
         requestHandler: {
+            type: "gpii.express.handler",
             createOnEvent: "onInvalidRequest",
             options: {
-                body: "{arguments}.2",
-                schemaKey: "{gpii.schema.middleware}.options.responseSchemaKey",
-                schemaUrl: "{gpii.schema.middleware}.options.responseSchemaUrl"
+                request:          "{arguments}.0",
+                response:         "{arguments}.1",
+                validationErrors: "{arguments}.2",
+                gradeNames:       "{arguments}.3",
+                schemaKey:        "{gpii.schema.middleware}.options.responseSchemaKey",
+                schemaUrl:        "{gpii.schema.middleware}.options.responseSchemaUrl"
             }
         }
     },
@@ -108,14 +118,24 @@ fluid.defaults("gpii.schema.middleware", {
     }
 });
 
+fluid.defaults("gpii.schema.middleware.requestAware", {
+    gradeNames: ["gpii.schema.middleware", "gpii.express.requestAware.base"]
+});
+
+fluid.defaults("gpii.schema.middleware.contentAware", {
+    gradeNames: ["gpii.schema.middleware", "gpii.express.contentAware.base"]
+});
+
+
 /*
 
-    A wrapper for the `gpii.express.requestAware.router` grade that seamlessly wires in JSON Schema validation.
+    A base router that will be used to wrap `requestAware` and `contentAware` router grades.
 
  */
-fluid.defaults("gpii.schema.middleware.requestAware.router", {
+fluid.defaults("gpii.schema.middleware.router.base", {
     gradeNames: ["gpii.express.router.passthrough"],
     method:     "post",
+    routerGrade: "gpii.express.router",
     events: {
         onSchemasDereferenced: null
     },
@@ -135,26 +155,58 @@ fluid.defaults("gpii.schema.middleware.requestAware.router", {
         gateKeeper: {
             type: "gpii.schema.middleware",
             options: {
-                method:     "{gpii.schema.middleware.requestAware.router}.options.method",
-                rules:      "{gpii.schema.middleware.requestAware.router}.options.rules",
-                schemaKey:  "{gpii.schema.middleware.requestAware.router}.options.schemaKey",
-                schemaDirs: "{gpii.schema.middleware.requestAware.router}.options.schemaDirs",
+                method:     "{gpii.schema.middleware.router.base}.options.method",
+                rules:      "{gpii.schema.middleware.router.base}.options.rules",
+                schemaKey:  "{gpii.schema.middleware.router.base}.options.schemaKey",
+                schemaDirs: "{gpii.schema.middleware.router.base}.options.schemaDirs",
                 listeners: {
                     "onSchemasDereferenced.notifyRouter": {
-                        func: "{gpii.schema.middleware.requestAware.router}.events.onSchemasDereferenced.fire"
+                        func: "{gpii.schema.middleware.router.base}.events.onSchemasDereferenced.fire"
                     }
                 }
             }
         },
         innerRouter: {
-            type: "gpii.express.requestAware.router",
+            type: "{gpii.schema.middleware.router.base}.options.routerGrade",
             options: {
-                handlerGrades: "{gpii.schema.middleware.requestAware.router}.options.handlerGrades",
-                method:        "{gpii.schema.middleware.requestAware.router}.options.method",
-                path:          "/"
+                method: "{gpii.schema.middleware.router.base}.options.method",
+                path:   "/"
             }
         }
     }
+});
+
+// The above configured for use with a `requestAware` router.
+fluid.defaults("gpii.schema.middleware.requestAware.router", {
+    gradeNames:  ["gpii.schema.middleware.router.base"],
+    routerGrade: "gpii.express.requestAware.router",
+    distributeOptions: {
+        source: "{that}.options.handlerGrades",
+        target: "{that > gpii.express.router}.options.handlerGrades"
+    }
+});
+
+// The above configured for use with a `contentAware` router.
+//
+// NOTE:
+//   Ordinarily a `contentAware` router has a single `handlers` option.  Because we can either handle errors or
+//   failures, we have two options.  The setting `options.errorHandlers` is used to handle validation errors by content
+//   type. The setting `options.successHandlers` is used by the inner router to handle successful requests, again, by
+//   content type.
+//
+fluid.defaults("gpii.schema.middleware.contentAware.router", {
+    gradeNames: ["gpii.schema.middleware.router.base"],
+    routerGrade: "gpii.express.contentAware.router",
+    distributeOptions: [
+        {
+            source: "{that}.options.successHandlers",
+            target: "{that >gpii.express.contentAware.router}.options.handlers"
+        },
+        {
+            source: "{that}.options.errorHandlers",
+            target: "{that >gpii.schema.middleware}.options.handlers"
+        }
+    ]
 });
 
 /*
@@ -177,6 +229,5 @@ fluid.defaults("gpii.schema.middleware.handlesGetMethod", {
 
  */
 fluid.defaults("gpii.schema.middleware.handlesPutMethod", {
-    gradeNames: ["gpii.schema.middleware.handlesPostMethod"],
     method:     "put"
 });

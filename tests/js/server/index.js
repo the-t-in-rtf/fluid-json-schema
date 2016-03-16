@@ -1,7 +1,8 @@
 "use strict";
 
 require("./handler-tests");
-require("./middleware-tests");
+require("./middleware-contentAware-tests");
+require("./middleware-requestAware-tests");
 require("./parser-tests");
 require("./pointer-function-tests");
 require("./schema-inline-router-tests");

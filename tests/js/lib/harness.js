@@ -16,12 +16,14 @@ fluid.defaults("gpii.schema.tests.harness", {
     port: 6194,
     events: {
         onInlineRouterReady: null,
-        onGatedRouterReady: null,
+        onGatedContentAwareRouterReady: null,
+        onGatedRequestAwareRouterReady: null,
         onAllReady: {
             events: {
-                "onStarted":           "onStarted",
-                "onInlineRouterReady": "onInlineRouterReady",
-                "onGatedRouterReady":  "onGatedRouterReady"
+                "onStarted":                      "onStarted",
+                "onInlineRouterReady":            "onInlineRouterReady",
+                "onGatedContentAwareRouterReady": "onGatedContentAwareRouterReady",
+                "onGatedRequestAwareRouterReady": "onGatedRequestAwareRouterReady"
             }
         }
     },
@@ -89,7 +91,17 @@ fluid.defaults("gpii.schema.tests.harness", {
             options: {
                 listeners: {
                     "onSchemasDereferenced.notifyEnvironment": {
-                        func: "{gpii.schema.tests.harness}.events.onGatedRouterReady.fire"
+                        func: "{gpii.schema.tests.harness}.events.onGatedRequestAwareRouterReady.fire"
+                    }
+                }
+            }
+        },
+        gatedContentAware: {
+            type: "gpii.schema.tests.middleware.router.contentAware",
+            options: {
+                listeners: {
+                    "onSchemasDereferenced.notifyEnvironment": {
+                        func: "{gpii.schema.tests.harness}.events.onGatedContentAwareRouterReady.fire"
                     }
                 }
             }
