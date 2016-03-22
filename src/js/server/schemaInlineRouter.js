@@ -36,6 +36,7 @@ gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
 fluid.defaults("gpii.schema.inline.router", {
     gradeNames: ["gpii.express.router", "gpii.hasRequiredOptions", "fluid.modelComponent"],
     path: "/allSchemas",
+    namespace: "allSchemas", // Namespace to allow other routers to put themselves in the chain before or after us.
     events: {
         onSchemasDereferenced: null
     },

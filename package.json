@@ -15,8 +15,8 @@
   "dependencies": {
     "ajv": "3.6.0",
     "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#53c0038d3c4334b210f8f5a19f1f5d9e9c39e167",
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#3d0760413da426575ad962432c7160de0c046489",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#2414d32dd15a8cfd07055d1b440106cc2d9166c4",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#2f2b9418f02e7a4251a46fe8602ae482b5eac83e",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#852fd55cc6589cbb6c028dd3788426039819313c",
     "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",

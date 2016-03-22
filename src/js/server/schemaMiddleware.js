@@ -155,6 +155,7 @@ fluid.defaults("gpii.schema.middleware.router.base", {
         gateKeeper: {
             type: "gpii.schema.middleware",
             options: {
+                namespace: "gatekeeper",
                 method:     "{gpii.schema.middleware.router.base}.options.method",
                 rules:      "{gpii.schema.middleware.router.base}.options.rules",
                 schemaKey:  "{gpii.schema.middleware.router.base}.options.schemaKey",
@@ -168,6 +169,7 @@ fluid.defaults("gpii.schema.middleware.router.base", {
         },
         innerRouter: {
             type: "{gpii.schema.middleware.router.base}.options.routerGrade",
+            priority: "after:gateKeeper",
             options: {
                 method: "{gpii.schema.middleware.router.base}.options.method",
                 path:   "/"
