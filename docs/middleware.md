@@ -43,9 +43,14 @@ to the schema `valid.json`, which can be found in `%my-package/src/schemas`. If 
 schema, the handler defined above would output a canned "success" message.  If the payload is invalid, the underlying
 `gpii.express.middleware` instance steps in and responds with a failure message.
 
+# Displaying validation messages onscreen
+
+The [`errorBinder`](errorBinder.md) component included with this package is designed to associate the validation error
+messages produced by `gpii.schema.middleware` with on-screen elements.  See that component's documentation for details.
+
 # Components
 
-## gpii.schema.middleware
+## `gpii.schema.middleware`
 
 Validates information available in the request object. The incoming request is first transformed using
 `fluid.model.transformWithRules` and`options.rules.requestContentToValidate`. The results are validated against
@@ -150,10 +155,33 @@ like the following:
         }
     });
 
+## `gpii.schema.middleware.contentAware.router`
+
+A component that overlays a `gpii.schema.middleware` instance in front of a `gpii.express.contentAware.router` instance.
+Invalid responses will be immediately rejected using the first matching handler in `options.errorHandlers`.  Valid
+responses will be passed along to the first matching handler in `options.successHandlers`.  For information about the
+underlying `contentAware` grade, see [the documentation for `gpii-express`](http://github.com/GPII/gpii-express).
+
+### Component Options
+
+| Option              | Type     | Description |
+| ------------------- | -------- | ----------- |
+| `errorHandlers`     | `Object` | A map of handlers and content types that will be use in handling a rejected response. |
+| `method`            | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
+| `path`              | `String` | The URL path (including any path variables) that will be handled by this router. |
+| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
+the incoming data before validation (see above). |
+| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
+validation errors before they are sent to the user (see above). |
+| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
+| `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
+| `successHandlers`   | `Object` | A map of handlers and content types that will be use in handling a successful response. |
+
+The order in which success and error handlers are matched is controlled using [namespaces and priorities](http://docs.fluidproject.org/infusion/development/Priorities.html).
 
 ## `gpii.schema.middleware.handlesGetMethod`
 
-A mix-in grade that configures a `gpii.schema.middleware.requestAware.router` instance to validate GET query data.
+A mix-in grade that configures either of the above routers to validate GET query data.
 Changes the `method` option to `get` and sets `rules.requestContentToValidate` to the following:
 
       requestContentToValidate: {
@@ -162,11 +190,6 @@ Changes the `method` option to `get` and sets `rules.requestContentToValidate` t
 
 ## `gpii.schema.middleware.handlesPutMethod`
 
-A mix-in grade that configures a `gpii.schema.middleware.requestAware.router` instance to validate PUT body data.
+A mix-in grade that configures either of the above routers to validate PUT body data.
 Changes the `method` options to `put`.  The rules to control what information is validated are inherited from
 `gpii.schema.middleware`.
-
-# Displaying validation messages onscreen
-
-The [`errorBinder`](errorBinder.md) component included with this package is designed to associate the validation error
-messages produced by `gpii.schema.middleware` with on-screen elements.  See that component's documentation for details.
