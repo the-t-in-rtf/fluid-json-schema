@@ -3,13 +3,13 @@
 Although you usually will build some fault tolerance into your components, on some level they expect to deal with
 data that has the right structure, and which contains the expected type of information (strings, booleans, dates, etc).
 
-The `gpii.schema.middleware` components provided with this package reject invalid payloads, which allows your server-side
-components to safely assume they will only receive JSON data in the correct format.  The component doesn't know anything
-about how you intend to use the data.  It only examines the payload and steps in if the payload is not valid according
-to the configured JSON Schema.
+The `gpii.schema.validationMiddleware` component provided with this package rejects invalid payloads, which allows your
+server-side components to safely assume they will only receive JSON data in the correct format.  The component doesn't
+know anything about how you intend to use the data.  It only examines the payload and steps in if the payload is not
+valid according to the configured JSON Schema.
 
 The base middleware is intended to be used with a `gpii.express` or `gpii.express.router` instance.  The
-`gpii.schema.middleware.requestAware.router` wrapper is provided as a convenient starting point.  With that router,
+`gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting point.  With that router,
 you can created "gated" REST endpoints that only pass through valid payloads to the underlying handlers, as show here:
 
     var fluid = require("infusion");
@@ -29,7 +29,7 @@ you can created "gated" REST endpoints that only pass through valid payloads to 
     );
 
     gpii.express({
-      gradeNames:        ["gpii.schema.middleware.requestAware.router"],
+      gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
       handlerGrades:     ["gpii.schema.tests.handler"],
       schemaKey:         "valid.json",
       schemaDirs:        ["%my-package/src/schemas"],
@@ -46,11 +46,11 @@ schema, the handler defined above would output a canned "success" message.  If t
 # Displaying validation messages onscreen
 
 The [`errorBinder`](errorBinder.md) component included with this package is designed to associate the validation error
-messages produced by `gpii.schema.middleware` with on-screen elements.  See that component's documentation for details.
+messages produced by `gpii.schema.validationMiddleware` with on-screen elements.  See that component's documentation for details.
 
 # Components
 
-## `gpii.schema.middleware`
+## `gpii.schema.validationMiddleware`
 
 Validates information available in the request object. The incoming request is first transformed using
 `fluid.model.transformWithRules` and`options.rules.requestContentToValidate`. The results are validated against
@@ -98,7 +98,7 @@ can be represented as follows:
           "": "body"
       }
 
-See `gpii.schema.middleware.handlesGetMethod` below for an example of working with query data.
+See `gpii.schema.validationMiddleware.handlesGetMethod` below for an example of working with query data.
 
 ### Invokers
 
@@ -117,9 +117,9 @@ and let some other downstream piece of middleware continue the conversation.
 This function is expected to be called by Express (or by an instance of `gpii.express`).
 
 
-## `gpii.schema.middleware.requestAware.router`
+## `gpii.schema.validationMiddleware.requestAware.router`
 
-A component that overlays a `gpii.schema.middleware` instance in front  of a `gpii.express.requestAware.router`
+A component that overlays a `gpii.schema.validationMiddleware` instance in front  of a `gpii.express.requestAware.router`
 instance. Invalid responses will be immediately rejected as outlined above.  Valid responses will be passed along to
 the underlying router and handler.    For information about the underlying grade, see
 [the documentation for `gpii-express`](http://github.com/GPII/gpii-express).
@@ -141,11 +141,11 @@ validation errors before they are sent to the user (see above). |
 | `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
 
 Note that `handlerGrades` as used here only governs the response sent when valid data is received.  If you wish to
-override the `handlerGrades` used by this component's `gpii.schema.middleware` instance, you would need to use options
+override the `handlerGrades` used by this component's `gpii.schema.validationMiddleware` instance, you would need to use options
 like the following:
 
     fluid.defaults("my.custom.router", {
-        gradeNames: ["gpii.schema.middleware.requestAware.router"]
+        gradeNames: ["gpii.schema.validationMiddleware.requestAware.router"]
         components: {
             gatekeeper: {
                 options: {
@@ -155,9 +155,9 @@ like the following:
         }
     });
 
-## `gpii.schema.middleware.contentAware.router`
+## `gpii.schema.validationMiddleware.contentAware.router`
 
-A component that overlays a `gpii.schema.middleware` instance in front of a `gpii.express.contentAware.router` instance.
+A component that overlays a `gpii.schema.validationMiddleware` instance in front of a `gpii.express.contentAware.router` instance.
 Invalid responses will be immediately rejected using the first matching handler in `options.errorHandlers`.  Valid
 responses will be passed along to the first matching handler in `options.successHandlers`.  For information about the
 underlying `contentAware` grade, see [the documentation for `gpii-express`](http://github.com/GPII/gpii-express).
@@ -179,7 +179,7 @@ validation errors before they are sent to the user (see above). |
 
 The order in which success and error handlers are matched is controlled using [namespaces and priorities](http://docs.fluidproject.org/infusion/development/Priorities.html).
 
-## `gpii.schema.middleware.handlesGetMethod`
+## `gpii.schema.validationMiddleware.handlesGetMethod`
 
 A mix-in grade that configures either of the above routers to validate GET query data.
 Changes the `method` option to `get` and sets `rules.requestContentToValidate` to the following:
@@ -188,8 +188,8 @@ Changes the `method` option to `get` and sets `rules.requestContentToValidate` t
           "": "query"
       }
 
-## `gpii.schema.middleware.handlesPutMethod`
+## `gpii.schema.validationMiddleware.handlesPutMethod`
 
 A mix-in grade that configures either of the above routers to validate PUT body data.
 Changes the `method` options to `put`.  The rules to control what information is validated are inherited from
-`gpii.schema.middleware`.
+`gpii.schema.validationMiddleware`.

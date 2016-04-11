@@ -53,7 +53,7 @@ fluid.defaults("gpii.schema.tests.middleware.router.contentAware.success.jsonHan
 });
 
 fluid.defaults("gpii.schema.tests.middleware.router.contentAware", {
-    gradeNames: ["gpii.schema.middleware.contentAware.router"],
+    gradeNames: ["gpii.schema.validationMiddleware.contentAware.router"],
     path: "/gatedContentAware",
     schemaDirs: "%gpii-json-schema/tests/schemas",
     schemaKey:  "gated.json",
@@ -74,7 +74,7 @@ fluid.defaults("gpii.schema.tests.middleware.router.contentAware", {
         },
         json: {
             contentType:  "application/json",
-            handlerGrades: ["gpii.schema.middleware.handler"]
+            handlerGrades: ["gpii.schema.validationMiddleware.handler"]
         }
     }
 });

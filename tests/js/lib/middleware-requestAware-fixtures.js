@@ -35,7 +35,7 @@ fluid.defaults("gpii.schema.tests.middleware.underlyingHandler", {
 
 // A base grade for all the "method" variations on our router.
 fluid.defaults("gpii.schema.tests.middleware.router.base", {
-    gradeNames: ["gpii.schema.middleware.requestAware.router"],
+    gradeNames: ["gpii.schema.validationMiddleware.requestAware.router"],
     schemaDirs: "%gpii-json-schema/tests/schemas",
     schemaKey:  "gated.json",
     handlerGrades: ["gpii.schema.tests.middleware.underlyingHandler"],
@@ -74,13 +74,13 @@ fluid.defaults("gpii.schema.tests.middleware.router.post", {
 
 // PUT
 fluid.defaults("gpii.schema.tests.middleware.router.put", {
-    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.middleware.handlesPutMethod"],
+    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.validationMiddleware.handlesPutMethod"],
     path:   "/PUT"
 });
 
 // GET
 fluid.defaults("gpii.schema.tests.middleware.router.get", {
-    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.middleware.handlesGetMethod"],
+    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.validationMiddleware.handlesGetMethod"],
     path:   "/GET"
 });
 
