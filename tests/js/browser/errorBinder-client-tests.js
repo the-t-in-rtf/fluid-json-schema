@@ -9,8 +9,8 @@ require("../lib/harness");
 
 fluid.registerNamespace("gpii.schema.tests.errorBinder");
 
-/*  globals $ */
 // Client side function to count the errors (requires jQuery)
+/*  globals $ */
 gpii.schema.tests.errorBinder.countSelectors = function (selector) {
     return $(selector).length;
 };

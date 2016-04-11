@@ -2,7 +2,7 @@
 
     A client-side wrapper for the validation component.  See the documentation for details:
 
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
 /* globals fluid, $ */

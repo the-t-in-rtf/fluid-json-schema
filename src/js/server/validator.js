@@ -3,7 +3,7 @@
     A server-side wrapper for the validation component.  The server-side parser loads the schema content used here. See
     the documentation for details:
 
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/validator.md
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
 "use strict";

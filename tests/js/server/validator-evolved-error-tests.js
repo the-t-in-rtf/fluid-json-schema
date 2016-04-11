@@ -23,7 +23,7 @@ gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey
 };
 
 fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder"],
+    gradeNames: ["gpii.tests.express.caseHolder"],
     rawModules: [
         {
             tests: [

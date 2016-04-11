@@ -2,7 +2,7 @@
 
     A parser that resolves `$ref` references in JSON Schema definitions.  See the documentation for details:
 
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/parser.md
 
 */
 
@@ -48,7 +48,7 @@ gpii.schema.parser.loadSchemas = function (that) {
 /**
  * Dereference all `$ref` links for a single schema. See the documentation for details.
  *
- * https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey
+ * https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/parser.md#gpiischemaparserdereferenceschemathat-schemapath-schemakey
  *
  * @param that - The parser component itself.
  * @param schemaPath {String} - The full path to the schema we are derferencing.

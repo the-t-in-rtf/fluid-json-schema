@@ -1,6 +1,5 @@
 "use strict";
 
-require("./handler-tests");
 require("./middleware-contentAware-tests");
 require("./middleware-requestAware-tests");
 require("./parser-tests");

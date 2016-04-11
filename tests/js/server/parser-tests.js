@@ -29,7 +29,7 @@ gpii.schema.parser.tests.testSchemaCaching = function (that) {
 };
 
 fluid.defaults("gpii.schema.parser.tests.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder"],
+    gradeNames: ["gpii.tests.express.caseHolder"],
     rawModules: [
         {
             tests: [

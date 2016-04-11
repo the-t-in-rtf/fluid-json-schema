@@ -4,7 +4,7 @@
 
     See the documentation for details:
 
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/middleware.md
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/schemaValidationMiddleware.md
 
  */
 "use strict";

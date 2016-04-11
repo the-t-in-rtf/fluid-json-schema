@@ -24,9 +24,7 @@ gpii.schema.tests.middleware.underlyingHandler.handleRequest = function (that) {
 };
 
 fluid.defaults("gpii.schema.tests.middleware.underlyingHandler", {
-    gradeNames: ["gpii.schema.handler"],
-    schemaKey: "message.json",
-    schemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
+    gradeNames: ["gpii.express.handler"],
     invokers: {
         handleRequest: {
             funcName: "gpii.schema.tests.middleware.underlyingHandler.handleRequest",
@@ -104,9 +102,17 @@ fluid.defaults("gpii.schema.tests.middleware.router", {
         }
     },
     components: {
+        linkHeaderMiddleware: {
+            type: "gpii.schema.schemaLinkMiddleware",
+            options: {
+                schemaKey: "message.json",
+                schemaUrl: "http://terms.raisingthefloor.org/schema/message.json"
+            }
+        },
         get: {
             type: "gpii.schema.tests.middleware.router.get",
             options: {
+                priority: "after:schemaLinkErrorMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
                         func: "{gpii.schema.tests.middleware.router}.events.onGetSchemasDereferenced.fire"
@@ -117,6 +123,7 @@ fluid.defaults("gpii.schema.tests.middleware.router", {
         post: {
             type: "gpii.schema.tests.middleware.router.post",
             options: {
+                priority: "after:schemaLinkErrorMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
                         func: "{gpii.schema.tests.middleware.router}.events.onPostSchemasDereferenced.fire"
@@ -127,6 +134,7 @@ fluid.defaults("gpii.schema.tests.middleware.router", {
         put: {
             type: "gpii.schema.tests.middleware.router.put",
             options: {
+                priority: "after:schemaLinkErrorMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
                         func: "{gpii.schema.tests.middleware.router}.events.onPutSchemasDereferenced.fire"

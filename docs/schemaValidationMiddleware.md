@@ -1,4 +1,4 @@
-# The Schema "Gatekeeper" Middleware
+# The Schema "Gatekeeper" Validation Middleware
 
 Although you usually will build some fault tolerance into your components, on some level they expect to deal with
 data that has the right structure, and which contains the expected type of information (strings, booleans, dates, etc).

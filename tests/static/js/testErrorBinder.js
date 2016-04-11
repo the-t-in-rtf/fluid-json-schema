@@ -6,8 +6,11 @@
         hideOnSuccess: false,
         inlineSchemaUrl: "/allSchemas",
         ajaxOptions: {
-            url:    "/gated/POST",
-            method: "POST"
+            url:      "/gated/POST",
+            method:   "POST",
+            headers: {
+                "Accept": "application/json"
+            }
         },
         schemaKey: "evolved.json",
         templates: {

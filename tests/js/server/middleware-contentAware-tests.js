@@ -53,9 +53,9 @@ fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
         testAllOf:  "CATs"
     },
     expected: {
-        invalidText: "The JSON you have provided is not valid.\n  * shallowlyRequired: should have required property 'shallowlyRequired'",
+        invalidText: "should have required property",
         invalidJson: {
-            "ok": false,
+            "isError": true,
             "message": "The JSON you have provided is not valid.",
             "fieldErrors": [
                 {
@@ -144,7 +144,7 @@ fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
                             args: ["{that}.options.invalidPayload"]
                         },
                         {
-                            listener: "jqUnit.assertEquals",
+                            listener: "gpii.test.schema.checkHtmlResponse",
                             event:    "{invalidPostNoHeader}.events.onComplete",
                             args:     ["We should receive a text message indicating 'failure'...", "{that}.options.expected.invalidText", "{arguments}.0"]
                         },
@@ -163,7 +163,7 @@ fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
                             args: ["{that}.options.invalidPayload"]
                         },
                         {
-                            listener: "jqUnit.assertEquals",
+                            listener: "gpii.test.schema.checkHtmlResponse",
                             event:    "{invalidPostHtmlHeader}.events.onComplete",
                             args:     ["We should receive a text message indicating 'failure'...", "{that}.options.expected.invalidText", "{arguments}.0"]
                         },

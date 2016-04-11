@@ -3,26 +3,14 @@
     "Gatekeeper" middleware that rejects any request whose JSON payloads are not valid. See this component's
     documentation for more details:
 
-    https://github.com/the-t-in-rtf/gpii-json-schema/blob/GPII-1336/docs/middleware.md
+    https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/schemaValidationMiddleware.md
 
  */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("./schemaHandler");
 require("../common/hasRequiredOptions");
-
-fluid.defaults("gpii.schema.middleware.handler", {
-    gradeNames: ["gpii.schema.handler"],
-    invokers: {
-        handleRequest: {
-            func: "{that}.sendResponse",
-            args: [400, "{that}.options.validationErrors"]
-        }
-    }
-});
-
 fluid.registerNamespace("gpii.schema.middleware");
 
 /**
@@ -36,13 +24,8 @@ gpii.schema.middleware.rejectOrForward  = function (that, req, res, next) {
     var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
     var results = that.validator.validate(that.options.schemaKey, toValidate);
     if (results) {
-        var transformedResults = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-
-        // For `contentAware` grades, there will be custom handlerGrades based on the accepted content type.
-        // For everything else this will be `null`.
-        var handlerGrades = gpii.express.contentAware.router.getHandlerGradesByContentType(that, req) || that.options.handlerGrades;
-
-        that.events.onInvalidRequest.fire(req, res, transformedResults, handlerGrades);
+        var transformedValidationErrors = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
+        next(transformedValidationErrors);
     }
     else {
         next();
@@ -60,18 +43,22 @@ fluid.defaults("gpii.schema.middleware", {
     gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
     requiredFields: {
         schemaDirs: true,
-        schemaKey: true
+        schemaKey: true,
+        "rules.requestContentToValidate": true
     },
     responseSchemaKey: "message.json",
     responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
     messages: {
         error: "The JSON you have provided is not valid."
     },
+    // We prevent merging of individual options, but allow them to be individually replaced.
+    mergeOptions: {
+        "rules.validationErrorsToResponse": "nomerge",
+        "rules.requestContentToValidate":   "nomerge"
+    },
     rules: {
         validationErrorsToResponse: {
-            ok: {
-                literalValue: false
-            },
+            isError: { literalValue: true},
             message: {
                 literalValue: "{that}.options.messages.error"
             },
@@ -79,23 +66,7 @@ fluid.defaults("gpii.schema.middleware", {
         }
     },
     events: {
-        onInvalidRequest: null,
         onSchemasDereferenced: null
-    },
-    handlerGrades: ["gpii.schema.middleware.handler"],
-    dynamicComponents: {
-        requestHandler: {
-            type: "gpii.express.handler",
-            createOnEvent: "onInvalidRequest",
-            options: {
-                request:          "{arguments}.0",
-                response:         "{arguments}.1",
-                validationErrors: "{arguments}.2",
-                gradeNames:       "{arguments}.3",
-                schemaKey:        "{gpii.schema.middleware}.options.responseSchemaKey",
-                schemaUrl:        "{gpii.schema.middleware}.options.responseSchemaUrl"
-            }
-        }
     },
     components: {
         validator: {

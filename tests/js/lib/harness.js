@@ -43,6 +43,7 @@ fluid.defaults("gpii.schema.tests.harness", {
         build: {
             type: "gpii.express.router.static",
             options: {
+                namespace: "build",
                 path:    "/build",
                 content: "%gpii-json-schema/build"
             }
@@ -89,6 +90,7 @@ fluid.defaults("gpii.schema.tests.harness", {
         gated: {
             type: "gpii.schema.tests.middleware.router",
             options: {
+                namespace: "gated",
                 listeners: {
                     "onSchemasDereferenced.notifyEnvironment": {
                         func: "{gpii.schema.tests.harness}.events.onGatedRequestAwareRouterReady.fire"
@@ -99,11 +101,36 @@ fluid.defaults("gpii.schema.tests.harness", {
         gatedContentAware: {
             type: "gpii.schema.tests.middleware.router.contentAware",
             options: {
+                namespace: "gatedContentAware",
+                priority:  "after:gated",
                 listeners: {
                     "onSchemasDereferenced.notifyEnvironment": {
                         func: "{gpii.schema.tests.harness}.events.onGatedContentAwareRouterReady.fire"
                     }
                 }
+            }
+        },
+        handlebars: {
+            type: "gpii.express.hb",
+            options: {
+                priority:     "after:gatedContentAware",
+                templateDirs: ["%gpii-json-schema/tests/templates", "%gpii-json-schema/src/templates"]
+            }
+        },
+        htmlErrorHandler: {
+            type: "gpii.handlebars.errorRenderingMiddleware",
+            options: {
+                statusCode:  400,
+                templateKey: "partials/validation-error-summary",
+                priority:    "after:handlebars"
+            }
+        },
+        
+        defaultErrorHandler: {
+            type: "gpii.express.middleware.error",
+            options: {
+                priority:   "after:errorRenderingMiddleware",
+                statusCode: 400
             }
         }
     }

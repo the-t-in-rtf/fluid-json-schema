@@ -46,6 +46,9 @@ fluid.defaults("gpii.schema.tests.middleware.request", {
             args: ["/gated/%method", { method: "{that}.options.method"}]
         }
     },
+    headers: {
+        accept: "application/json"
+    },
     port:       "{testEnvironment}.options.port"
 });
 

@@ -5,6 +5,8 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
+var jqUnit = require("node-jqunit");
+
 require("../../../");
 require("gpii-express");
 gpii.express.loadTestingSupport();
@@ -15,8 +17,13 @@ kettle.loadTestingSupport();
 
 require("./harness");
 
+fluid.registerNamespace("gpii.test.schema");
+gpii.test.schema.checkHtmlResponse = function (message, expected, body) {
+    jqUnit.assertTrue(message, body.indexOf(expected) !== -1);
+};
+
 fluid.defaults("gpii.schema.tests.caseHolder", {
-    gradeNames: ["gpii.express.tests.caseHolder.base"],
+    gradeNames: ["gpii.tests.express.caseHolder.base"],
     sequenceStart: [
         { // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
             func: "{testEnvironment}.events.constructServer.fire"
