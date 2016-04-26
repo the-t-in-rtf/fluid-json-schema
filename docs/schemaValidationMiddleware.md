@@ -116,80 +116,11 @@ and let some other downstream piece of middleware continue the conversation.
 
 This function is expected to be called by Express (or by an instance of `gpii.express`).
 
+## `gpii.schema.validationMiddleware.handlesQueryData`
 
-## `gpii.schema.validationMiddleware.requestAware.router`
-
-A component that overlays a `gpii.schema.validationMiddleware` instance in front  of a `gpii.express.requestAware.router`
-instance. Invalid responses will be immediately rejected as outlined above.  Valid responses will be passed along to
-the underlying router and handler.    For information about the underlying grade, see
-[the documentation for `gpii-express`](http://github.com/GPII/gpii-express).
-
-### Component Options
-
-| Option              | Type     | Description |
-| ------------------- | -------- | ----------- |
-| `path`              | `String` | The URL path (including any path variables) that will be handled by this router. |
-| `handlerGrades`     | `Array`  | An array of grade names that will be used in constructing the request handler that will field a successful response. |
-| `method`            | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
-| `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
-| `responseSchemaUrl` | `String` | The base URL where `responseSchemaKey` can be found. |
-| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-the incoming data before validation (see above). |
-| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-validation errors before they are sent to the user (see above). |
-| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
-| `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
-
-Note that `handlerGrades` as used here only governs the response sent when valid data is received.  If you wish to
-override the `handlerGrades` used by this component's `gpii.schema.validationMiddleware` instance, you would need to use options
-like the following:
-
-    fluid.defaults("my.custom.router", {
-        gradeNames: ["gpii.schema.validationMiddleware.requestAware.router"]
-        components: {
-            gatekeeper: {
-                options: {
-                    handlerGrades: ["my.custom.handler"]
-                }
-            }
-        }
-    });
-
-## `gpii.schema.validationMiddleware.contentAware.router`
-
-A component that overlays a `gpii.schema.validationMiddleware` instance in front of a `gpii.express.contentAware.router` instance.
-Invalid responses will be immediately rejected using the first matching handler in `options.errorHandlers`.  Valid
-responses will be passed along to the first matching handler in `options.successHandlers`.  For information about the
-underlying `contentAware` grade, see [the documentation for `gpii-express`](http://github.com/GPII/gpii-express).
-
-### Component Options
-
-| Option              | Type     | Description |
-| ------------------- | -------- | ----------- |
-| `errorHandlers`     | `Object` | A map of handlers and content types that will be use in handling a rejected response. |
-| `method`            | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
-| `path`              | `String` | The URL path (including any path variables) that will be handled by this router. |
-| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-the incoming data before validation (see above). |
-| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-validation errors before they are sent to the user (see above). |
-| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
-| `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
-| `successHandlers`   | `Object` | A map of handlers and content types that will be use in handling a successful response. |
-
-The order in which success and error handlers are matched is controlled using [namespaces and priorities](http://docs.fluidproject.org/infusion/development/Priorities.html).
-
-## `gpii.schema.validationMiddleware.handlesGetMethod`
-
-A mix-in grade that configures either of the above routers to validate GET query data.
-Changes the `method` option to `get` and sets `rules.requestContentToValidate` to the following:
+A mix-in grade that configures an instance of `gpii.schema.validationMiddleware` to validate query data.
+Sets `rules.requestContentToValidate` to the following:
 
       requestContentToValidate: {
           "": "query"
       }
-
-## `gpii.schema.validationMiddleware.handlesPutMethod`
-
-A mix-in grade that configures either of the above routers to validate PUT body data.
-Changes the `method` options to `put`.  The rules to control what information is validated are inherited from
-`gpii.schema.validationMiddleware`.

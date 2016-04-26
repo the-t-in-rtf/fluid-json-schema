@@ -15,20 +15,21 @@ var jqUnit = require("node-jqunit");
 
 require("../../../index");
 
-fluid.defaults("gpii.schema.tests.parser.bornToDie", {
+fluid.defaults("gpii.tests.schema.parser.bornToDie", {
     gradeNames: ["gpii.schema.parser"],
     schemaDirs: "%gpii-json-schema/tests/badSchemas"
 });
 
-fluid.registerNamespace("gpii.schema.tests.parser.failure");
-gpii.schema.tests.parser.failure.confirmErrorFired = function (error) {
+fluid.registerNamespace("gpii.tests.schema.parser.failure");
+gpii.tests.schema.parser.failure.confirmErrorFired = function (error) {
     jqUnit.assertTrue("Attempting to load bad remote schemas fails as expected...", error && error.message && (error.message.indexOf("ENOENT") !== -1));
     console.log(error);
 };
 
-fluid.defaults("gpii.schema.tests.parser.failure.caseholder", {
+fluid.defaults("gpii.tests.schema.parser.failure.caseholder", {
     gradeNames: ["fluid.test.testCaseHolder"],
     modules: {
+        name: "Testing failure modes in parser...",
         tests: [
             {
                 name: "Confirm that bad schemas eventually trigger a failure...",
@@ -36,10 +37,10 @@ fluid.defaults("gpii.schema.tests.parser.failure.caseholder", {
                 sequence: [
                     {
                         funcName: "kettle.test.pushInstrumentedErrors",
-                        args: "gpii.schema.tests.parser.failure.confirmErrorFired"
+                        args: "gpii.tests.schema.parser.failure.confirmErrorFired"
                     },
                     {
-                        funcName: "gpii.schema.tests.parser.bornToDie",
+                        funcName: "gpii.tests.schema.parser.bornToDie",
                         args: []
                     }
                 ]
@@ -48,10 +49,13 @@ fluid.defaults("gpii.schema.tests.parser.failure.caseholder", {
     }
 });
 
-fluid.test.testEnvironment({
+fluid.defaults("gpii.tests.schema.parser.failure.testEnvironment", {
+    gradeNames: ["fluid.test.testEnvironment"],
     components: {
         caseHolder: {
-            type: "gpii.schema.tests.parser.failure.caseholder"
+            type: "gpii.tests.schema.parser.failure.caseholder"
         }
     }
 });
+
+fluid.test.runTests("gpii.tests.schema.parser.failure.testEnvironment");

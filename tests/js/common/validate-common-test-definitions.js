@@ -5,7 +5,7 @@
 var fluid = require("infusion");
 
 // A convenience grade that holds our "dehydrated" test definitions.
-fluid.defaults("gpii.schema.tests.validator.hasDehydratedTests", {
+fluid.defaults("gpii.test.schema.validator.hasDehydratedTests", {
     commonTests: {
         validBase: {
             message: "Validate the simplest valid 'base' record....",

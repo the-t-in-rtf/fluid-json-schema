@@ -11,7 +11,7 @@ require("gpii-handlebars");
 
 require("./middleware-fixtures.js");
 
-fluid.defaults("gpii.schema.tests.harness", {
+fluid.defaults("gpii.test.schema.harness", {
     gradeNames: ["gpii.express"],
     port: 6194,
     events: {
@@ -40,6 +40,48 @@ fluid.defaults("gpii.schema.tests.harness", {
         }
     },
     components: {
+        json: {
+            type: "gpii.express.middleware.bodyparser.json",
+            options: {
+                priority: "first"
+            }
+        },
+        urlencoded: {
+            type: "gpii.express.middleware.bodyparser.urlencoded",
+            options: {
+                priority: "after:json"
+            }
+        },
+        handlebars: {
+            type: "gpii.express.hb",
+            options: {
+                priority:     "after:urlencoded",
+                templateDirs: ["%gpii-json-schema/tests/templates", "%gpii-json-schema/src/templates"]
+            }
+        },
+        gated: {
+            type: "gpii.test.schema.middleware.router",
+            options: {
+                priority: "after:handlebars",
+                listeners: {
+                    "onSchemasDereferenced.notifyEnvironment": {
+                        func: "{gpii.test.schema.harness}.events.onGatedRequestAwareRouterReady.fire"
+                    }
+                }
+            }
+        },
+        gatedContentAware: {
+            type: "gpii.test.schema.contentAware",
+            options: {
+                namespace: "gatedContentAware",
+                priority:  "after:gated",
+                listeners: {
+                    "onSchemasDereferenced.notifyEnvironment": {
+                        func: "{gpii.test.schema.harness}.events.onGatedContentAwareRouterReady.fire"
+                    }
+                }
+            }
+        },
         build: {
             type: "gpii.express.router.static",
             options: {
@@ -70,67 +112,73 @@ fluid.defaults("gpii.schema.tests.harness", {
             }
         },
         inline: {
-            type: "gpii.express.hb.inline",
+            type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
             options: {
                 path:         "/hbs",
                 templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates"]
             }
         },
         inlineSchemas: {
-            type: "gpii.schema.inline.router",
+            type: "gpii.schema.inlineMiddleware",
             options: {
                 schemaDirs: "%gpii-json-schema/tests/schemas",
                 listeners: {
                     "onSchemasDereferenced.notifyEnvironment": {
-                        func: "{gpii.schema.tests.harness}.events.onInlineRouterReady.fire"
+                        func: "{gpii.test.schema.harness}.events.onInlineRouterReady.fire"
                     }
                 }
             }
         },
-        gated: {
-            type: "gpii.schema.tests.middleware.router",
+        htmlHeaderMiddleware: {
+            type: "gpii.express.middleware.headerSetter.error",
             options: {
-                namespace: "gated",
-                listeners: {
-                    "onSchemasDereferenced.notifyEnvironment": {
-                        func: "{gpii.schema.tests.harness}.events.onGatedRequestAwareRouterReady.fire"
+                priority:  "after:gatedContentAware",
+                namespace: "htmlHeaderMiddleware",
+                headers: {
+                    contentType: {
+                        fieldName: "Content-Type",
+                        template:  "text/html",
+                        dataRules: {}
                     }
                 }
-            }
-        },
-        gatedContentAware: {
-            type: "gpii.schema.tests.middleware.router.contentAware",
-            options: {
-                namespace: "gatedContentAware",
-                priority:  "after:gated",
-                listeners: {
-                    "onSchemasDereferenced.notifyEnvironment": {
-                        func: "{gpii.schema.tests.harness}.events.onGatedContentAwareRouterReady.fire"
-                    }
-                }
-            }
-        },
-        handlebars: {
-            type: "gpii.express.hb",
-            options: {
-                priority:     "after:gatedContentAware",
-                templateDirs: ["%gpii-json-schema/tests/templates", "%gpii-json-schema/src/templates"]
             }
         },
         htmlErrorHandler: {
             type: "gpii.handlebars.errorRenderingMiddleware",
             options: {
+                priority:  "after:htmlHeaderMiddleware",
+                namespace: "htmlErrorHandler",
                 statusCode:  400,
-                templateKey: "partials/validation-error-summary",
-                priority:    "after:handlebars"
+                templateKey: "partials/validation-error-summary"
             }
         },
-        
+        jsonHeaderMiddleware: {
+            type: "gpii.express.middleware.headerSetter.error",
+            options: {
+                priority:  "after:htmlErrorHandler",
+                namespace: "jsonHeaderMiddleware",
+                headers: {
+                    contentType: {
+                        fieldName: "Content-Type",
+                        template:  "application/json",
+                        dataRules: {}
+                    }
+                }
+            }
+        },
+        validationErrorHeaderMiddleware: {
+            type: "gpii.schema.schemaLinkMiddleware.error",
+            options: {
+                schemaKey: "message.json",
+                schemaUrl: "http://some.fake.site/schemas/message.json",
+                priority:  "after:jsonHeaderMiddleware"
+            }
+        },
         defaultErrorHandler: {
             type: "gpii.express.middleware.error",
             options: {
-                priority:   "after:errorRenderingMiddleware",
-                statusCode: 400
+                priority:  "after:validationErrorHeaderMiddleware",
+                defaultStatusCode: 400
             }
         }
     }

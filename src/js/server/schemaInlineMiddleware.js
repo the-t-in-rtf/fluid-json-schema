@@ -13,7 +13,7 @@ var gpii  = fluid.registerNamespace("gpii");
 
 require("../common/hasRequiredOptions");
 
-fluid.registerNamespace("gpii.schema.inline.router");
+fluid.registerNamespace("gpii.schema.inlineMiddleware");
 
 /**
  *
@@ -24,7 +24,7 @@ fluid.registerNamespace("gpii.schema.inline.router");
  * @param res {Object} - The Express `response` object: http://expressjs.com/en/api.html#res
  *
  */
-gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
+gpii.schema.inlineMiddleware.sendSchemaData  = function (that, req, res) {
     res.status(200).send(that.model.schemas);
 };
 
@@ -33,8 +33,8 @@ gpii.schema.inline.router.sendSchemaData  = function (that, req, res) {
     The `gpii.express.router` that delivers schema data to client side components.
 
  */
-fluid.defaults("gpii.schema.inline.router", {
-    gradeNames: ["gpii.express.router", "gpii.hasRequiredOptions", "fluid.modelComponent"],
+fluid.defaults("gpii.schema.inlineMiddleware", {
+    gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions", "fluid.modelComponent"],
     path: "/allSchemas",
     namespace: "allSchemas", // Namespace to allow other routers to put themselves in the chain before or after us.
     events: {
@@ -47,8 +47,8 @@ fluid.defaults("gpii.schema.inline.router", {
         schemas: "{parser}.model.dereferencedSchemas"
     },
     invokers: {
-        route: {
-            funcName: "gpii.schema.inline.router.sendSchemaData",
+        middleware: {
+            funcName: "gpii.schema.inlineMiddleware.sendSchemaData",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `request`, `response`
         }
     },
@@ -56,10 +56,10 @@ fluid.defaults("gpii.schema.inline.router", {
         parser: {
             type: "gpii.schema.parser",
             options: {
-                schemaDirs: "{gpii.schema.inline.router}.options.schemaDirs",
+                schemaDirs: "{gpii.schema.inlineMiddleware}.options.schemaDirs",
                 listeners: {
                     "onSchemasDereferenced.notifyRouter": {
-                        func: "{gpii.schema.inline.router}.events.onSchemasDereferenced.fire"
+                        func: "{gpii.schema.inlineMiddleware}.events.onSchemasDereferenced.fire"
                     }
                 }
             }

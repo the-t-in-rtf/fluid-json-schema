@@ -15,24 +15,25 @@ require("../../../");
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
-fluid.registerNamespace("gpii.schema.parser.tests.server");
+fluid.registerNamespace("gpii.tests.schema.parser.server");
 
-gpii.schema.parser.tests.server.validateAndTest = function (validator, schemaKey, content, expected) {
+gpii.tests.schema.parser.server.validateAndTest = function (validator, schemaKey, content, expected) {
     var output = validator.validate(schemaKey, content);
     jqUnit.assertDeepEq("The output should be as expected...", expected, output);
 };
 
-fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
-    gradeNames: ["gpii.tests.express.caseHolder"],
+fluid.defaults("gpii.tests.schema.parser.server.caseHolder", {
+    gradeNames: ["gpii.test.express.caseHolder"],
     rawModules: [
         {
+            name: "Testing 'evolved' error messages...",
             tests: [
                 {
                     name: "Testing a single unevolved failure...",
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "base.json", "{that}.options.input.singleRawFailure", "{that}.options.expected.singleRawFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -42,7 +43,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "base.json", "{that}.options.input.multipleRawFailures", "{that}.options.expected.multipleRawFailures"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -52,7 +53,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedRootFailure", "{that}.options.expected.evolvedRootFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -62,7 +63,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedRequiredFailure", "{that}.options.expected.evolvedRequiredFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -72,7 +73,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.evolvedDeepFailure", "{that}.options.expected.evolvedDeepFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -82,7 +83,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedArrayFailure", "{that}.options.expected.evolvedArrayFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -92,7 +93,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved.json", "{that}.options.input.evolvedButValid", "{that}.options.expected.evolvedButValid"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -102,7 +103,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.overlayedRootFailure", "{that}.options.expected.overlayedRootFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -112,7 +113,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.server.validateAndTest",
+                            funcName: "gpii.tests.schema.parser.server.validateAndTest",
                             args:     ["{testEnvironment}.validator", "evolved-overlay.json", "{that}.options.input.inheritedFailure", "{that}.options.expected.inheritedFailure"] // validator, schemaKey, content, expected
                         }
                     ]
@@ -230,7 +231,7 @@ fluid.defaults("gpii.schema.parser.tests.server.caseHolder", {
     }
 });
 
-fluid.defaults("gpii.schema.parser.tests.server.environment", {
+fluid.defaults("gpii.tests.schema.parser.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
         constructServer:  null,
@@ -256,10 +257,10 @@ fluid.defaults("gpii.schema.parser.tests.server.environment", {
             }
         },
         caseHolder: {
-            type: "gpii.schema.parser.tests.server.caseHolder"
+            type: "gpii.tests.schema.parser.server.caseHolder"
         }
     }
 });
 
-gpii.schema.parser.tests.server.environment();
+fluid.test.runTests("gpii.tests.schema.parser.server.environment");
 

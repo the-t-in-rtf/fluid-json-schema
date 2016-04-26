@@ -30,9 +30,9 @@ require("gpii-express");
 gpii.express.loadTestingSupport();
 
 require("gpii-test-browser");
-gpii.tests.browser.loadTestingSupport();
+gpii.test.browser.loadTestingSupport();
 
-fluid.registerNamespace("gpii.schema.tests.validator.browser");
+fluid.registerNamespace("gpii.tests.schema.validator.browser");
 
 // A client-side function to submit JSON content to the client-side component via `gpii-test-browser` and return the output.
 //
@@ -44,7 +44,7 @@ fluid.registerNamespace("gpii.schema.tests.validator.browser");
 //
 // Returns the output in JSON format.
 //
-gpii.schema.tests.validator.browser.validateContent = function (schema, content) {
+gpii.tests.schema.validator.browser.validateContent = function (schema, content) {
     /* globals clientValidator */
     return clientValidator.validate(schema, content);
 };
@@ -65,24 +65,24 @@ gpii.schema.tests.validator.browser.validateContent = function (schema, content)
 //    name: "Validate an empty 'derived' record...",
 //    sequence: [
 //      {
-//        func: "{gpii.templates.tests.browser.environment}.browser.goto",
-//        args: ["{gpii.templates.tests.browser.environment}.options.url"]
+//        func: "{gpii.handlebars.tests.browser.environment}.browser.goto",
+//        args: ["{gpii.handlebars.tests.browser.environment}.options.url"]
 //      },
 //      {
-//        event:    "{gpii.templates.tests.browser.environment}.browser.events.onLoaded",
-//        listener: "{gpii.templates.tests.browser.environment}.browser.evaluate",
-//        args:     [gpii.schema.tests.validator.browser.validateContent, "derived.json", {}]
+//        event:    "{gpii.handlebars.tests.browser.environment}.browser.events.onLoaded",
+//        listener: "{gpii.handlebars.tests.browser.environment}.browser.evaluate",
+//        args:     [gpii.tests.schema.validator.browser.validateContent, "derived.json", {}]
 //      },
 //      {
-//        event:    "{gpii.templates.tests.browser.environment}.browser.events.onEvaluateComplete",
-//        listener: "gpii.schema.tests.hasFieldErrors",
+//        event:    "{gpii.handlebars.tests.browser.environment}.browser.events.onEvaluateComplete",
+//        listener: "gpii.test.schema.hasFieldErrors",
 //        args:     ["The correct errors should be returned...", [".required", ".deeply.nested.additionalRequired"]]
 //      },
 //    ]
 //  }
 //
 // The checks for multiples are similar, but add a final `true` argument to the call to
-// `gpii.schema.tests.hasFieldErrors`.
+// `gpii.test.schema.hasFieldErrors`.
 //
 // The checks for tests that do not have errors would look even simpler, as we are expecting `undefined` to be the
 // output and can simply use `jqUnit.assertUndefined` to test that..
@@ -90,7 +90,7 @@ gpii.schema.tests.validator.browser.validateContent = function (schema, content)
 // The generated sequences are eventually run through the normal process that the `addRequiredSequences` function
 // provided by `gpii.express` uses.  Thus, you can use the same `sequenceStart` and `sequenceEnd` options.
 //
-gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
+gpii.tests.schema.validator.browser.constructTestSequences = function (that) {
     var generatedTests = [];
 
     // iterate through the test definitions and generate sequences as outlined above.
@@ -98,19 +98,19 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
         var hasMultiples = Boolean(testDefinition.multipleErrorPaths);
         var sequence = [
             {
-                func: "{gpii.schema.tests.validator.browser.environment}.browser.goto",
-                args: ["{gpii.schema.tests.validator.browser.environment}.options.url"]
+                func: "{gpii.tests.schema.validator.browser.environment}.browser.goto",
+                args: ["{gpii.tests.schema.validator.browser.environment}.options.url"]
             },
             // TODO:  Listen for the client-side component's `onTemplatesLoaded` event once https://issues.gpii.net/browse/GPII-1574 is fixed.
             {
-                event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onLoaded",
-                listener: "{gpii.schema.tests.validator.browser.environment}.browser.wait",
+                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onLoaded",
+                listener: "{gpii.tests.schema.validator.browser.environment}.browser.wait",
                 args:     [500]
             },
             {
-                event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onWaitComplete",
-                listener: "{gpii.schema.tests.validator.browser.environment}.browser.evaluate",
-                args:     [gpii.schema.tests.validator.browser.validateContent, testDefinition.schema, testDefinition.content]
+                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onWaitComplete",
+                listener: "{gpii.tests.schema.validator.browser.environment}.browser.evaluate",
+                args:     [gpii.tests.schema.validator.browser.validateContent, testDefinition.schema, testDefinition.content]
             }
         ];
 
@@ -118,14 +118,14 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
             var errorPaths   = hasMultiples ? testDefinition.multipleErrorPaths : testDefinition.errorPaths;
 
             sequence.push({
-                event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onEvaluateComplete",
-                listener: "gpii.schema.tests.hasFieldErrors",
+                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onEvaluateComplete",
+                listener: "gpii.test.schema.hasFieldErrors",
                 args:     ["{arguments}.0", errorPaths, hasMultiples]
             });
         }
         else {
             sequence.push({
-                event:    "{gpii.schema.tests.validator.browser.environment}.browser.events.onEvaluateComplete",
+                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onEvaluateComplete",
                 listener: "jqUnit.assertEquals",
                 args:     ["There should be no errors...", undefined, "{arguments}.0"]
             });
@@ -138,7 +138,7 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
     });
 
     // Finish off each sequence by running it through the `gpii.express` function that prepends and appends sequence steps.
-    var finalSequences = gpii.tests.express.helpers.addRequiredSequences([{ tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd);
+    var finalSequences = gpii.test.express.helpers.addRequiredSequences([{ name: "Testing client-side validation...", tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd);
 
     return finalSequences;
 };
@@ -146,16 +146,16 @@ gpii.schema.tests.validator.browser.constructTestSequences = function (that) {
 
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
-fluid.defaults("gpii.schema.tests.validator.browser.caseHolder", {
-    gradeNames: ["gpii.tests.browser.caseHolder.withExpress", "gpii.schema.tests.validator.hasDehydratedTests"],
+fluid.defaults("gpii.tests.schema.validator.browser.caseHolder", {
+    gradeNames: ["gpii.test.browser.caseHolder.withExpress", "gpii.test.schema.validator.hasDehydratedTests"],
     moduleSource: {
-        funcName: "gpii.schema.tests.validator.browser.constructTestSequences",
+        funcName: "gpii.tests.schema.validator.browser.constructTestSequences",
         args:     ["{that}"]
     }
 });
 
-fluid.defaults("gpii.schema.tests.validator.browser.environment", {
-    gradeNames: ["gpii.tests.browser.environment.withExpress"],
+fluid.defaults("gpii.tests.schema.validator.browser.environment", {
+    gradeNames: ["gpii.test.browser.environment.withExpress"],
     port:   6984,
     url: {
         expander: {
@@ -165,7 +165,7 @@ fluid.defaults("gpii.schema.tests.validator.browser.environment", {
     },
     components: {
         express: {
-            type: "gpii.schema.tests.harness",
+            type: "gpii.test.schema.harness",
             options: {
                 port: "{testEnvironment}.options.port"
             }
@@ -181,9 +181,9 @@ fluid.defaults("gpii.schema.tests.validator.browser.environment", {
             }
         },
         caseHolder: {
-            type: "gpii.schema.tests.validator.browser.caseHolder"
+            type: "gpii.tests.schema.validator.browser.caseHolder"
         }
     }
 });
 
-gpii.schema.tests.validator.browser.environment();
+fluid.test.runTests("gpii.tests.schema.validator.browser.environment");

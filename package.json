@@ -15,15 +15,15 @@
   "dependencies": {
     "ajv": "3.6.0",
     "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#0f4b0e9059b0d827f71c1097d4c01993d6f56d76",
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#05fb6c9559891f3cbab94ee7f018c0c9847b25fe",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#1abecede2a5c09ed30409b9641914c5c13ca1dbc",
-    "infusion": "2.0.0-dev.20151211T025229Z.eabb4fc",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#7edfb72890711b71864a2f3e3dd5c614381e23f6",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#fa3097ef7b2593282dfec6b64442e3d57db3355a",
+    "infusion": "git://github.com/amb26/infusion.git#81ef49cdc0e78a96549c5195d9ffd42604087096",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.0"
   },
   "devDependencies": {
-    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#658bb82cba766a959a4ec09652de2a5d37765c49",
+    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#1db9aa32ef306424b2b7402778247b204ab46140",
     "grunt": "~0.4.4",
     "grunt-contrib-jshint": "~0.9.0",
     "grunt-jsonlint": "1.0.4",

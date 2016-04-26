@@ -3,20 +3,20 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("gpii-test-browser");
-gpii.tests.browser.loadTestingSupport();
+gpii.test.browser.loadTestingSupport();
 
 require("../lib/harness");
 
-fluid.registerNamespace("gpii.schema.tests.errorBinder");
+fluid.registerNamespace("gpii.tests.schema.errorBinder");
 
 // Client side function to count the errors (requires jQuery)
 /*  globals $ */
-gpii.schema.tests.errorBinder.countSelectors = function (selector) {
+gpii.tests.schema.errorBinder.countSelectors = function (selector) {
     return $(selector).length;
 };
 
-fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
-    gradeNames: ["gpii.tests.browser.caseHolder.withExpress"],
+fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
+    gradeNames: ["gpii.test.browser.caseHolder.withExpress"],
     // All of our tests follow the same pattern, start everything, then open a page.
     sequenceStart: [
         {
@@ -43,13 +43,14 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
         }
     ],
     rawModules: [{
+        name:  "Testing the client-side error binder component...",
         tests: [
             {
                 name: "Confirm that initial client-side validation errors appear correctly after startup...",
                 sequence: [
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.browser.tests.lookupFunction, ".errorBinder-clientSideValidation-viewport .fieldErrors", "innerText"]
+                        args: [gpii.test.browser.lookupFunction, ".errorBinder-clientSideValidation-viewport .fieldErrors", "innerText"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -58,7 +59,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.browser.tests.lookupFunction, ".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError", "innerText"]
+                        args: [gpii.test.browser.lookupFunction, ".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError", "innerText"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -150,7 +151,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".fieldError"]
+                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".fieldError"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -175,7 +176,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".fieldError"]
+                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".fieldError"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -194,7 +195,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .fieldError"]
+                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .fieldError"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -203,7 +204,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        args:  [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -212,7 +213,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        args:  [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -237,7 +238,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -258,7 +259,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.browser.events.onClickComplete",
                         listener: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -267,7 +268,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -287,7 +288,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.browser.events.onClickComplete",
                         listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -296,7 +297,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -321,7 +322,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.browser.events.onClickComplete",
                         listener: "{testEnvironment}.browser.evaluate",
-                        args:     [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-viewport .error .alert-box"]
+                        args:     [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-viewport .error .alert-box"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -330,7 +331,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.schema.tests.errorBinder.countSelectors, ".errorBinder-viewport .fieldError"]
+                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-viewport .fieldError"]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -344,8 +345,8 @@ fluid.defaults("gpii.schema.tests.errorBinder.caseHolder", {
 });
 
 
-fluid.defaults("gpii.schema.tests.errorBinder.environment", {
-    gradeNames: ["gpii.tests.browser.environment.withExpress"],
+fluid.defaults("gpii.tests.schema.errorBinder.environment", {
+    gradeNames: ["gpii.test.browser.environment.withExpress"],
     port:   6984,
     url: {
         expander: {
@@ -355,7 +356,7 @@ fluid.defaults("gpii.schema.tests.errorBinder.environment", {
     },
     components: {
         express: {
-            type: "gpii.schema.tests.harness",
+            type: "gpii.test.schema.harness",
             options: {
                 port: "{testEnvironment}.options.port"
             }
@@ -371,9 +372,9 @@ fluid.defaults("gpii.schema.tests.errorBinder.environment", {
             }
         },
         caseHolder: {
-            type: "gpii.schema.tests.errorBinder.caseHolder"
+            type: "gpii.tests.schema.errorBinder.caseHolder"
         }
     }
 });
 
-gpii.schema.tests.errorBinder.environment();
+fluid.test.runTests("gpii.tests.schema.errorBinder.environment");

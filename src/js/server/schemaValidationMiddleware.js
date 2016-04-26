@@ -41,10 +41,12 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, ne
  */
 fluid.defaults("gpii.schema.validationMiddleware", {
     gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
+    namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
     requiredFields: {
-        schemaDirs: true,
-        schemaKey: true,
-        "rules.requestContentToValidate": true
+        "rules.requestContentToValidate":   true,
+        "rules.validationErrorsToResponse": true,
+        schemaDirs:                         true,
+        schemaKey:                          true
     },
     responseSchemaKey: "message.json",
     responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
@@ -57,6 +59,9 @@ fluid.defaults("gpii.schema.validationMiddleware", {
         "rules.requestContentToValidate":   "nomerge"
     },
     rules: {
+        requestContentToValidate: {
+            "": "body"
+        },
         validationErrorsToResponse: {
             isError: { literalValue: true},
             message: {
@@ -84,123 +89,20 @@ fluid.defaults("gpii.schema.validationMiddleware", {
     invokers: {
         middleware: {
             funcName: "gpii.schema.validationMiddleware.rejectOrForward",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"]
+            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // request, response, next
         }
     }
-});
-
-fluid.defaults("gpii.schema.validationMiddleware.requestAware", {
-    gradeNames: ["gpii.schema.validationMiddleware", "gpii.express.requestAware.base"]
-});
-
-fluid.defaults("gpii.schema.validationMiddleware.contentAware", {
-    gradeNames: ["gpii.schema.validationMiddleware", "gpii.express.contentAware.base"]
-});
-
-
-/*
-
-    A base router that will be used to wrap `requestAware` and `contentAware` router grades.
-
- */
-fluid.defaults("gpii.schema.validationMiddleware.router.base", {
-    gradeNames: ["gpii.express.router.passthrough"],
-    method:     "post",
-    routerGrade: "gpii.express.router",
-    events: {
-        onSchemasDereferenced: null
-    },
-    rules: {
-        requestContentToValidate: {
-            "": "body"
-        }
-    },
-    components: {
-        // required middleware that provides `req.body`
-        json: {
-            type: "gpii.express.middleware.bodyparser.json"
-        },
-        urlencoded: {
-            type: "gpii.express.middleware.bodyparser.urlencoded"
-        },
-        gateKeeper: {
-            type: "gpii.schema.validationMiddleware",
-            options: {
-                namespace: "gatekeeper",
-                method:     "{gpii.schema.validationMiddleware.router.base}.options.method",
-                rules:      "{gpii.schema.validationMiddleware.router.base}.options.rules",
-                schemaKey:  "{gpii.schema.validationMiddleware.router.base}.options.schemaKey",
-                schemaDirs: "{gpii.schema.validationMiddleware.router.base}.options.schemaDirs",
-                listeners: {
-                    "onSchemasDereferenced.notifyRouter": {
-                        func: "{gpii.schema.validationMiddleware.router.base}.events.onSchemasDereferenced.fire"
-                    }
-                }
-            }
-        },
-        innerRouter: {
-            type: "{gpii.schema.validationMiddleware.router.base}.options.routerGrade",
-            priority: "after:gateKeeper",
-            options: {
-                method: "{gpii.schema.validationMiddleware.router.base}.options.method",
-                path:   "/"
-            }
-        }
-    }
-});
-
-// The above configured for use with a `requestAware` router.
-fluid.defaults("gpii.schema.validationMiddleware.requestAware.router", {
-    gradeNames:  ["gpii.schema.validationMiddleware.router.base"],
-    routerGrade: "gpii.express.requestAware.router",
-    distributeOptions: {
-        source: "{that}.options.handlerGrades",
-        target: "{that > gpii.express.router}.options.handlerGrades"
-    }
-});
-
-// The above configured for use with a `contentAware` router.
-//
-// NOTE:
-//   Ordinarily a `contentAware` router has a single `handlers` option.  Because we can either handle errors or
-//   failures, we have two options.  The setting `options.errorHandlers` is used to handle validation errors by content
-//   type. The setting `options.successHandlers` is used by the inner router to handle successful requests, again, by
-//   content type.
-//
-fluid.defaults("gpii.schema.validationMiddleware.contentAware.router", {
-    gradeNames: ["gpii.schema.validationMiddleware.router.base"],
-    routerGrade: "gpii.express.contentAware.router",
-    distributeOptions: [
-        {
-            source: "{that}.options.successHandlers",
-            target: "{that >gpii.express.contentAware.router}.options.handlers"
-        },
-        {
-            source: "{that}.options.errorHandlers",
-            target: "{that >gpii.schema.validationMiddleware}.options.handlers"
-        }
-    ]
 });
 
 /*
 
-    A mix-in grade to configure one of the above routers (or a derived grade) to validate GET query data.
+    A mix-in grade to configure an instance of `gpii.schema.validationMiddleware` to work with query data.
 
  */
-fluid.defaults("gpii.schema.validationMiddleware.handlesGetMethod", {
-    method: "get",
+fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
     rules: {
         requestContentToValidate: {
             "": "query"
         }
     }
-});
-
-/*
-
-    A mix-in grade to configure one of the above routers (or a derived grade) to validate PUT body data.
-
- */
-fluid.defaults("gpii.schema.validationMiddleware.handlesPutMethod", {
-    method:     "put"
 });

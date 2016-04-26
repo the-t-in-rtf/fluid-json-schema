@@ -16,7 +16,7 @@ require("../../../");
 require("../common/validate-common-test-definitions");
 require("../lib/errors");
 
-fluid.registerNamespace("gpii.schema.tests.validator.server");
+fluid.registerNamespace("gpii.tests.schema.validator.server");
 
 // We are working with test definitions that look like:
 //
@@ -30,15 +30,15 @@ fluid.registerNamespace("gpii.schema.tests.validator.server");
 //
 // See `options.tests` below for examples.
 //
-gpii.schema.tests.validator.server.singleTest = function (that, test) {
+gpii.tests.schema.validator.server.singleTest = function (that, test) {
     var result = that.validate(test.schema, test.content);
 
     if (test.errors) {
         if (test.errorPaths) {
-            gpii.schema.tests.hasFieldErrors(result, test.errorPaths);
+            gpii.test.schema.hasFieldErrors(result, test.errorPaths);
         }
         if (test.multipleErrorPaths) {
-            gpii.schema.tests.hasFieldErrors(result, test.multipleErrorPaths, true);
+            gpii.test.schema.hasFieldErrors(result, test.multipleErrorPaths, true);
         }
     }
     else {
@@ -48,13 +48,13 @@ gpii.schema.tests.validator.server.singleTest = function (that, test) {
 
 
 // This last test is the only one that can't use the common definitions or `hasFieldErrors` function...
-gpii.schema.tests.validator.server.invalidJsonTest = function (that) {
+gpii.tests.schema.validator.server.invalidJsonTest = function (that) {
     var result = that.validate("base.json", "{}");
     jqUnit.assertNotUndefined("There should be validation errors...", result);
 };
 
 // We need a custom test sequence constructor.  We rehydrate the common test cases here.
-gpii.schema.tests.validator.server.constructTestSequences = function (that) {
+gpii.tests.schema.validator.server.constructTestSequences = function (that) {
     var generatedTests = [];
 
     // iterate through the test definitions and generate sequences as outlined above.
@@ -67,7 +67,7 @@ gpii.schema.tests.validator.server.constructTestSequences = function (that) {
                 },
                 {
                     event:    "{testEnvironment}.events.onSchemasLoaded",
-                    listener: "gpii.schema.tests.validator.server.singleTest",
+                    listener: "gpii.tests.schema.validator.server.singleTest",
                     args:     ["{testEnvironment}.validator", testDefinition]
                 }
             ]
@@ -84,7 +84,7 @@ gpii.schema.tests.validator.server.constructTestSequences = function (that) {
             },
             {
                 event:    "{testEnvironment}.events.onSchemasLoaded",
-                listener: "gpii.schema.tests.validator.server.invalidJsonTest",
+                listener: "gpii.tests.schema.validator.server.invalidJsonTest",
                 args:     ["{testEnvironment}.validator"]
             }
         ]
@@ -92,21 +92,24 @@ gpii.schema.tests.validator.server.constructTestSequences = function (that) {
 
     generatedTests.push(generatedBonusTest);
 
-    return { tests: generatedTests };
+    return {
+        name: "Testing server-side validation...",
+        tests: generatedTests
+    };
 };
 
 
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
-fluid.defaults("gpii.schema.tests.validator.server.caseHolder", {
-    gradeNames: ["fluid.test.testCaseHolder", "gpii.schema.tests.validator.hasDehydratedTests"],
+fluid.defaults("gpii.tests.schema.validator.server.caseHolder", {
+    gradeNames: ["fluid.test.testCaseHolder", "gpii.test.schema.validator.hasDehydratedTests"],
     moduleSource: {
-        funcName: "gpii.schema.tests.validator.server.constructTestSequences",
+        funcName: "gpii.tests.schema.validator.server.constructTestSequences",
         args:     ["{that}"]
     }
 });
 
-fluid.defaults("gpii.schema.tests.validator.server.environment", {
+fluid.defaults("gpii.tests.schema.validator.server.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
         onSchemasLoaded:    null,
@@ -127,9 +130,9 @@ fluid.defaults("gpii.schema.tests.validator.server.environment", {
             }
         },
         caseHolder: {
-            type: "gpii.schema.tests.validator.server.caseHolder"
+            type: "gpii.tests.schema.validator.server.caseHolder"
         }
     }
 });
 
-gpii.schema.tests.validator.server.environment();
+fluid.test.runTests("gpii.tests.schema.validator.server.environment");

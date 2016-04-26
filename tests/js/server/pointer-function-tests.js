@@ -11,7 +11,7 @@ var jqUnit = require("node-jqunit");
 
 require("../../../");
 
-fluid.registerNamespace("gpii.schema.tests.pointers");
+fluid.registerNamespace("gpii.tests.schema.pointers");
 
 /*
 
@@ -25,13 +25,13 @@ fluid.registerNamespace("gpii.schema.tests.pointers");
     }
 
  */
-gpii.schema.tests.pointers.runSingleTest = function (test) {
+gpii.tests.schema.pointers.runSingleTest = function (test) {
     jqUnit.test(test.message, function () {
         jqUnit.assertDeepEq(test.message, test.expected, test.func.apply(null, test.args));
     });
 };
 
-fluid.defaults("gpii.schema.tests.pointers", {
+fluid.defaults("gpii.tests.schema.pointers", {
     gradeNames: ["fluid.component"],
     tests: [
         // gpii.schema.pointers.getParentJsonPointer (jsonPointer)
@@ -102,9 +102,9 @@ fluid.defaults("gpii.schema.tests.pointers", {
     listeners: {
         "onCreate.runTests": {
             funcName: "fluid.each",
-            args: ["{that}.options.tests", gpii.schema.tests.pointers.runSingleTest]
+            args: ["{that}.options.tests", gpii.tests.schema.pointers.runSingleTest]
         }
     }
 });
 
-gpii.schema.tests.pointers();
+gpii.tests.schema.pointers();

@@ -22,8 +22,8 @@ gpii.test.schema.checkHtmlResponse = function (message, expected, body) {
     jqUnit.assertTrue(message, body.indexOf(expected) !== -1);
 };
 
-fluid.defaults("gpii.schema.tests.caseHolder", {
-    gradeNames: ["gpii.tests.express.caseHolder.base"],
+fluid.defaults("gpii.test.schema.caseHolder", {
+    gradeNames: ["gpii.test.express.caseHolder.base"],
     sequenceStart: [
         { // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
             func: "{testEnvironment}.events.constructServer.fire"
@@ -36,7 +36,7 @@ fluid.defaults("gpii.schema.tests.caseHolder", {
 });
 
 // A testEnvironment with the standard harness wired in.
-fluid.defaults("gpii.schema.tests.testEnvironment", {
+fluid.defaults("gpii.test.schema.testEnvironment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
         constructServer: null,
@@ -45,7 +45,7 @@ fluid.defaults("gpii.schema.tests.testEnvironment", {
     components: {
         harness: {
             createOnEvent: "constructServer",
-            type: "gpii.schema.tests.harness",
+            type: "gpii.test.schema.harness",
             options: {
                 "port" : "{testEnvironment}.options.port",
                 listeners: {
@@ -59,7 +59,7 @@ fluid.defaults("gpii.schema.tests.testEnvironment", {
 });
 
 // A wrapper for `kettle.request.http` designed for use with the above `testEnvironment`.
-fluid.defaults("gpii.schema.tests.request", {
+fluid.defaults("gpii.test.schema.request", {
     gradeNames: ["kettle.test.request.http"],
     port: "{testEnvironment}.options.port",
     path: {

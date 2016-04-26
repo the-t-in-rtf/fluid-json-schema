@@ -19,30 +19,30 @@ kettle.loadTestingSupport();
 
 require("../../../");
 
-fluid.defaults("gpii.schema.tests.middleware.contentAware.request", {
+fluid.defaults("gpii.test.schema.middleware.contentAware.request", {
     gradeNames: ["kettle.test.request.http"],
     path:       "/gatedContentAware",
     port:       "{testEnvironment}.options.port",
     method:     "POST"
 });
 
-fluid.defaults("gpii.schema.tests.middleware.contentAware.request.html", {
-    gradeNames: ["gpii.schema.tests.middleware.contentAware.request"],
+fluid.defaults("gpii.test.schema.middleware.contentAware.request.html", {
+    gradeNames: ["gpii.test.schema.middleware.contentAware.request"],
     headers: {
         "accept": "text/html"
     }
 });
 
-fluid.defaults("gpii.schema.tests.middleware.contentAware.request.json", {
-    gradeNames: ["gpii.schema.tests.middleware.contentAware.request"],
+fluid.defaults("gpii.test.schema.middleware.contentAware.request.json", {
+    gradeNames: ["gpii.test.schema.middleware.contentAware.request"],
     headers: {
         "accept": "application/json"
     }
 });
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
-fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
-    gradeNames: ["gpii.schema.tests.caseHolder"],
+fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
+    gradeNames: ["gpii.test.schema.caseHolder"],
     validPayload: {
         shallowlyRequired: true,
         testString:        "CATs",
@@ -77,6 +77,7 @@ fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
     },
     rawModules: [
         {
+            name: "Testing validation with 'content aware' middleware...",
             tests: [
                 {
                     name: "Testing a valid POST response with no 'Accept' header...",
@@ -197,34 +198,34 @@ fluid.defaults("gpii.schema.tests.middleware.contentAware.caseHolder", {
     ],
     components: {
         validPostNoHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request"
+            type: "gpii.test.schema.middleware.contentAware.request"
         },
         validPostHtmlHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request.html"
+            type: "gpii.test.schema.middleware.contentAware.request.html"
         },
         validPostJsonHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request.json"
+            type: "gpii.test.schema.middleware.contentAware.request.json"
         },
         invalidPostNoHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request"
+            type: "gpii.test.schema.middleware.contentAware.request"
         },
         invalidPostHtmlHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request.html"
+            type: "gpii.test.schema.middleware.contentAware.request.html"
         },
         invalidPostJsonHeader: {
-            type: "gpii.schema.tests.middleware.contentAware.request.json"
+            type: "gpii.test.schema.middleware.contentAware.request.json"
         }
     }
 });
 
-fluid.defaults("gpii.schema.tests.middleware.contentAware.testEnvironment", {
-    gradeNames: ["gpii.schema.tests.testEnvironment"],
+fluid.defaults("gpii.test.schema.middleware.contentAware.testEnvironment", {
+    gradeNames: ["gpii.test.schema.testEnvironment"],
     port:       7593,
     components: {
         caseHolder: {
-            type: "gpii.schema.tests.middleware.contentAware.caseHolder"
+            type: "gpii.test.schema.middleware.contentAware.caseHolder"
         }
     }
 });
 
-gpii.schema.tests.middleware.contentAware.testEnvironment();
+fluid.test.runTests("gpii.test.schema.middleware.contentAware.testEnvironment");

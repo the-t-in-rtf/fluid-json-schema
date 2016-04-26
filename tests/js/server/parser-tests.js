@@ -13,9 +13,9 @@ require("../../../");
 require("gpii-express");
 gpii.express.loadTestingSupport();
 
-fluid.registerNamespace("gpii.schema.parser.tests");
+fluid.registerNamespace("gpii.tests.schema.parser");
 
-gpii.schema.parser.tests.testSchemaCaching = function (that) {
+gpii.tests.schema.parser.testSchemaCaching = function (that) {
     jqUnit.assertTrue("There should be dereferenced schemas...", that.model && that.model.dereferencedSchemas && Object.keys(that.model.dereferencedSchemas).length > 0);
 
     // There should no longer be any $ref values in any of our schemas.  We check the `properties` structure, which in
@@ -28,17 +28,18 @@ gpii.schema.parser.tests.testSchemaCaching = function (that) {
     });
 };
 
-fluid.defaults("gpii.schema.parser.tests.caseHolder", {
-    gradeNames: ["gpii.tests.express.caseHolder"],
+fluid.defaults("gpii.tests.schema.parser.caseHolder", {
+    gradeNames: ["gpii.test.express.caseHolder"],
     rawModules: [
         {
+            name: "Testing the parser in isolation...",
             tests: [
                 {
                     name: "Testing the initial dereferencing of schema content...",
                     type: "test",
                     sequence: [
                         {
-                            funcName: "gpii.schema.parser.tests.testSchemaCaching",
+                            funcName: "gpii.tests.schema.parser.testSchemaCaching",
                             args:     ["{testEnvironment}.parser"]
                         }
                     ]
@@ -48,7 +49,7 @@ fluid.defaults("gpii.schema.parser.tests.caseHolder", {
     ]
 });
 
-fluid.defaults("gpii.schema.parser.tests.environment", {
+fluid.defaults("gpii.tests.schema.parser.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
         constructServer:  null,
@@ -74,10 +75,10 @@ fluid.defaults("gpii.schema.parser.tests.environment", {
             }
         },
         caseHolder: {
-            type: "gpii.schema.parser.tests.caseHolder"
+            type: "gpii.tests.schema.parser.caseHolder"
         }
     }
 });
 
-gpii.schema.parser.tests.environment();
+fluid.test.runTests("gpii.tests.schema.parser.environment");
 

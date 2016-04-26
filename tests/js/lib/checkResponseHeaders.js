@@ -8,8 +8,8 @@ var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
-fluid.registerNamespace("gpii.schema.tests");
-gpii.schema.tests.checkResponseHeaders = function (response, body, typePattern, linkPattern) {
+fluid.registerNamespace("gpii.test.schema");
+gpii.test.schema.checkResponseHeaders = function (response, body, typePattern, linkPattern) {
     if (typePattern) {
         var contentType = response.headers["content-type"];
         jqUnit.assertTrue("The content type header should contain our key...", contentType && contentType.match(typePattern));

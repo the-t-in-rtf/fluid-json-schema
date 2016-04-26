@@ -2,7 +2,7 @@
 (function () {
     "use strict";
 
-    fluid.defaults("gpii.schema.tests.errorBinder.base", {
+    fluid.defaults("gpii.tests.schema.errorBinder.base", {
         hideOnSuccess: false,
         inlineSchemaUrl: "/allSchemas",
         ajaxOptions: {
@@ -50,12 +50,12 @@
         }
     });
 
-    fluid.defaults("gpii.schema.tests.errorBinder", {
-        gradeNames: ["gpii.schemas.client.errorAwareForm", "gpii.schema.tests.errorBinder.base"]
+    fluid.defaults("gpii.tests.schema.errorBinder", {
+        gradeNames: ["gpii.schemas.client.errorAwareForm", "gpii.tests.schema.errorBinder.base"]
     });
 
-    fluid.defaults("gpii.schema.tests.errorBinder.clientSideValidation", {
-        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation.realTime", "gpii.schema.tests.errorBinder.base"]
+    fluid.defaults("gpii.tests.schema.errorBinder.clientSideValidation", {
+        gradeNames: ["gpii.schemas.client.errorAwareForm.clientSideValidation.realTime", "gpii.tests.schema.errorBinder.base"]
     });
 })(jQuery);
 

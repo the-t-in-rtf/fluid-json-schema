@@ -7,11 +7,11 @@ var jqUnit = require("node-jqunit");
 
 require("../../../");
 
-fluid.registerNamespace("gpii.schema.tests");
+fluid.registerNamespace("gpii.test.schema");
 
 // Inspects a response body (`results`) looking for errors that match the paths specified in `fieldPaths` (dot notation paths within `fieldErrors`.  If `multiple`
 // is specified, there should be more than one error at each `fieldPath`.
-gpii.schema.tests.hasFieldErrors = function (results, fieldPointers, multiple) {
+gpii.test.schema.hasFieldErrors = function (results, fieldPointers, multiple) {
     if (fieldPointers) {
         var errorsFound = {};
         fluid.each(results, function (error) {

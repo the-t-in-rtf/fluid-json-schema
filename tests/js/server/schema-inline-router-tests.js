@@ -36,9 +36,10 @@ gpii.schema.inline.tests.checkInlineSchemaPayload = function (response, body) {
 };
 
 fluid.defaults("gpii.schema.inline.tests.caseHolder", {
-    gradeNames: ["gpii.schema.tests.caseHolder"],
+    gradeNames: ["gpii.test.schema.caseHolder"],
     rawModules: [
         {
+            name: "Testing the router that bundles and delivers all schemas at once...",
             tests: [
                 {
                     name: "Testing the initial dereferencing of schema content...",
@@ -60,7 +61,7 @@ fluid.defaults("gpii.schema.inline.tests.caseHolder", {
     ],
     components: {
         schemaContentRequest: {
-            type: "gpii.schema.tests.request",
+            type: "gpii.test.schema.request",
             options: {
                 endpoint: "allSchemas"
             }
@@ -69,7 +70,7 @@ fluid.defaults("gpii.schema.inline.tests.caseHolder", {
 });
 
 fluid.defaults("gpii.schema.inline.tests.environment", {
-    gradeNames: ["gpii.schema.tests.testEnvironment"],
+    gradeNames: ["gpii.test.schema.testEnvironment"],
     port: 7654,
     components: {
         caseHolder: {
@@ -78,5 +79,5 @@ fluid.defaults("gpii.schema.inline.tests.environment", {
     }
 });
 
-gpii.schema.inline.tests.environment();
+fluid.test.runTests("gpii.schema.inline.tests.environment");
 

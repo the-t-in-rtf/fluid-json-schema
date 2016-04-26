@@ -9,11 +9,11 @@ require("gpii-express");
 require("../../../");
 
 // A handler which delivers a "success" or "failure" message depending on a single user-supplied flag.
-fluid.registerNamespace("gpii.schema.tests.middleware.underlyingHandler");
+fluid.registerNamespace("gpii.test.schema.middleware.underlyingHandler");
 
-gpii.schema.tests.middleware.underlyingHandler.handleRequest = function (that) {
+gpii.test.schema.middleware.underlyingHandler.handleRequest = function (that) {
     // Reuse the validation rules to get a consistent payload across all methods.
-    var data = fluid.model.transformWithRules(that.request, that.options.rules.requestContentToValidate);
+    var data = fluid.model.transformWithRules(that.options.request, that.options.rules.requestContentToValidate);
     // TODO:  Simplify this once the binder properly supports checkboxes: https://issues.gpii.net/browse/GPII-1577
     if (data.succeed || data["succeed[]"]) {
         that.sendResponse(200, { ok: true, message: that.options.messages.success});
@@ -23,70 +23,103 @@ gpii.schema.tests.middleware.underlyingHandler.handleRequest = function (that) {
     }
 };
 
-fluid.defaults("gpii.schema.tests.middleware.underlyingHandler", {
+fluid.defaults("gpii.test.schema.middleware.underlyingHandler", {
     gradeNames: ["gpii.express.handler"],
+    rules: "{gpii.schema.validationMiddleware}.options.rules",
     invokers: {
         handleRequest: {
-            funcName: "gpii.schema.tests.middleware.underlyingHandler.handleRequest",
+            funcName: "gpii.test.schema.middleware.underlyingHandler.handleRequest",
             args:     ["{that}"]
         }
     }
 });
 
 // A base grade for all the "method" variations on our router.
-fluid.defaults("gpii.schema.tests.middleware.router.base", {
-    gradeNames: ["gpii.schema.validationMiddleware.requestAware.router"],
-    schemaDirs: "%gpii-json-schema/tests/schemas",
-    schemaKey:  "gated.json",
-    handlerGrades: ["gpii.schema.tests.middleware.underlyingHandler"],
-    messages: {
-        success: {
-            expander: {
-                funcName: "fluid.stringTemplate",
-                args: ["You were able to '%method' content.", { method: "{that}.options.method"}]
-            }
-        },
-        failure: {
-            expander: {
-                funcName: "fluid.stringTemplate",
-                args: ["You failed to '%method' content.", { method: "{that}.options.method"}]
-            }
-        }
+fluid.defaults("gpii.test.schema.middleware.router.base", {
+    gradeNames: ["gpii.express.router"],
+    events: {
+        onSchemasDereferenced: null
     },
-    distributeOptions: [
-        {
-            source: "{that}.options.messages",
-            target: "{that gpii.express.handler}.options.messages"
+    components: {
+        validationMiddleware: {
+            type: "gpii.schema.validationMiddleware",
+            options: {
+                namespace: "validationMiddleware",
+                schemaDirs: "%gpii-json-schema/tests/schemas",
+                schemaKey:  "gated.json",
+                listeners: {
+                    "onSchemasDereferenced.notifyParent": {
+                        func: "{gpii.test.schema.middleware.router.base}.events.onSchemasDereferenced.fire"
+                    }
+                }
+            }
         },
-        {
-            source: "{that}.options.rules",
-            target: "{that gpii.express.handler}.options.rules"
+        requestAwareMiddleware: {
+            type: "gpii.express.middleware.requestAware",
+            options: {
+                priority: "after:validationMiddleware",
+                method:    "use",
+                handlerGrades: ["gpii.test.schema.middleware.underlyingHandler"],
+                messages: {
+                    success: {
+                        expander: {
+                            funcName: "fluid.stringTemplate",
+                            args: ["You were able to '%method' content.", { method: "{gpii.test.schema.middleware.router.base}.options.method"}]
+                        }
+                    },
+                    failure: {
+                        expander: {
+                            funcName: "fluid.stringTemplate",
+                            args: ["You failed to '%method' content.", { method: "{gpii.test.schema.middleware.router.base}.options.method"}]
+                        }
+                    }
+                },
+                distributeOptions: [
+                    {
+                        source: "{that}.options.messages",
+                        target: "{that gpii.express.handler}.options.messages"
+                    },
+                    {
+                        source: "{that}.options.rules",
+                        target: "{that gpii.express.handler}.options.rules"
+                    }
+                ]
+            }
         }
-    ]
+    }
 });
 
 // POST
-fluid.defaults("gpii.schema.tests.middleware.router.post", {
-    gradeNames: ["gpii.schema.tests.middleware.router.base"],
-    method: "post",
-    path:   "/POST"
+fluid.defaults("gpii.test.schema.middleware.router.post", {
+    gradeNames: ["gpii.test.schema.middleware.router.base"],
+    method:     "post",
+    path:       "/POST"
 });
 
 // PUT
-fluid.defaults("gpii.schema.tests.middleware.router.put", {
-    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.validationMiddleware.handlesPutMethod"],
-    path:   "/PUT"
+fluid.defaults("gpii.test.schema.middleware.router.put", {
+    gradeNames: ["gpii.test.schema.middleware.router.base"],
+    method:     "put",
+    path:       "/PUT"
 });
 
 // GET
-fluid.defaults("gpii.schema.tests.middleware.router.get", {
-    gradeNames: ["gpii.schema.tests.middleware.router.base", "gpii.schema.validationMiddleware.handlesGetMethod"],
-    path:   "/GET"
+fluid.defaults("gpii.test.schema.middleware.router.get", {
+    gradeNames: ["gpii.test.schema.middleware.router.base"],
+    method:     "get",
+    path:       "/GET",
+    components: {
+        validationMiddleware: {
+            options: {
+                gradeNames: ["gpii.schema.validationMiddleware.handlesQueryData"]
+            }
+        }
+    }
 });
 
 // A common container for all of the different "method" variations
-fluid.defaults("gpii.schema.tests.middleware.router", {
-    gradeNames: ["gpii.express.router.passthrough"],
+fluid.defaults("gpii.test.schema.middleware.router", {
+    gradeNames: ["gpii.express.router"],
     path: "/gated",
     method: "use",
     events: {
@@ -110,34 +143,34 @@ fluid.defaults("gpii.schema.tests.middleware.router", {
             }
         },
         get: {
-            type: "gpii.schema.tests.middleware.router.get",
+            type: "gpii.test.schema.middleware.router.get",
             options: {
-                priority: "after:schemaLinkErrorMiddleware",
+                priority: "after:schemaLinkMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
-                        func: "{gpii.schema.tests.middleware.router}.events.onGetSchemasDereferenced.fire"
+                        func: "{gpii.test.schema.middleware.router}.events.onGetSchemasDereferenced.fire"
                     }
                 }
             }
         },
         post: {
-            type: "gpii.schema.tests.middleware.router.post",
+            type: "gpii.test.schema.middleware.router.post",
             options: {
-                priority: "after:schemaLinkErrorMiddleware",
+                priority: "after:schemaLinkMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
-                        func: "{gpii.schema.tests.middleware.router}.events.onPostSchemasDereferenced.fire"
+                        func: "{gpii.test.schema.middleware.router}.events.onPostSchemasDereferenced.fire"
                     }
                 }
             }
         },
         put: {
-            type: "gpii.schema.tests.middleware.router.put",
+            type: "gpii.test.schema.middleware.router.put",
             options: {
-                priority: "after:schemaLinkErrorMiddleware",
+                priority: "after:schemaLinkMiddleware",
                 listeners: {
                     "onSchemasDereferenced.notifyParent": {
-                        func: "{gpii.schema.tests.middleware.router}.events.onPutSchemasDereferenced.fire"
+                        func: "{gpii.test.schema.middleware.router}.events.onPutSchemasDereferenced.fire"
                     }
                 }
             }

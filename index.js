@@ -11,7 +11,7 @@ require("./src/js/common/pointers");
 require("./src/js/common/validator");
 require("./src/js/server/validator");
 require("./src/js/server/parser");
-require("./src/js/server/schemaInlineRouter");
+require("./src/js/server/schemaInlineMiddleware");
 require("./src/js/server/schemaLinkMiddleware");
 require("./src/js/server/schemaValidationMiddleware");
 

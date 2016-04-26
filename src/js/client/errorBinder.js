@@ -63,7 +63,7 @@
         },
         components: {
             renderer: {
-                type: "gpii.templates.renderer"
+                type: "gpii.handlebars.renderer"
             }
         },
         modelListeners: {
@@ -77,7 +77,7 @@
 
     // An instance of `templateFormControl` that uses the `errorBinder` to display server-side errors.
     fluid.defaults("gpii.schemas.client.errorAwareForm", {
-        gradeNames: ["gpii.schemas.client.errorBinder", "gpii.templates.templateFormControl"],
+        gradeNames: ["gpii.schemas.client.errorBinder", "gpii.handlebars.templateFormControl"],
         templates: {
             error:   "validation-error-summary"
         },
@@ -95,7 +95,7 @@
         },
         components: {
             renderer: {
-                type: "gpii.templates.renderer.serverAware",
+                type: "gpii.handlebars.renderer.serverAware",
                 options: {
                     listeners: {
                         "onTemplatesLoaded.renderMarkup": {
