@@ -45,7 +45,6 @@ fluid.defaults("gpii.schema.validationMiddleware", {
     requiredFields: {
         "rules.requestContentToValidate":   true,
         "rules.validationErrorsToResponse": true,
-        schemaDirs:                         true,
         schemaKey:                          true
     },
     responseSchemaKey: "message.json",
