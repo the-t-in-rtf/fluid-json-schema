@@ -36,12 +36,10 @@ gpii.schema.parser.loadSchemas = function (that) {
         });
     });
 
-    if (promises.length) {
-        fluid.promise.sequence(promises).then(
-            function () { that.events.onSchemasDereferenced.fire(that); },
-            function (error) { fluid.fail(error.message || error); }
-        );
-    }
+    fluid.promise.sequence(promises).then(
+        function () { that.events.onSchemasDereferenced.fire(that); },
+        function (error) { fluid.fail(error.message || error); }
+    );
 };
 
 
