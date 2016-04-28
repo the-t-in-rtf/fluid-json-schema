@@ -80,7 +80,7 @@ feedback where possible.
 #### `gpii.schema.validator.ajv.sanitizeValidationErrors(schemaKey, errors)`
 
 * `schemaKey {String}`: The schema key we are validating against.
-* `errors`: A map of existing error results to be sanitized.
+* `errors`: A map of existing error results to be sanitized (see below for examples).
 
 AJV gives us output like:
 
