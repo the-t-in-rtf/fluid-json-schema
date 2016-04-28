@@ -14,10 +14,7 @@ require("../../../index");
 fluid.registerNamespace("gpii.schema.validator.ajv.server");
 
 fluid.defaults("gpii.schema.validator.ajv.server", {
-    gradeNames: ["gpii.schema.validator.ajv", "gpii.hasRequiredOptions"],
-    requiredFields: {
-        schemaDirs: true
-    },
+    gradeNames: ["gpii.schema.validator.ajv"],
     events: {
         onSchemasDereferenced: null,
         // Map the common `onSchemasLoaded` event to `onSchemasReferenced`, as the parser loaded them for us.
