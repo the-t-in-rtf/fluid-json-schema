@@ -38,7 +38,9 @@ gpii.schema.parser.loadSchemas = function (that) {
 
     fluid.promise.sequence(promises).then(
         function () { that.events.onSchemasDereferenced.fire(that); },
-        function (error) { fluid.fail(error.message || error); }
+        function (error) {
+            fluid.fail(error.message || error);
+        }
     );
 };
 
