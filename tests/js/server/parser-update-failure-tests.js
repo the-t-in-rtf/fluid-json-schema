@@ -20,14 +20,19 @@ fluid.defaults("gpii.tests.schema.parser.bornToDie", {
     schemaDirs: "%gpii-json-schema/tests/badSchemas"
 });
 
+/*
+
+    Global error handling used in this specific test, adapted from:
+
+    https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L111
+    https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L115
+
+ */
+
 fluid.registerNamespace("gpii.tests.schema.parser.failure");
 gpii.tests.schema.parser.failure.confirmErrorFired = function (error) {
     jqUnit.assertTrue("Attempting to load bad remote schemas fails as expected...", error && error.message && (error.message.indexOf("ENOENT") !== -1));
 };
-
-// TODO:  Look here for an option to handle this properly:
-// https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L111
-// https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L115
 
 gpii.tests.schema.awaitGlobalError = function (priority, message) {
     jqUnit.assert(message);
