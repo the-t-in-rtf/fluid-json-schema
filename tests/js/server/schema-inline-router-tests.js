@@ -36,7 +36,7 @@ gpii.schema.inline.tests.checkInlineSchemaPayload = function (response, body) {
 };
 
 fluid.defaults("gpii.schema.inline.tests.caseHolder", {
-    gradeNames: ["gpii.test.schema.caseHolder"],
+    gradeNames: ["gpii.test.express.caseHolder"],
     rawModules: [
         {
             name: "Testing the router that bundles and delivers all schemas at once...",

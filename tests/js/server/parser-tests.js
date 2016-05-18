@@ -52,9 +52,9 @@ fluid.defaults("gpii.tests.schema.parser.caseHolder", {
 fluid.defaults("gpii.tests.schema.parser.environment", {
     gradeNames: ["fluid.test.testEnvironment"],
     events: {
-        constructServer:  null,
+        constructFixtures:  null,
         onSchemasDereferenced: null,
-        onStarted: {
+        onFixturesConstructed: {
             events: {
                 onSchemasDereferenced: "onSchemasDereferenced"
             }
@@ -69,7 +69,7 @@ fluid.defaults("gpii.tests.schema.parser.environment", {
     components: {
         parser: {
             type: "gpii.schema.parser",
-            createOnEvent: "constructServer",
+            createOnEvent: "constructFixtures",
             options: {
                 schemaDirs: "%gpii-json-schema/tests/schemas"
             }

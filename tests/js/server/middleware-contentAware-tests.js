@@ -42,7 +42,7 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.request.json", {
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
-    gradeNames: ["gpii.test.schema.caseHolder"],
+    gradeNames: ["gpii.test.express.caseHolder"],
     validPayload: {
         shallowlyRequired: true,
         testString:        "CATs",

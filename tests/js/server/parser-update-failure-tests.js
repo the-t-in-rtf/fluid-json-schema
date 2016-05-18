@@ -52,21 +52,6 @@ gpii.tests.schema.notifyGlobalError = function () {
     globalErrorHandler.events.onError.fire(fluid.makeArray(arguments));
 };
 
-/*
- {
- funcName: "kettle.test.pushInstrumentedErrors",
- args: "kettle.tests.notifyGlobalError"
- }, {
- funcName: "kettle.tests.triggerGlobalErrorAsync",
- args: "{testCaseHolder}"
- }, {
- event: "{eventHolder}.events.logNotifier",
- listener: "kettle.tests.awaitGlobalError"
- }, {
- funcName: "kettle.test.popInstrumentedErrors"
- */
-
-
 fluid.defaults("gpii.tests.schema.parser.failure.caseholder", {
     gradeNames: ["fluid.test.testCaseHolder"],
     modules: {

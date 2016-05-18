@@ -69,7 +69,7 @@ fluid.defaults("gpii.tests.schema.middleware.request.put", {
 
 // Wire in an instance of kettle.requests.request.http for each test and wire the check to its onError or onSuccess event
 fluid.defaults("gpii.tests.schema.middleware.caseHolder", {
-    gradeNames: ["gpii.test.schema.caseHolder"],
+    gradeNames: ["gpii.test.express.caseHolder"],
     rawModules: [
         {
             name: "Testing the schema validation middleware in combination with the 'request aware' middleware...",

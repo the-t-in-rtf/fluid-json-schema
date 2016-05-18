@@ -22,35 +22,24 @@ gpii.test.schema.checkHtmlResponse = function (message, expected, body) {
     jqUnit.assertTrue(message, body.indexOf(expected) !== -1);
 };
 
-fluid.defaults("gpii.test.schema.caseHolder", {
-    gradeNames: ["gpii.test.express.caseHolder.base"],
-    sequenceStart: [
-        { // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
-            func: "{testEnvironment}.events.constructServer.fire"
-        },
-        {
-            listener: "fluid.identity",
-            event: "{testEnvironment}.events.onAllReady"
-        }
-    ]
-});
-
 // A testEnvironment with the standard harness wired in.
 fluid.defaults("gpii.test.schema.testEnvironment", {
-    gradeNames: ["fluid.test.testEnvironment"],
+    gradeNames: ["gpii.test.express.testEnvironment"],
     events: {
-        constructServer: null,
-        onAllReady: null
+        onHarnessReady: null,
+        onFixturesConstructed: {
+            events: {
+                onHarnessReady: "onHarnessReady"
+            }
+        }
     },
     components: {
-        harness: {
-            createOnEvent: "constructServer",
+        express: {
             type: "gpii.test.schema.harness",
             options: {
-                "port" : "{testEnvironment}.options.port",
                 listeners: {
                     "onAllReady.notifyEnvironment": {
-                        func: "{testEnvironment}.events.onAllReady.fire"
+                        func: "{testEnvironment}.events.onHarnessReady.fire"
                     }
                 }
             }

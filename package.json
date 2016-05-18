@@ -14,21 +14,21 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "3.6.0",
-    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#a94d9311f25d591c687d626566f9d2f01109ed26",
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#1c821135fb89596b1cf5bbd398bb2ad50e874d79",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#ddf45b9b55bc6511801625f09b2874b69440f898",
-    "infusion": "git://github.com/amb26/infusion.git#81ef49cdc0e78a96549c5195d9ffd42604087096",
+    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#6525dba4c6d826bd587b07a5e5195dc556839730",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#d3a21a9247a30a9bd9d0e8a3b6ffa9152a572b03",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#59bcd1ebf7def36701320d8a1fdb57fd6722ce8b",
+    "infusion": "git://github.com/amb26/infusion.git#3c67d2d3d2fafbe6c21a6e9828be438eebe67299",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.0"
   },
   "devDependencies": {
-    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#2a81cb06a9787d8ae2e112e4bff1c8b3f200637c",
+    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#f424508679e1b3866314468ed167a01499c9d66a",
     "grunt": "~0.4.4",
     "grunt-contrib-jshint": "~0.9.0",
     "grunt-jsonlint": "1.0.4",
     "grunt-shell": "0.6.4",
-    "kettle": "git://github.com/amb26/kettle.git#2517cc1d9d047d58aef70db48d1580da718ffc16",
+    "kettle": "git://github.com/amb26/kettle.git#d808f3d5e326265aab9aaa1014703d75fa8ef0d0",
     "node-jqunit": "~1.1.3",
     "request": "2.51.0"
   }

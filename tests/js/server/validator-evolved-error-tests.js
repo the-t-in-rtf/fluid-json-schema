@@ -232,11 +232,10 @@ fluid.defaults("gpii.tests.schema.parser.server.caseHolder", {
 });
 
 fluid.defaults("gpii.tests.schema.parser.server.environment", {
-    gradeNames: ["fluid.test.testEnvironment"],
+    gradeNames: ["gpii.test.express.testEnvironment"],
     events: {
-        constructServer:  null,
         onSchemasLoaded: null,
-        onStarted: {
+        onFixturesConstructed: {
             events: {
                 onSchemasLoaded: "onSchemasLoaded"
             }
@@ -251,7 +250,7 @@ fluid.defaults("gpii.tests.schema.parser.server.environment", {
     components: {
         validator: {
             type: "gpii.schema.validator.ajv.server",
-            createOnEvent: "constructServer",
+            createOnEvent: "constructFixtures",
             options: {
                 schemaDirs: "%gpii-json-schema/tests/schemas"
             }
