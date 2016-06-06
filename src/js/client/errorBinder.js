@@ -45,7 +45,7 @@
         });
 
         // We have inserted new elements and need to fire an event so that interested parties can update their bindings.
-        that.events.onDomBind.fire(that);
+        that.events.onDomChange.fire(that);
     };
 
     // The base component used to actually display validation errors.

@@ -24,7 +24,7 @@
                 testAllOf:         "testAllOf",
                 succeed:           "succeed",
                 deep: {
-                    deeplyRequired:    "deeplyRequired"
+                    deeplyRequired: "deeplyRequired"
                 }
             }
         },
@@ -32,13 +32,62 @@
         },
         bindings: {
             // We use both styles of bindings to confirm that they each work with the `errorBinder`.
-            shallowlyRequired: "shallowlyRequired",
+            shallowlyRequired: {
+                selector: "shallowlyRequired",
+                path:     "shallowlyRequired",
+                rules: {
+                    domToModel: {
+                        "": {
+                            transform: {
+                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                inputPath: ""
+                            }
+                        }
+                    }
+                }
+            },
             testString: {
                 selector: "testString",
-                path:     "testString"
+                path:     "testString",
+                rules: {
+                    domToModel: {
+                        "": {
+                            transform: {
+                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                inputPath: ""
+                            }
+                        }
+                    }
+                }
             },
-            testAllOf: "testAllOf",
-            deeplyRequired: "deeplyRequired",
+            testAllOf: {
+                selector: "testAllOf",
+                path:     "testAllOf",
+                rules: {
+                    domToModel: {
+                        "": {
+                            transform: {
+                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                inputPath: ""
+                            }
+                        }
+                    }
+                }
+            },
+            deeplyRequired: {
+                selector: "deeplyRequired",
+                path:     "deeplyRequired",
+                rules: {
+                    domToModel: {
+                        "": {
+                            transform: {
+                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                inputPath: ""
+                            }
+                        }
+                    }
+                }
+            },
             succeed: "succeed"
         },
         selectors: {
