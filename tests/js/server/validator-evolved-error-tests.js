@@ -5,6 +5,7 @@
   Client-side tests and integration are covered by the validator tests, which make use of the parser internally.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
@@ -262,4 +263,3 @@ fluid.defaults("gpii.tests.schema.parser.server.environment", {
 });
 
 fluid.test.runTests("gpii.tests.schema.parser.server.environment");
-

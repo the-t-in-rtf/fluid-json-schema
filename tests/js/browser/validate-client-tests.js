@@ -1,3 +1,4 @@
+/* eslint-env node */
 "use strict";
 // Test "validator" components using browser and filesystem content.
 //

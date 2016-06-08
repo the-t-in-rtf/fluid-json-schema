@@ -3,6 +3,7 @@
  * Static functions used to work with JSON pointers.
  *
  */
+/* eslint-env node */
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
@@ -108,3 +109,4 @@ gpii.schema.pointers.getLastJsonPointerSegment = function (jsonPointer) {
     var segments = jsonPointer.split("/");
     return segments[segments.length - 1];
 };
+

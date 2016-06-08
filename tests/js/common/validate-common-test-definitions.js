@@ -1,6 +1,7 @@
 // Tests to be used with the validator on both the client and server side. This grade cannot be used by itself.  You
 // must mix it in with an existing test grade.  See `validate-server-tests.js` for an example.
 //
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 

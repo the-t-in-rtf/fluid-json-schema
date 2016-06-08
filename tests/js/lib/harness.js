@@ -1,6 +1,7 @@
 /*
     Test harness common to all tests that use `gpii-express`.  Loads all required server-side components.
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 

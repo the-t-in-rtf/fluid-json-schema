@@ -3,6 +3,7 @@
     Tests for the static functions used within the.pointers.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

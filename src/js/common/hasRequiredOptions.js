@@ -11,6 +11,7 @@
 //   "path.relative.to.that.options": true
 // }
 //
+/* eslint-env node */
 "use strict";
 var fluid = fluid || require("infusion"); // Can also be used within client-side components.
 var gpii = fluid.registerNamespace("gpii");

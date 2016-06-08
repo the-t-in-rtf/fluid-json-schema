@@ -3,6 +3,7 @@
     Tests for the "schema Middleware" that rejects requests with invalid JSON payloads.
 
 */
+/* eslint-env node */
 "use strict";
 var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

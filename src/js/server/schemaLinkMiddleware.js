@@ -1,11 +1,12 @@
 /*
 
-    An extension of `gpii.express.middleware` (and `gpii.express.middleware.error`) that adds JSON Schema headers to 
+    An extension of `gpii.express.middleware` (and `gpii.express.middleware.error`) that adds JSON Schema headers to
     the outgoing response. See the component's documentation for more details:
 
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/schemaLinkMiddleware.md
 
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

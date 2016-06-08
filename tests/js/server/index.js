@@ -1,5 +1,5 @@
 "use strict";
-
+/* eslint-env node */
 require("./parser-update-failure-tests");
 // TODO:  Review with Antranig.  If we enable this we get errors like the following.  The same tests run as expected when launched individually.
 /*
@@ -8,7 +8,6 @@ require("./parser-update-failure-tests");
  at gpii.test.schema.checkResponseHeaders (/Users/duhrer/Source/rtf/gpii-json-schema/tests/js/lib/checkResponseHeaders.js:15:16)
  */
 
-
 require("./middleware-contentAware-tests");
 require("./middleware-requestAware-tests");
 require("./parser-tests");
@@ -16,4 +15,3 @@ require("./pointer-function-tests");
 require("./schema-inline-router-tests");
 require("./validate-server-tests");
 require("./validator-evolved-error-tests");
-

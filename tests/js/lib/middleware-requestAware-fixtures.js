@@ -1,6 +1,7 @@
 // "gated" test middleware (and an underlying test handler that lies beyond the gate).  Used in testing the
 // `requestAware` wrapper with our `schemaMiddleware`.
 //
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

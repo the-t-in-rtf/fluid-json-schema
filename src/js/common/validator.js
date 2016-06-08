@@ -5,7 +5,7 @@
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
-
+/* eslint-env node */
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
@@ -16,7 +16,7 @@ fluid.registerNamespace("gpii.schema.validator.ajv");
 
 gpii.schema.validator.ajv.init = function (that) {
     // We persist a single AJV instance so that we can take advantage of its automatic compiling and caching.
-    that.ajv = Ajv(that.options.validatorOptions); // jshint ignore:line
+    that.ajv = Ajv(that.options.validatorOptions); /* eslint new-cap: "off" */
 
     gpii.schema.validator.ajv.refreshSchemas(that);
 };
@@ -117,4 +117,3 @@ fluid.defaults("gpii.schema.validator.ajv", {
         }
     }
 });
-

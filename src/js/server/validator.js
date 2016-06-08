@@ -6,6 +6,7 @@
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 

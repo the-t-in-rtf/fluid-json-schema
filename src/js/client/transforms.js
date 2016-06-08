@@ -3,6 +3,7 @@
     Model transformation functions useful in validating form content.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

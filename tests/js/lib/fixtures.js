@@ -1,6 +1,7 @@
 /*
     Test fixtures for use in a range of tests.
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

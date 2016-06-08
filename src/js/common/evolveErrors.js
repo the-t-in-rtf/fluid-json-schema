@@ -2,6 +2,7 @@
 //
 // https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/errors.md
 //
+/* eslint-env node */
 "use strict";
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

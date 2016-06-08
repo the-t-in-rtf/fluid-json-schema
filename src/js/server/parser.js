@@ -5,7 +5,7 @@
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/parser.md
 
 */
-
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

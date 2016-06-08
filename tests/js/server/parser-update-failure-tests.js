@@ -3,6 +3,7 @@
   Pass the parser a bad JSON Schema and confirm that it throws an error.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");

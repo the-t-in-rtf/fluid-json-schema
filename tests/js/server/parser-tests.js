@@ -3,6 +3,7 @@
   Test the parser by itself to confirm that it loads schemas and dereferences them as expected.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
@@ -81,4 +82,3 @@ fluid.defaults("gpii.tests.schema.parser.environment", {
 });
 
 fluid.test.runTests("gpii.tests.schema.parser.environment");
-

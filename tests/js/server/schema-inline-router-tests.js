@@ -2,6 +2,7 @@
 
   Test the router that dereferences and delivers all schemas "inline" as a single JSON object.
  */
+/* eslint-env node */
 "use strict";
 var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
@@ -80,4 +81,3 @@ fluid.defaults("gpii.schema.inline.tests.environment", {
 });
 
 fluid.test.runTests("gpii.schema.inline.tests.environment");
-

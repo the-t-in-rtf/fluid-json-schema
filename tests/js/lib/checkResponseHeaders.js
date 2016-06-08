@@ -3,6 +3,7 @@
     Static function to check responses for the standard headers.
 
  */
+/* eslint-env node */
 "use strict";
 var fluid  =  require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
