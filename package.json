@@ -16,7 +16,7 @@
     "ajv": "3.6.0",
     "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#f1ade44e0be4990a2400e54061a5557e634a13a8",
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#52b1701d46868eeb3943d6d85bba09eba47938ce",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#50becec84ae026a35c2644b48bb4a2aadd9401db",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#c66207050ba764cbdbce401db725d2932c8fcbce",
     "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",
