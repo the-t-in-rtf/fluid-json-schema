@@ -19,19 +19,19 @@
 var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("gpii-test-browser");
-
 require("../lib/errors");
 require("../lib/harness");
 require("../common/validate-common-test-definitions");
 
 require("../../../");
 
-require("gpii-express");
-gpii.express.loadTestingSupport();
+// var jqUnit = require("node-jqunit");
+// jqUnit.asyncTest("Waiting for stuff to start....", function () {
+//     setTimeout(function () { jqUnit.start(); jqUnit.assert("Stuff has started"); }, 1000);
+// });
 
-require("gpii-test-browser");
-gpii.test.browser.loadTestingSupport();
+require("gpii-webdriver");
+gpii.webdriver.loadTestingSupport();
 
 fluid.registerNamespace("gpii.tests.schema.validator.browser");
 
@@ -99,18 +99,18 @@ gpii.tests.schema.validator.browser.constructTestSequences = function (that) {
         var hasMultiples = Boolean(testDefinition.multipleErrorPaths);
         var sequence = [
             {
-                func: "{gpii.tests.schema.validator.browser.environment}.browser.goto",
-                args: ["{gpii.tests.schema.validator.browser.environment}.options.url"]
+                func: "{testEnvironment}.webdriver.get",
+                args: ["{testEnvironment}.options.url"]
             },
-            // TODO:  Listen for the client-side component's `onTemplatesLoaded` event once https://issues.gpii.net/browse/GPII-1574 is fixed.
+            // TODO:  Listen for the client-side component's `onTemplatesLoaded` event.
             {
-                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onLoaded",
-                listener: "{gpii.tests.schema.validator.browser.environment}.browser.wait",
+                event:    "{testEnvironment}.webdriver.events.onGetComplete",
+                listener: "{testEnvironment}.webdriver.sleep",
                 args:     [500]
             },
             {
-                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onWaitComplete",
-                listener: "{gpii.tests.schema.validator.browser.environment}.browser.evaluate",
+                event:    "{testEnvironment}.webdriver.events.onSleepComplete",
+                listener: "{testEnvironment}.webdriver.executeScript",
                 args:     [gpii.tests.schema.validator.browser.validateContent, testDefinition.schema, testDefinition.content]
             }
         ];
@@ -119,16 +119,16 @@ gpii.tests.schema.validator.browser.constructTestSequences = function (that) {
             var errorPaths   = hasMultiples ? testDefinition.multipleErrorPaths : testDefinition.errorPaths;
 
             sequence.push({
-                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onEvaluateComplete",
+                event:    "{testEnvironment}.webdriver.events.onExecuteScriptComplete",
                 listener: "gpii.test.schema.hasFieldErrors",
                 args:     ["{arguments}.0", errorPaths, hasMultiples]
             });
         }
         else {
             sequence.push({
-                event:    "{gpii.tests.schema.validator.browser.environment}.browser.events.onEvaluateComplete",
-                listener: "jqUnit.assertEquals",
-                args:     ["There should be no errors...", undefined, "{arguments}.0"]
+                event:    "{testEnvironment}.webdriver.events.onExecuteScriptComplete",
+                listener: "jqUnit.assertNull",
+                args:     ["There should be no errors...", "{arguments}.0"]
             });
         }
         var generatedTest = {
@@ -139,16 +139,16 @@ gpii.tests.schema.validator.browser.constructTestSequences = function (that) {
     });
 
     // Finish off each sequence by running it through the `gpii.express` function that prepends and appends sequence steps.
-    var finalSequences = gpii.test.express.helpers.addRequiredSequences([{ name: "Testing client-side validation...", tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd);
-
-    return finalSequences;
+    var modulesWithStartAndEnd = gpii.test.express.helpers.addRequiredSequences([{ name: "Testing client-side validation...", tests: generatedTests }], that.options.sequenceStart, that.options.sequenceEnd);
+    var transformedSequences = fluid.transform(modulesWithStartAndEnd, that.prepareModule);
+    return transformedSequences;
 };
 
 
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
 fluid.defaults("gpii.tests.schema.validator.browser.caseHolder", {
-    gradeNames: ["gpii.test.browser.caseHolder.withExpress", "gpii.test.schema.validator.hasDehydratedTests"],
+    gradeNames: ["gpii.test.webdriver.caseHolder", "gpii.test.schema.validator.hasDehydratedTests"],
     moduleSource: {
         funcName: "gpii.tests.schema.validator.browser.constructTestSequences",
         args:     ["{that}"]
@@ -156,7 +156,7 @@ fluid.defaults("gpii.tests.schema.validator.browser.caseHolder", {
 });
 
 fluid.defaults("gpii.tests.schema.validator.browser.environment", {
-    gradeNames: ["gpii.test.browser.environment.withExpress"],
+    gradeNames: ["gpii.test.webdriver.testEnvironment.withExpress"],
     port:   6984,
     url: {
         expander: {
@@ -171,7 +171,7 @@ fluid.defaults("gpii.tests.schema.validator.browser.environment", {
                 port: "{testEnvironment}.options.port"
             }
         },
-        browser: {
+        webdriver: {
             options: {
                 listeners: {
                     "onError": {
@@ -187,4 +187,4 @@ fluid.defaults("gpii.tests.schema.validator.browser.environment", {
     }
 });
 
-fluid.test.runTests("gpii.tests.schema.validator.browser.environment");
+gpii.test.webdriver.allBrowsers({ baseTestEnvironment: "gpii.tests.schema.validator.browser.environment"});

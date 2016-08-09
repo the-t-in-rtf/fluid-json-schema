@@ -1,45 +1,40 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
+fluid.setLogging(true);
 var gpii  = fluid.registerNamespace("gpii");
 
-require("gpii-test-browser");
-gpii.test.browser.loadTestingSupport();
+require ("gpii-webdriver");
+gpii.webdriver.loadTestingSupport();
 
 require("../lib/harness");
 
 fluid.registerNamespace("gpii.tests.schema.errorBinder");
 
-// Client side function to count the errors (requires jQuery)
-/*  globals $ */
-gpii.tests.schema.errorBinder.countSelectors = function (selector) {
-    return $(selector).length;
-};
-
 fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
-    gradeNames: ["gpii.test.browser.caseHolder.withExpress"],
+    gradeNames: ["gpii.test.webdriver.caseHolder"],
     // All of our tests follow the same pattern, start everything, then open a page.
     sequenceStart: [
         {
             func: "{testEnvironment}.events.constructFixtures.fire"
         },
         {
-            event: "{testEnvironment}.events.onReady",
+            event: "{testEnvironment}.events.onFixturesConstructed",
             listener: "fluid.identity"
         },
         // These must be separate otherwise the framework will complain that the browser might not exist yet. (Even though it should).
         {
-            func: "{testEnvironment}.browser.goto",
+            func: "{testEnvironment}.webdriver.get",
             args: ["{testEnvironment}.options.url"]
         },
-        // TODO:  Remove this in favor of listening for "onSchemasUpdated" on the client side once https://issues.gpii.net/browse/GPII-1574 is resolved.
+        // TODO:  Remove in favor of having the client side execute a callback to let us know it's ready
         {
-            event:    "{testEnvironment}.browser.events.onGotoComplete",
-            listener: "{testEnvironment}.browser.wait",
+            event:    "{testEnvironment}.webdriver.events.onGetComplete",
+            listener: "{testEnvironment}.webdriver.sleep",
             args:     [500]
         },
         {
-            event:    "{testEnvironment}.browser.events.onWaitComplete",
+            event:    "{testEnvironment}.webdriver.events.onSleepComplete",
             listener: "fluid.identity"
         }
     ],
@@ -50,22 +45,22 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                 name: "Confirm that initial client-side validation errors appear correctly after startup...",
                 sequence: [
                     {
-                        func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.test.browser.lookupFunction, ".errorBinder-clientSideValidation-viewport .fieldErrors", "innerText"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [{ css: ".errorBinder-clientSideValidation-viewport .fieldErrors"}]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["The error summary should be as expected...", "The information you provided is incomplete or incorrect. Please check the following:\n\nThe 'shallowlyRequired' field is required.\n", "{arguments}.0"]
+                        listener: "gpii.test.webdriver.inspectElement",
+                        event: "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        args: ["The error summary should be as expected...", "{arguments}.0", "getText", "The information you provided is incomplete or incorrect. Please check the following:\nThe 'shallowlyRequired' field is required."] // message, element, elementFn, expectedValue, jqUnitFn
                     },
                     {
-                        func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.test.browser.lookupFunction, ".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError", "innerText"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [{ css: ".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError"}]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["An inline error should be as expected...", "The 'shallowlyRequired' field is required.", "{arguments}.0"]
+                        listener: "gpii.test.webdriver.inspectElement",
+                        event: "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        args: ["An inline error should be as expected...", "{arguments}.0", "getText", "The 'shallowlyRequired' field is required."] // message, element, elementFn, expectedValue, jqUnitFn
                     }
                 ]
             },
@@ -73,116 +68,129 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                 name: "Confirm that feedback on a required field is set and unset as needed...",
                 sequence: [
                     {
-                        func: "{testEnvironment}.browser.type",
-                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
-                    },
-                    // We have to click somewhere else to change focus and trigger a binder update.
-                    {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']")]
                     },
                     {
-                        event:    "{testEnvironment}.browser.events.onClickComplete",
-                        listener: "{testEnvironment}.browser.exists",
-                        args:     [".errorBinder-clientSideValidation-viewport .fieldErrors"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: ["There is text now.", gpii.webdriver.Key.TAB]}
+                        ]]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.isElementPresent",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldErrors")]
                     },
                     {
                         listener: "jqUnit.assertFalse",
-                        event: "{testEnvironment}.browser.events.onExistsComplete",
+                        event: "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
                         args: ["There should no longer be an error summary...", "{arguments}.0"]
                     },
-
                     {
-                        func: "{testEnvironment}.browser.exists",
-                        args: [".errorBinder-clientSideValidation-viewport .fieldError"]
+                        func: "{testEnvironment}.webdriver.isElementPresent",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldError")]
                     },
                     {
                         listener: "jqUnit.assertFalse",
-                        event:    "{testEnvironment}.browser.events.onExistsComplete",
+                        event:    "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
                         args:     ["There should no longer be any field-level errors...", "{arguments}.0"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']")]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args:     [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: fluid.generate(20, gpii.webdriver.Key.ARROW_RIGHT) },
+                            { fn: "sendKeys", args: fluid.generate(20, gpii.webdriver.Key.BACK_SPACE) },
+                            { fn: "sendKeys", args: [gpii.webdriver.Key.TAB]}
+                        ]]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        func: "{testEnvironment}.webdriver.isElementPresent",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldErrors")]
+                    },
+                    {
+                        listener: "jqUnit.assertTrue",
+                        event: "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
+                        args: ["There should now be an error summary...", "{arguments}.0"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.isElementPresent",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldError")]
+                    },
+                    {
+                        listener: "jqUnit.assertTrue",
+                        event:    "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
+                        args:     ["There should now be field-level errors...", "{arguments}.0"]
                     }
-                    //,
-                    // TODO: Enable these steps once https://issues.gpii.net/browse/GPII-1580 is resolved.
-                    //{
-                    //    func: "{testEnvironment}.browser.insert",
-                    //    args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", null]
-                    //},
-                    //// We have to click somewhere else to change focus and trigger a binder update.
-                    //{
-                    //    event: "{testEnvironment}.browser.events.onTypeComplete",
-                    //    func: "{testEnvironment}.browser.click",
-                    //    args: [".errorBinder-clientSideValidation-viewport .focusPoint"]
-                    //},
-                    //{
-                    //    event: "{testEnvironment}.browser.events.onClickComplete",
-                    //    listener: "{testEnvironment}.browser.exists",
-                    //    args: [".errorBinder-clientSideValidation-viewport .fieldErrors"]
-                    //},
-                    //{
-                    //    listener: "jqUnit.assertTrue",
-                    //    event: "{testEnvironment}.browser.events.onExistsComplete",
-                    //    args: ["There should now be an error summary...", "{arguments}.0"]
-                    //},
-                    //
-                    //{
-                    //    func: "{testEnvironment}.browser.exists",
-                    //    args: [".errorBinder-clientSideValidation-viewport .shallowlyRequired-block .fieldError"]
-                    //},
-                    //{
-                    //    listener: "jqUnit.assertTrue",
-                    //    event: "{testEnvironment}.browser.events.onExistsComplete",
-                    //    args: ["There should now be a field-level errors...", "{arguments}.0"]
-                    //}
                 ]
             },
             {
                 name: "Confirm that multiple errors can be set and cleared in real time...",
                 sequence: [
                     {
-                        func: "{testEnvironment}.browser.type",
-                        args:     [".errorBinder-clientSideValidation-viewport input[name='testAllOf']", "CAT"]
-                    },
-                    // We have to click somewhere else to change focus and trigger a binder update.
-                    {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='testAllOf']")]
                     },
                     {
-                        event:     "{testEnvironment}.browser.events.onClickComplete",
-                        listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".fieldError"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: ["CAT", gpii.webdriver.Key.TAB]}
+                        ]]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should now be two field errors...", 2, "{arguments}.0"]
-                    },
-                    {
-                        func: "{testEnvironment}.browser.type",
-                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
-                    },
-                    {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.type",
-                        args:     [".errorBinder-clientSideValidation-viewport input[name='testAllOf']", "CATs"]
-                    },
-                    // We have to click somewhere else to change focus and trigger a binder update.
-                    {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .focusPoint"]
-                    },
-                    {
-                        event:     "{testEnvironment}.browser.events.onClickComplete",
-                        listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".fieldError"]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener:  "{testEnvironment}.webdriver.findElements",
+                        args:      [gpii.webdriver.By.css(".fieldError")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should now be no field errors...", undefined, "{arguments}.0"]
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should now be two field errors...", 2, "{arguments}.0.length"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']")]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: ["There is text now.", gpii.webdriver.Key.TAB]}
+                        ]]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='testAllOf']")]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: [" NAP", gpii.webdriver.Key.TAB]}
+                        ]]
+                    },
+                    {
+                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener:  "{testEnvironment}.webdriver.findElements",
+                        args:      [gpii.webdriver.By.css(".fieldError")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should now be no field errors...", 0, "{arguments}.0.length"]
                     }
                 ]
             },
@@ -190,154 +198,179 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                 name: "Confirm that form submission is prevented if there are validation errors...",
                 sequence: [
                     {
-                        func: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .submit")]
                     },
                     {
-                        event:     "{testEnvironment}.browser.events.onClickComplete",
-                        listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .fieldError"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args:     [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should still be 1 field error...", 1, "{arguments}.0"]
-                    },
-                    {
-                        func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener:  "{testEnvironment}.webdriver.findElements",
+                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldError")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should still be no new success message...", undefined, "{arguments}.0"]
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should still be 1 field error...", 1, "{arguments}.0.length"]
                     },
                     {
-                        func:  "{testEnvironment}.browser.evaluate",
-                        args:  [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        func:  "{testEnvironment}.webdriver.findElements",
+                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should still be only one top level error message...", 1, "{arguments}.0"]
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should still be no new success message...", 0, "{arguments}.0.length"]
+                    },
+                    {
+                        func:  "{testEnvironment}.webdriver.findElements",
+                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should still be only one top level error message...", 1, "{arguments}.0.length"]
                     }
                 ]
             },
             {
                 name: "Confirm that underlying server-side messages are still displayed correctly...",
                 sequence: [
-                    // Test a single successful submission
                     {
-                        func: "{testEnvironment}.browser.type",
-                        args: [".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']", "There is text now."]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='shallowlyRequired']")]
                     },
                     {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: ["There is text now.", gpii.webdriver.Key.ENTER]}
+                        ]]
                     },
                     {
-                        event:     "{testEnvironment}.browser.events.onClickComplete",
-                        listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
-                    },
-                    {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should now be a success message...", 1, "{arguments}.0"]
-                    },
-                    // Test a success response followed by a failure, to confirm that the right response (and only that one) is displayed.
-                    {
-                        func: "{testEnvironment}.browser.uncheck",
-                        args: [".errorBinder-clientSideValidation-viewport input[name='succeed']"]
-                    },
-                    // We have to click somewhere else to change focus and trigger a binder update.
-                    {
-                        event:    "{testEnvironment}.browser.events.onUncheckComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
-                    },
-                    {
-                        event:    "{testEnvironment}.browser.events.onClickComplete",
-                        listener: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener:  "{testEnvironment}.webdriver.findElements",
+                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should now be an error message...", 1, "{arguments}.0"]
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should now be a success message...", 1, "{arguments}.0.length"]
                     },
                     {
-                        func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='succeed']")]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should no longer be a success message...", undefined, "{arguments}.0"]
-                    },
-                    // Test an error response followed by a success, to confirm that the right response (and only that one) is displayed.
-                    {
-                        func: "{testEnvironment}.browser.check",
-                        args: [".errorBinder-clientSideValidation-viewport input[name='succeed']"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },
                     {
-                        event:    "{testEnvironment}.browser.events.onCheckComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-clientSideValidation-viewport .submit"]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElement",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .submit")]
                     },
                     {
-                        event:     "{testEnvironment}.browser.events.onClickComplete",
-                        listener:  "{testEnvironment}.browser.evaluate",
-                        args:      [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .success .alert-box"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args:     [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },
                     {
-                        listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should now be a success message...", 1, "{arguments}.0"]
-                    },
-                    {
-                        func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-clientSideValidation-viewport .error .alert-box"]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElements",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args: ["There should no longer be an error message...", undefined, "{arguments}.0"]
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should now be an error message...", 1, "{arguments}.0.length"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElements",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should no longer be a success message...", 0, "{arguments}.0.length"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport input[name='succeed']")]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElement",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .submit")]
+                    },
+                    {
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
+                    },                    {
+                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener:  "{testEnvironment}.webdriver.findElements",
+                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should now be a success message...", 1, "{arguments}.0.length"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElements",
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args: ["There should no longer be an error message...", 0, "{arguments}.0.length"]
                     }
                 ]
             },
             {
                 name: "Confirm that server-side validation errors are displayed correctly...",
                 sequence: [
-                    // Submit a form with multiple server-side errors.
                     {
-                        func: "{testEnvironment}.browser.type",
-                        args: [".errorBinder-viewport input[name='testAllOf']", "CAT"]
+                        func: "{testEnvironment}.webdriver.findElement",
+                        args: [gpii.webdriver.By.css(".errorBinder-viewport input[name='testAllOf']")]
                     },
                     {
-                        event:    "{testEnvironment}.browser.events.onTypeComplete",
-                        listener: "{testEnvironment}.browser.click",
-                        args:     [".errorBinder-viewport .submit"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        listener: "{testEnvironment}.webdriver.actionsHelper",
+                        args: [[
+                            { fn: "click",    args: ["{arguments}.0"]},
+                            { fn: "sendKeys", args: ["CAT", gpii.webdriver.Key.ENTER]}
+                        ]]
                     },
                     {
-                        event:    "{testEnvironment}.browser.events.onClickComplete",
-                        listener: "{testEnvironment}.browser.evaluate",
-                        args:     [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-viewport .error .alert-box"]
-                    },
-                    {
-                        listener: "jqUnit.assertEquals",
-                        event:    "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args:     ["There should be an error summary and the server's `message` as well...", 2, "{arguments}.0"]
-                    },
-                    {
-                        func: "{testEnvironment}.browser.evaluate",
-                        args: [gpii.tests.schema.errorBinder.countSelectors, ".errorBinder-viewport .fieldError"]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElements",
+                        args:     [gpii.webdriver.By.css(".errorBinder-viewport .error .alert-box")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event:    "{testEnvironment}.browser.events.onEvaluateComplete",
-                        args:     ["There should be two field-level errors...", 2, "{arguments}.0"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should be an error summary and the server's `message` as well...", 2, "{arguments}.0.length"]
+                    },
+                    {
+                        func: "{testEnvironment}.webdriver.findElements",
+                        args: [gpii.webdriver.By.css(".errorBinder-viewport .fieldError")]
+                    },
+                    {
+                        listener: "jqUnit.assertEquals",
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should be two field-level errors...", 2, "{arguments}.0.length"]
                     }
                 ]
             }
@@ -347,7 +380,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
 
 
 fluid.defaults("gpii.tests.schema.errorBinder.environment", {
-    gradeNames: ["gpii.test.browser.environment.withExpress"],
+    gradeNames: ["gpii.test.webdriver.testEnvironment.withExpress"],
     port:   6984,
     url: {
         expander: {
@@ -362,20 +395,9 @@ fluid.defaults("gpii.tests.schema.errorBinder.environment", {
                 port: "{testEnvironment}.options.port"
             }
         },
-        browser: {
-            options: {
-                listeners: {
-                    "onError": {
-                        funcName: "fluid.log",
-                        args: ["BROWSER ERROR:", "{arguments}.0"]
-                    }
-                }
-            }
-        },
         caseHolder: {
             type: "gpii.tests.schema.errorBinder.caseHolder"
         }
     }
 });
-
-fluid.test.runTests("gpii.tests.schema.errorBinder.environment");
+gpii.test.webdriver.allBrowsers({ baseTestEnvironment: "gpii.tests.schema.errorBinder.environment"});

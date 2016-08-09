@@ -5,13 +5,6 @@ var fluid =  require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 var jqUnit = require("node-jqunit");
-//jqUnit.module("Unit tests for validation component...");
-//
-//// We cannot use proper test sequences without writing some kind of event wrapper around the `validate` invoker.
-//// For now, just issue a single test to give the validator time to start up.
-//jqUnit.asyncTest("Waiting for stuff to start....", function () {
-//    setTimeout(function () { jqUnit.start(); jqUnit.assertTrue("Stuff has started", true); }, 2000);
-//});
 
 require("../../../");
 require("../common/validate-common-test-definitions");

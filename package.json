@@ -14,22 +14,23 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "3.6.0",
-    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#f1ade44e0be4990a2400e54061a5557e634a13a8",
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#52b1701d46868eeb3943d6d85bba09eba47938ce",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#c66207050ba764cbdbce401db725d2932c8fcbce",
+    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#5453663ad74a5e490552e16b0d7d626bd4b68a68",
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#bf17c0517d10902f61aa2ba491f29eaef49cf1be",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#c675bd16dc3021d61f9a1f49b03cdda4d03a0feb",
     "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
     "json-schema-ref-parser": "1.4.0",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.0"
   },
   "devDependencies": {
-    "gpii-test-browser": "git://github.com/the-t-in-rtf/gpii-test-browser#bb64399e45417baa18aa943b8e98ef6e0f50b321",
+    "eslint": "3.2.2",
+    "fluid-grunt-eslint": "18.1.1",
+    "gpii-webdriver": "git://github.com/the-t-in-rtf/gpii-webdriver#7152e44ae72667d5fb63fd38c56e19b6f2cbf639",
     "grunt": "1.0.1",
-    "grunt-eslint": "18.1.0",
-    "grunt-jsonlint": "1.0.4",
-    "istanbul": "0.4.3",
-    "kettle": "git://github.com/amb26/kettle.git#d808f3d5e326265aab9aaa1014703d75fa8ef0d0",
-    "node-jqunit": "~1.1.3",
-    "request": "2.51.0"
+    "grunt-jsonlint": "1.1.0",
+    "istanbul": "0.4.4",
+    "kettle": "1.1.0",
+    "node-jqunit": "1.1.4",
+    "request": "2.74.0"
   }
 }
