@@ -8,3 +8,4 @@ require("./pointer-function-tests");
 require("./schema-inline-router-tests");
 require("./validate-server-tests");
 require("./validator-evolved-error-tests");
+require("./hasRequiredOptions-tests");
