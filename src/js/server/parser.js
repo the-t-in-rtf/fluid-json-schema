@@ -81,10 +81,9 @@ gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
         }
         else {
             // Our keys have periods in them, which the change applier will interpret as a deeper part of the path
-            // unless we do something like this.
-            var schemas = fluid.copy(that.model.dereferencedSchemas);
-            schemas[schemaKey] = schema;
-            that.applier.change("dereferencedSchemas", schemas);
+            // unless we escape the key.
+            var escapedSchemaKey = schemaKey.replace(/\./g, "\\.");
+            that.applier.change("dereferencedSchemas." + escapedSchemaKey , schema);
             promise.resolve(schema);
         }
     };
