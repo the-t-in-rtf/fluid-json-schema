@@ -37,7 +37,7 @@ the following unique options:
 
 ## Component Invokers
 
-### `{that}.middleware(request, response, body)`
+### `{that}.middleware(request, response, next)`
 
 * `request`: The [request object](http://expressjs.com/en/api.html#req) provided by Express, which wraps node's [`http.incomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
 * `response`: The [response object](http://expressjs.com/en/api.html#res) provided by Express, which wraps node's [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse).
