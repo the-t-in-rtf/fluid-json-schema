@@ -13,17 +13,17 @@
   "author": "Tony Atkins <tony@raisingthefloor.org>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "ajv": "4.5.0",
+    "ajv": "4.6.0",
     "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#513066d82f20303e4745115f6d52d104bc359021",
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#baa1558d22ee7abcb6d6b6410af7cc95693f1b80",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#64dd7b04ceb9531bc6b575a41d3c5d05160eeb65",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#e3ef50adee5683d65f3548cd16252d747c8f7be4",
     "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
     "json-schema-ref-parser": "3.1.2",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.0"
   },
   "devDependencies": {
-    "eslint": "3.3.1",
+    "eslint": "3.4.0",
     "fluid-grunt-eslint": "18.1.2",
     "gpii-webdriver": "git://github.com/the-t-in-rtf/gpii-webdriver#4b4e405989c1007d7efb505e9e1ae8a6064787a3",
     "grunt": "1.0.1",
