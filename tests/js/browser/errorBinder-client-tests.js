@@ -27,14 +27,13 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
             func: "{testEnvironment}.webdriver.get",
             args: ["{testEnvironment}.options.url"]
         },
-        // TODO:  Remove in favor of having the client side execute a callback to let us know it's ready
         {
             event:    "{testEnvironment}.webdriver.events.onGetComplete",
-            listener: "{testEnvironment}.webdriver.sleep",
-            args:     [500]
+            listener: "{testEnvironment}.webdriver.wait",
+            args:     [gpii.webdriver.until.elementLocated({css: ".errorBinder-viewport form"})]
         },
         {
-            event:    "{testEnvironment}.webdriver.events.onSleepComplete",
+            event:    "{testEnvironment}.webdriver.events.onWaitComplete",
             listener: "fluid.identity"
         }
     ],
@@ -218,7 +217,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.webdriver.findElements",
-                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -227,7 +226,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         func:  "{testEnvironment}.webdriver.findElements",
-                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
+                        args:  [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -254,7 +253,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
                         listener:  "{testEnvironment}.webdriver.findElements",
-                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -283,7 +282,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
                         listener: "{testEnvironment}.webdriver.findElements",
-                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -292,7 +291,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElements",
-                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -320,7 +319,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },                    {
                         event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
                         listener:  "{testEnvironment}.webdriver.findElements",
-                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .alert-box")]
+                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -329,7 +328,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElements",
-                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .alert-box")]
+                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .error .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
@@ -356,7 +355,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
                         listener: "{testEnvironment}.webdriver.findElements",
-                        args:     [gpii.webdriver.By.css(".errorBinder-viewport .error .alert-box")]
+                        args:     [gpii.webdriver.By.css(".errorBinder-viewport .error .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
