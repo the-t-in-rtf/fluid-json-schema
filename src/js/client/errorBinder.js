@@ -183,7 +183,13 @@
             validator: {
                 type: "gpii.schema.validator.ajv.client",
                 options: {
-                    inlineSchemaUrl: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.options.inlineSchemaUrl"
+                    inlineSchemaUrl: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.options.inlineSchemaUrl",
+                    // perform an initial validation pass once the validator is ready
+                    listeners: {
+                        "onSchemasLoaded.validateContent": {
+                            func: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.validateContent"
+                        }
+                    }
                 }
             }
         }
@@ -199,16 +205,6 @@
             }
         },
         components: {
-            validator: {
-                options: {
-                    // perform an initial validation pass once the validator is ready
-                    listeners: {
-                        "onSchemasUpdated.validateContent": {
-                            func: "{gpii.schemas.client.errorAwareForm.clientSideValidation}.validateContent"
-                        }
-                    }
-                }
-            },
             error: {
                 options: {
                     // Override the default model listener, as (unlike the defaults) our error component might already

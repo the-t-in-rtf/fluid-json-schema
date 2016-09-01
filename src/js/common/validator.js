@@ -30,10 +30,13 @@ gpii.schema.validator.ajv.init = function (that) {
  *
  */
 gpii.schema.validator.ajv.validate = function (that, key, content) {
-    var contentValid = that.ajv.validate(key, content);
+    // TODO:  Review with Antranig, this is meant to ensure that validation only takes place when already we have a valid schema.
+    if (that.model.schemas[key]) {
+        var contentValid = that.ajv.validate(key, content);
 
-    if (!contentValid) {
-        return (gpii.schema.validator.ajv.sanitizeValidationErrors(that, key, that.ajv.errors));
+        if (!contentValid) {
+            return (gpii.schema.validator.ajv.sanitizeValidationErrors(that, key, that.ajv.errors));
+        }
     }
 
     return undefined;

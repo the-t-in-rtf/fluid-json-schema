@@ -30,7 +30,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
         {
             event:    "{testEnvironment}.webdriver.events.onGetComplete",
             listener: "{testEnvironment}.webdriver.wait",
-            args:     [gpii.webdriver.until.elementLocated({css: ".errorBinder-viewport form"})]
+            args:     [gpii.webdriver.until.elementLocated({css: ".fieldError"})]
         },
         {
             event:    "{testEnvironment}.webdriver.events.onWaitComplete",

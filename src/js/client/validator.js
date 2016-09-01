@@ -47,9 +47,6 @@
         requiredFields: {
             "inlineSchemaUrl": true
         },
-        events: {
-            onSchemasUpdated: null
-        },
         listeners: {
             "onCreate.retrieveSchemas": {
                 funcName: "gpii.schema.validator.ajv.client.retrieveSchemas",
