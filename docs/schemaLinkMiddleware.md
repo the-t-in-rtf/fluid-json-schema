@@ -39,9 +39,9 @@ the following unique options:
 
 ### `{that}.middleware(request, response, next)`
 
-* `request`: The [request object](http://expressjs.com/en/api.html#req) provided by Express, which wraps node's [`http.incomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
-* `response`: The [response object](http://expressjs.com/en/api.html#res) provided by Express, which wraps node's [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse).
-* `next`: The next Express middleware or router function in the chain.
+* `request`: An object representing the individual user's request.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for details.
+* `response`: The response object, which can be used to send information to the requesting user.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for details.
+* `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
 This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It adds the two headers outlined
@@ -67,10 +67,10 @@ supports the following options:
 
 ### `{that}.middleware(error, request, response, body)`
 
-* `error`: The error payload returned by upstream middleware.
-* `request`: The [request object](http://expressjs.com/en/api.html#req) provided by Express, which wraps node's [`http.incomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage).
-* `response`: The [response object](http://expressjs.com/en/api.html#res) provided by Express, which wraps node's [`http.ServerResponse`](https://nodejs.org/api/http.html#http_class_http_serverresponse).
-* `next`: The next Express middleware or router function in the chain.
+* `error`: The error payload returned by upstream middleware.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#error-handling-middleware) for details.
+* `request`: An object representing the individual user's request.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for details.
+* `response`: The response object, which can be used to send information to the requesting user.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for details.
+* `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
 This invoker fulfills the standard contract for a `gpii.express.middleware.error` component.  It adds the two headers
