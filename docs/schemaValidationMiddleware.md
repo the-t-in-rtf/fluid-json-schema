@@ -1,12 +1,15 @@
 # The Schema "Gatekeeper" Validation Middleware
 
 Although you usually will build some fault tolerance into your components, on some level they expect to deal with
-data that has the right structure, and which contains the expected type of information (strings, booleans, dates, etc).
+data that has a particular structure, and which contains the expected type of information (strings, booleans, dates,
+etc).  Although it cannot confirm whether data supplied by an end user is accurate or meaningful, [the JSON Schema validation component](validator.md)
+provided by this package can at least verify whether the supplied data is "valid", i.e. that it matches the rules
+outlined in a particular JSON Schema.
 
-The `gpii.schema.validationMiddleware` component provided with this package rejects invalid payloads, which allows your
-server-side components to safely assume they will only receive JSON data in the correct format.  The component doesn't
-know anything about how you intend to use the data.  It only examines the payload and steps in if the payload is not
-valid according to the configured JSON Schema.
+The `gpii.schema.validationMiddleware` component provided with this package validates all incoming requests, and rejects
+invalid payloads.  This allows your server-side components to at least assume they will only receive JSON data that is
+valid according to the supplied schema.  The "gatekeeper" doesn't know anything about how you intend to use the data.
+It only examines the payload and steps in if the payload is not valid according to the configured JSON Schema.
 
 The base middleware is intended to be used with a `gpii.express` or `gpii.express.router` instance.  The
 `gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting point.  With that router,
@@ -59,7 +62,6 @@ Validates information available in the request object. The incoming request is f
 The default options validate the request body, as expected with a `POST` or `PUT` request.  See the mix-in grades
 below for examples of how different rules can handle different types of request data.
 
-
 The transformed request data is validated against the schema. Any validation errors are then transformed using
 `options.rules.validationErrorsToResponse` before they are sent to the user.  The default format looks roughly like:
 
@@ -109,10 +111,10 @@ See `gpii.schema.validationMiddleware.handlesGetMethod` below for an example of 
 * `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
-This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It examines the `req` content
-and interrupts the conversation if the JSON data supplied as part of `req` is not valid according to the JSON
-Schema `options.schemaKey` found at `options.schemaPath`.  If the content is valid, execute the supplied `next` function
-and let some other downstream piece of middleware continue the conversation.
+This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It examines the `request`
+content and interrupts the conversation if the JSON data supplied as part of `request` is not valid according to the
+JSON Schema `options.schemaKey` found at `options.schemaPath`.  If the content is valid, execute the supplied `next`
+function and let some other downstream piece of middleware continue the conversation.
 
 This function is expected to be called by Express (or by an instance of `gpii.express`).
 
