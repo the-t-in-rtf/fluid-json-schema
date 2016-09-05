@@ -132,8 +132,11 @@ from the validator. If it finds them, it replaces `message` with alternate wordi
      }
  ]
 ```
-
 See [the documentation for `evolveError`](evolveErrors.md) for more details.
+
+Note that `dataPath` values are ["Javascript property access notation"](https://github.com/epoberezkin/ajv#validation-errors).
+These values are URI encoded along the way, and as such, slashes in element names are replaced with `~1`.  To avoid
+mangling `/1`, tildes are escaped as `~0`. See [the relevant AJV functions for more information](https://github.com/epoberezkin/ajv/blob/3806b9d8a3d11a23ee505bcc8e9eb4907b4cd328/lib/compile/util.js#L270).
 
 # gpii.schema.validator.ajv.server
 
