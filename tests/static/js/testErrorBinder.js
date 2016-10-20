@@ -39,7 +39,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                type:      "gpii.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -53,7 +53,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                type:      "gpii.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -67,7 +67,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                type:      "gpii.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -81,7 +81,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.schemas.transforms.stripEmptyString",
+                                type:      "gpii.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
