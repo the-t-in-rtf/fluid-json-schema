@@ -138,6 +138,9 @@ Note that `dataPath` values are ["Javascript property access notation"](https://
 These values are URI encoded along the way, and as such, slashes in element names are replaced with `~1`.  To avoid
 mangling `/1`, tildes are escaped as `~0`. See [the relevant AJV functions for more information](https://github.com/epoberezkin/ajv/blob/3806b9d8a3d11a23ee505bcc8e9eb4907b4cd328/lib/compile/util.js#L270).
 
+The `schemaPath` values are JSON Pointer notation, see [RFC 6901](https://tools.ietf.org/html/rfc6901) for details.
+
+
 # gpii.schema.validator.ajv.server
 
 A server-side component which loads and dereferences all schemas on startup.
