@@ -25,6 +25,7 @@
   "devDependencies": {
     "eslint": "3.4.0",
     "handlebars": "4.0.5",
+    "eslint-config-fluid": "1.0.0",
     "fluid-grunt-eslint": "18.1.2",
     "foundation-sites": "6.2.3",
     "gpii-webdriver": "git://github.com/the-t-in-rtf/gpii-webdriver#4b4e405989c1007d7efb505e9e1ae8a6064787a3",
