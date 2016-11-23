@@ -80,22 +80,22 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
-                        listener: "{testEnvironment}.webdriver.isElementPresent",
+                        listener: "{testEnvironment}.webdriver.findElement",
                         args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldErrors")]
                     },
                     {
-                        listener: "jqUnit.assertFalse",
-                        event: "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
-                        args: ["There should no longer be an error summary...", "{arguments}.0"]
+                        listener: "jqUnit.assert",
+                        event:    "{testEnvironment}.webdriver.events.onError",
+                        args:     ["There should no longer be an error summary..."]
                     },
                     {
-                        func: "{testEnvironment}.webdriver.isElementPresent",
+                        func: "{testEnvironment}.webdriver.findElement",
                         args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldError")]
                     },
                     {
-                        listener: "jqUnit.assertFalse",
-                        event:    "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
-                        args:     ["There should no longer be any field-level errors...", "{arguments}.0"]
+                        listener: "jqUnit.assert",
+                        event:    "{testEnvironment}.webdriver.events.onError",
+                        args:     ["There should no longer be any field-level errors..."]
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElement",
@@ -113,22 +113,22 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
-                        func: "{testEnvironment}.webdriver.isElementPresent",
-                        args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldErrors")]
+                        listener: "{testEnvironment}.webdriver.findElement",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldErrors")]
                     },
                     {
-                        listener: "jqUnit.assertTrue",
-                        event: "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
-                        args: ["There should now be an error summary...", "{arguments}.0"]
+                        listener: "jqUnit.assert",
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        args:     ["There should now be an error summary..."]
                     },
                     {
-                        func: "{testEnvironment}.webdriver.isElementPresent",
+                        func: "{testEnvironment}.webdriver.findElement",
                         args: [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .fieldError")]
                     },
                     {
-                        listener: "jqUnit.assertTrue",
-                        event:    "{testEnvironment}.webdriver.events.onIsElementPresentComplete",
-                        args:     ["There should now be field-level errors...", "{arguments}.0"]
+                        listener: "jqUnit.assert",
+                        event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
+                        args:     ["There should now be field-level errors..."]
                     }
                 ]
             },
@@ -182,14 +182,14 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                         ]]
                     },
                     {
-                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
-                        listener:  "{testEnvironment}.webdriver.findElements",
-                        args:      [gpii.webdriver.By.css(".fieldError")]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElements",
+                        args:     [gpii.webdriver.By.css(".fieldError")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should now be no field errors...", 0, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should now be no field errors...", 0, "{arguments}.0.length"]
                     }
                 ]
             },
@@ -212,8 +212,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should still be 1 field error...", 1, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should still be 1 field error...", 1, "{arguments}.0.length"]
                     },
                     {
                         func:  "{testEnvironment}.webdriver.findElements",
@@ -221,8 +221,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should still be no new success message...", 0, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should still be no new success message...", 0, "{arguments}.0.length"]
                     },
                     {
                         func:  "{testEnvironment}.webdriver.findElements",
@@ -230,8 +230,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should still be only one top level error message...", 1, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should still be only one top level error message...", 1, "{arguments}.0.length"]
                     }
                 ]
             },
@@ -257,8 +257,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should now be a success message...", 1, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should now be a success message...", 1, "{arguments}.0.length"]
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElement",
@@ -267,7 +267,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
                         listener: "{testEnvironment}.webdriver.actionsHelper",
-                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
+                        args:     [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
@@ -286,8 +286,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should now be an error message...", 1, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should now be an error message...", 1, "{arguments}.0.length"]
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElements",
@@ -295,8 +295,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should no longer be a success message...", 0, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should no longer be a success message...", 0, "{arguments}.0.length"]
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElement",
@@ -305,7 +305,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
                         listener: "{testEnvironment}.webdriver.actionsHelper",
-                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
+                        args:     [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
@@ -315,16 +315,16 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onFindElementComplete",
                         listener: "{testEnvironment}.webdriver.actionsHelper",
-                        args: [[{ fn: "click",    args: ["{arguments}.0"]}]]
+                        args:     [[{ fn: "click",    args: ["{arguments}.0"]}]]
                     },                    {
-                        event:     "{testEnvironment}.webdriver.events.onActionsHelperComplete",
-                        listener:  "{testEnvironment}.webdriver.findElements",
-                        args:      [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
+                        event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
+                        listener: "{testEnvironment}.webdriver.findElements",
+                        args:     [gpii.webdriver.By.css(".errorBinder-clientSideValidation-viewport .success .callout")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should now be a success message...", 1, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should now be a success message...", 1, "{arguments}.0.length"]
                     },
                     {
                         func: "{testEnvironment}.webdriver.findElements",
@@ -332,8 +332,8 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     },
                     {
                         listener: "jqUnit.assertEquals",
-                        event: "{testEnvironment}.webdriver.events.onFindElementsComplete",
-                        args: ["There should no longer be an error message...", 0, "{arguments}.0.length"]
+                        event:    "{testEnvironment}.webdriver.events.onFindElementsComplete",
+                        args:     ["There should no longer be an error message...", 0, "{arguments}.0.length"]
                     }
                 ]
             },
@@ -355,7 +355,7 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
                     {
                         event:    "{testEnvironment}.webdriver.events.onActionsHelperComplete",
                         listener: "{testEnvironment}.webdriver.findElements",
-                        args:     [gpii.webdriver.By.css(".errorBinder-viewport .error .callout")]
+                        args:     [gpii.webdriver.By.css(".errorBinder-viewport .callout.alert")]
                     },
                     {
                         listener: "jqUnit.assertEquals",
