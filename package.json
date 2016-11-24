@@ -1,6 +1,6 @@
 {
   "name": "gpii-json-schema",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Fluid components to add support for JSON Schema validation.",
   "main": "",
   "scripts": {
@@ -14,10 +14,10 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "ajv": "4.9.0",
-    "gpii-binder": "git://github.com/the-t-in-rtf/gpii-binder#329da105f318cf5bdb88b43faeca36c186db1844",
-    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#39c32a4b306640c7c92dd1a7acd6d5af3f37ddef",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#24bc08866d182b79b79b4bd84dd6fca8bd9feb97",
-    "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
+    "gpii-binder": "1.0.0-dev.20161123T123137Z.a776add",
+    "gpii-express": "1.0.0",
+    "gpii-handlebars": "1.0.0-dev.20161124T134321Z.9eb2804",
+    "infusion": "2.0.0-dev.20161027T155641Z.0bcd507",
     "json-schema-ref-parser": "3.1.2",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.1"
@@ -27,12 +27,12 @@
     "eslint-config-fluid": "1.0.0",
     "fluid-grunt-eslint": "18.1.2",
     "foundation-sites": "6.2.4",
+    "gpii-webdriver": "1.0.0-dev.20161124T133029Z.b454037",
     "grunt": "1.0.1",
     "grunt-jsonlint": "1.1.0",
-    "gpii-webdriver": "git://github.com/the-t-in-rtf/gpii-webdriver#7e1d3d913d9df61423809a5f2bb7182389c9efc6",
     "handlebars": "4.0.6",
     "istanbul": "0.4.5",
-    "kettle": "1.2.1",
+    "kettle": "1.2.2",
     "node-jqunit": "1.1.4",
     "pagedown": "1.1.0",
     "request": "2.79.0"
