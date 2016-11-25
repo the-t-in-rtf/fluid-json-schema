@@ -9,6 +9,7 @@ var jqUnit = require("node-jqunit");
 require("../../../");
 require("../common/validate-common-test-definitions");
 require("../lib/errors");
+require("../lib/fixtures");
 
 fluid.registerNamespace("gpii.tests.schema.validator.server");
 
@@ -55,16 +56,10 @@ gpii.tests.schema.validator.server.constructTestSequences = function (that) {
     fluid.each(that.options.commonTests, function (testDefinition) {
         var generatedCommonTest = {
             name:     testDefinition.message,
-            sequence: [
-                {
-                    func: "{testEnvironment}.events.onConstructFixtures.fire"
-                },
-                {
-                    event:    "{testEnvironment}.events.onSchemasLoaded",
-                    listener: "gpii.tests.schema.validator.server.singleTest",
-                    args:     ["{testEnvironment}.validator", testDefinition]
-                }
-            ]
+            sequence: [{
+                func: "gpii.tests.schema.validator.server.singleTest",
+                args: ["{testEnvironment}.validator", testDefinition]
+            }]
         };
         generatedTests.push(generatedCommonTest);
     });
@@ -72,39 +67,52 @@ gpii.tests.schema.validator.server.constructTestSequences = function (that) {
     // This one isn't part of the commmon test definitions, so we generate and add it manually.
     var generatedBonusTest = {
         name: "Test invalid JSON content...",
-        sequence: [
-            {
-                func: "{testEnvironment}.events.onConstructFixtures.fire"
-            },
-            {
-                event:    "{testEnvironment}.events.onSchemasLoaded",
-                listener: "gpii.tests.schema.validator.server.invalidJsonTest",
-                args:     ["{testEnvironment}.validator"]
-            }
-        ]
+        sequence: [{
+            func: "gpii.tests.schema.validator.server.invalidJsonTest",
+            args: ["{testEnvironment}.validator"]
+        }]
     };
 
     generatedTests.push(generatedBonusTest);
 
-    return {
+    var testsWithStartAndEnd = gpii.test.express.helpers.addRequiredSequences([{
         name: "Testing server-side validation...",
         tests: generatedTests
-    };
+    }], that.options.sequenceStart, that.options.sequenceEnd);
+
+    return testsWithStartAndEnd;
 };
+
+gpii.tests.schema.validator.server.standardStartSequence = [
+    {
+        func: "{testEnvironment}.events.onConstructFixtures.fire"
+    },
+    {
+        event:    "{testEnvironment}.events.onSchemasLoaded",
+        listener: "fluid.identity"
+    }
+];
+
 
 
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
 fluid.defaults("gpii.tests.schema.validator.server.caseHolder", {
     gradeNames: ["fluid.test.testCaseHolder", "gpii.test.schema.validator.hasDehydratedTests"],
+    sequenceStart: gpii.tests.schema.validator.server.standardStartSequence,
+    mergePolicy: {
+        rawModules:    "noexpand",
+        sequenceStart: "noexpand",
+        sequenceEnd:   "noexpand"
+    },
     moduleSource: {
         funcName: "gpii.tests.schema.validator.server.constructTestSequences",
         args:     ["{that}"]
     }
 });
 
-fluid.defaults("gpii.tests.schema.validator.server.environment", {
-    gradeNames: ["fluid.test.testEnvironment"],
+fluid.defaults("gpii.tests.schema.validator.server.environment.base", {
+    gradeNames: ["gpii.test.schema.testEnvironment"],
     events: {
         onSchemasLoaded:    null,
         onConstructFixtures: null
@@ -122,11 +130,91 @@ fluid.defaults("gpii.tests.schema.validator.server.environment", {
                     }
                 }
             }
-        },
+        }
+    }
+});
+
+fluid.defaults("gpii.tests.schema.validator.server.environment.standard", {
+    gradeNames: ["gpii.tests.schema.validator.server.environment.base"],
+    components: {
         caseHolder: {
             type: "gpii.tests.schema.validator.server.caseHolder"
         }
     }
 });
 
-fluid.test.runTests("gpii.tests.schema.validator.server.environment");
+fluid.test.runTests("gpii.tests.schema.validator.server.environment.standard");
+
+// The next tests can use the standard harness from gpii-express
+fluid.registerNamespace("gpii.tests.schema.validator.server.caseHolder.replay");
+gpii.tests.schema.validator.server.caseHolder.replay.validateMultiples = function (validator, schemaKey, message, inputs, expected) {
+    var results = [];
+    fluid.each(inputs, function (input) {
+        var result = validator.validate(schemaKey, input);
+        results.push(result === undefined);
+    });
+
+    jqUnit.assertDeepEq(message, expected, results);
+};
+
+fluid.defaults("gpii.tests.schema.validator.server.caseHolder.replay", {
+    gradeNames: ["gpii.test.express.caseHolder.base"],
+    sequenceStart: gpii.tests.schema.validator.server.standardStartSequence,
+    schemaKey: "base.json",
+    rawModules: [{
+        name: "Testing multiple validations with a single component...",
+        tests: [
+            {
+                name: "Fail twice in a row...",
+                type: "test",
+                sequence: [
+                    {
+                        func: "gpii.tests.schema.validator.server.caseHolder.replay.validateMultiples",
+                        args: ["{testEnvironment}.validator", "{that}.options.schemaKey", "We should be able to fail after a failure...", [{},{}], [false, false]]
+                    }
+                ]
+            },
+            {
+                name: "Succeed twice in a row...",
+                type: "test",
+                sequence: [
+                    {
+                        func: "gpii.tests.schema.validator.server.caseHolder.replay.validateMultiples",
+                        args: ["{testEnvironment}.validator", "{that}.options.schemaKey", "We should be able to succeed after a success...", [{ required: true },{ required: true }], [true, true]]
+                    }
+                ]
+            },
+            {
+                name: "Succeed, then fail...",
+                type: "test",
+                sequence: [
+                    {
+                        func: "gpii.tests.schema.validator.server.caseHolder.replay.validateMultiples",
+                        args: ["{testEnvironment}.validator", "{that}.options.schemaKey", "We should be able to fail after a success...", [{ required: true },{}], [true, false]]
+                    }
+                ]
+            },
+            {
+                name: "Fail, then succeed...",
+                type: "test",
+                sequence: [
+                    {
+                        func: "gpii.tests.schema.validator.server.caseHolder.replay.validateMultiples",
+                        args: ["{testEnvironment}.validator", "{that}.options.schemaKey", "We should be able to succeed after a failure...", [{},{ required: true }], [false, true]]
+                    }
+                ]
+            }
+        ]
+    }]
+});
+
+fluid.defaults("gpii.tests.schema.validator.server.environment.replay", {
+    gradeNames: ["gpii.tests.schema.validator.server.environment.base"],
+    components: {
+        caseHolder: {
+            type: "gpii.tests.schema.validator.server.caseHolder.replay"
+        }
+    }
+});
+
+fluid.test.runTests("gpii.tests.schema.validator.server.environment.replay");
