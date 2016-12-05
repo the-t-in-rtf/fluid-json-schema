@@ -93,8 +93,6 @@ gpii.tests.schema.validator.server.standardStartSequence = [
     }
 ];
 
-
-
 // Use the standard `gpii-test-browser` caseHolder, but use a more complex function to rehydrate the "common" tests
 // before wiring in the standard start and end sequence steps.
 fluid.defaults("gpii.tests.schema.validator.server.caseHolder", {
