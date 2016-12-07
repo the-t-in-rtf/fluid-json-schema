@@ -15,5 +15,5 @@ apps:
     setup:
       - yarn install
     test_cmds:
-      - yarn test
+      - BROWSERS=chrome yarn test
 
