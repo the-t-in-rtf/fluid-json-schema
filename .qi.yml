@@ -15,4 +15,4 @@ apps:
     setup:
       - yarn install
     test_cmds:
-      - PATH=$PATH:/vagrant/node_modules/chromedriver/bin/chromedriver/ BROWSERS=chrome yarn test
+      - BROWSERS=chrome yarn test

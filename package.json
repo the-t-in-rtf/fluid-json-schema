@@ -23,6 +23,7 @@
     "quoted-printable": "1.0.1"
   },
   "devDependencies": {
+    "chromedriver": "^2.25.2",
     "eslint": "3.11.1",
     "eslint-config-fluid": "1.0.0",
     "fluid-grunt-eslint": "18.1.2",
