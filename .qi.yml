@@ -15,7 +15,4 @@ apps:
     setup:
       - yarn install
     test_cmds:
-      - export PATH=$PATH:/home/vagrant/sync/node_modules/chromedriver/bin/chromedriver/
-      - xhost +
-      - export DISPLAY=:0
-      - BROWSERS=chrome yarn test
+      - PATH=$PATH:/home/vagrant/sync/node_modules/chromedriver/bin/chromedriver/ BROWSERS=chrome yarn test
