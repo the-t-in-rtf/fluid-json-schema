@@ -1,5 +1,5 @@
 language: node_js
-node_js: "6"
+node_js: "6.9.1"
 addons:
   apt:
     packages:
@@ -7,6 +7,7 @@ addons:
 install:
   - export DISPLAY=':99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  - npm install -g yarn
   - yarn install
 script:
   - BROWSERS=firefox yarn test
