@@ -86,10 +86,8 @@ The following component configuration options are supported:
 | `method` | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
 | `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
 | `responseSchemaUrl` | `String` | The base URL where `responseSchemaKey` can be found. |
-| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-the incoming data before validation (see below for more details). |
-| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-)
-validation errors before they are sent to the user (see above). |
+| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
+| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) validation errors before they are sent to the user (see above). |
 | `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
 | `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
 
