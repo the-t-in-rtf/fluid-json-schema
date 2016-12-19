@@ -262,7 +262,7 @@ chalk@~0.4.0:
     has-color "~0.1.0"
     strip-ansi "~0.1.0"
 
-chromedriver@^2.25.2:
+chromedriver@2.25.2:
   version "2.25.2"
   resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-2.25.2.tgz#20bfcf1f84ede626be39abf94454a87c1a2ef0b5"
   dependencies:
@@ -562,9 +562,9 @@ eslint-config-fluid@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-config-fluid/-/eslint-config-fluid-1.0.0.tgz#fd1fe8c14439c6afc009b31c0665be0d574d2892"
 
-eslint@3.11.1:
-  version "3.11.1"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-3.11.1.tgz#408be581041385cba947cd8d1cd2227782b55dbf"
+eslint@3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-3.12.2.tgz#6be5a9aa29658252abd7f91e9132bab1f26f3c34"
   dependencies:
     babel-code-frame "^6.16.0"
     chalk "^1.1.3"
@@ -577,7 +577,7 @@ eslint@3.11.1:
     esutils "^2.0.2"
     file-entry-cache "^2.0.0"
     glob "^7.0.3"
-    globals "^9.2.0"
+    globals "^9.14.0"
     ignore "^3.2.0"
     imurmurhash "^0.1.4"
     inquirer "^0.12.0"
@@ -923,6 +923,10 @@ glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@~7.0.0:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
+globals@^9.14.0:
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-9.14.0.tgz#8859936af0038741263053b39d0e76ca241e4034"
+
 globals@^9.2.0:
   version "9.12.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-9.12.0.tgz#992ce90828c3a55fa8f16fada177adb64664cf9d"
@@ -938,22 +942,11 @@ globby@^5.0.0:
     pify "^2.0.0"
     pinkie-promise "^2.0.0"
 
-gpii-binder@1.0.0-dev.20161123T123137Z.a776add:
-  version "1.0.0-dev.20161123T123137Z.a776add"
-  resolved "https://registry.yarnpkg.com/gpii-binder/-/gpii-binder-1.0.0-dev.20161123T123137Z.a776add.tgz#4d44015699fec6f6046e5859130254a118606442"
+gpii-binder@1.0.0-dev.20161219T173834Z.5ecfb7b:
+  version "1.0.0-dev.20161219T173834Z.5ecfb7b"
+  resolved "https://registry.yarnpkg.com/gpii-binder/-/gpii-binder-1.0.0-dev.20161219T173834Z.5ecfb7b.tgz#912dead98c27c10d34f52cdc0c75b75bb677f7e9"
   dependencies:
-    infusion "git://github.com/the-t-in-rtf/infusion.git#8202f87093d60bdf7c58d95a41ecdf27aca0eca9"
-
-gpii-express@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/gpii-express/-/gpii-express-1.0.0.tgz#97acef3356395c45265869a32cceafce8e549013"
-  dependencies:
-    body-parser "1.15.2"
-    cookie-parser "1.4.3"
-    express "4.14.0"
-    express-session "1.14.2"
-    infusion "2.0.0-dev.20161027T155641Z.0bcd507"
-    resolve "1.1.7"
+    infusion "2.0.0-dev.20161219T170555Z.5778f7e"
 
 gpii-express@1.0.1:
   version "1.0.1"
@@ -966,26 +959,26 @@ gpii-express@1.0.1:
     infusion "2.0.0-dev.20161027T155641Z.0bcd507"
     resolve "1.1.7"
 
-gpii-handlebars@1.0.0-dev.20161125T162508Z.3c6f745:
-  version "1.0.0-dev.20161125T162508Z.3c6f745"
-  resolved "https://registry.yarnpkg.com/gpii-handlebars/-/gpii-handlebars-1.0.0-dev.20161125T162508Z.3c6f745.tgz#0c810dc7b6127983347b9250a370d92d17682562"
+gpii-handlebars@1.0.0-dev.20161219T181822Z.0445c4c:
+  version "1.0.0-dev.20161219T181822Z.0445c4c"
+  resolved "https://registry.yarnpkg.com/gpii-handlebars/-/gpii-handlebars-1.0.0-dev.20161219T181822Z.0445c4c.tgz#aea1fa7e644211abe15d78ab1fc765a0b509a654"
   dependencies:
     express-handlebars "1.2.2"
-    gpii-binder "1.0.0-dev.20161123T123137Z.a776add"
-    gpii-express "1.0.0"
+    gpii-binder "1.0.0-dev.20161219T173834Z.5ecfb7b"
+    gpii-express "1.0.1"
     handlebars "4.0.6"
-    infusion "2.0.0-dev.20161027T155641Z.0bcd507"
+    infusion "2.0.0-dev.20161219T170555Z.5778f7e"
     marked "0.3.6"
     pagedown "1.1.0"
     underscore-node "0.1.2"
 
-gpii-webdriver@1.0.0-dev.20161125T164054Z.becc872:
-  version "1.0.0-dev.20161125T164054Z.becc872"
-  resolved "https://registry.yarnpkg.com/gpii-webdriver/-/gpii-webdriver-1.0.0-dev.20161125T164054Z.becc872.tgz#a6c23b792380393cb53d352028f4c027fcfad60f"
+gpii-webdriver@1.0.0-dev.20161219T175107Z.5a2a1c1:
+  version "1.0.0-dev.20161219T175107Z.5a2a1c1"
+  resolved "https://registry.yarnpkg.com/gpii-webdriver/-/gpii-webdriver-1.0.0-dev.20161219T175107Z.5a2a1c1.tgz#d714d34564c69c18a8b30b0e71e8a58ba20a90ef"
   dependencies:
     accessibility-developer-tools "2.11.0"
     axe-core "2.0.7"
-    infusion "2.0.0-dev.20161027T155641Z.0bcd507"
+    infusion "2.0.0-dev.20161219T170555Z.5778f7e"
     selenium-webdriver "3.0.1"
 
 graceful-fs@^3.0.2:
@@ -1193,15 +1186,9 @@ infusion@2.0.0-dev.20161027T155641Z.0bcd507:
   dependencies:
     fluid-resolve "1.2.0"
 
-infusion@2.0.0-dev.20161124T191742Z.17a345b:
-  version "2.0.0-dev.20161124T191742Z.17a345b"
-  resolved "https://registry.yarnpkg.com/infusion/-/infusion-2.0.0-dev.20161124T191742Z.17a345b.tgz#8266bc688d1a0afb399aeced06bc3b46efa81b5b"
-  dependencies:
-    fluid-resolve "1.2.0"
-
-"infusion@git://github.com/the-t-in-rtf/infusion.git#8202f87093d60bdf7c58d95a41ecdf27aca0eca9":
-  version "2.0.0"
-  resolved "git://github.com/the-t-in-rtf/infusion.git#8202f87093d60bdf7c58d95a41ecdf27aca0eca9"
+infusion@2.0.0-dev.20161219T170555Z.5778f7e:
+  version "2.0.0-dev.20161219T170555Z.5778f7e"
+  resolved "https://registry.yarnpkg.com/infusion/-/infusion-2.0.0-dev.20161219T170555Z.5778f7e.tgz#3568b448d1e6c0a491e8ad45d6c592de3b7fd4bf"
   dependencies:
     fluid-resolve "1.2.0"
 
