@@ -923,13 +923,9 @@ glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@~7.0.0:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-globals@^9.14.0:
+globals@^9.14.0, globals@^9.2.0:
   version "9.14.0"
   resolved "https://registry.yarnpkg.com/globals/-/globals-9.14.0.tgz#8859936af0038741263053b39d0e76ca241e4034"
-
-globals@^9.2.0:
-  version "9.12.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-9.12.0.tgz#992ce90828c3a55fa8f16fada177adb64664cf9d"
 
 globby@^5.0.0:
   version "5.0.0"
@@ -948,33 +944,33 @@ gpii-binder@1.0.0-dev.20161219T173834Z.5ecfb7b:
   dependencies:
     infusion "2.0.0-dev.20161219T170555Z.5778f7e"
 
-gpii-express@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/gpii-express/-/gpii-express-1.0.1.tgz#ad2b3e110d56867e171c2323362caaa378163095"
+gpii-express@1.0.1-dev.20170106T131203Z.a048e61:
+  version "1.0.1-dev.20170106T131203Z.a048e61"
+  resolved "https://registry.yarnpkg.com/gpii-express/-/gpii-express-1.0.1-dev.20170106T131203Z.a048e61.tgz#5ce9b3c8f996bc3da9f4f0e6afb1fc30338eabdc"
   dependencies:
     body-parser "1.15.2"
     cookie-parser "1.4.3"
     express "4.14.0"
     express-session "1.14.2"
-    infusion "2.0.0-dev.20161027T155641Z.0bcd507"
-    resolve "1.1.7"
+    infusion "2.0.0-dev.20161219T170555Z.5778f7e"
+    resolve "1.2.0"
 
-gpii-handlebars@1.0.0-dev.20161219T181822Z.0445c4c:
-  version "1.0.0-dev.20161219T181822Z.0445c4c"
-  resolved "https://registry.yarnpkg.com/gpii-handlebars/-/gpii-handlebars-1.0.0-dev.20161219T181822Z.0445c4c.tgz#aea1fa7e644211abe15d78ab1fc765a0b509a654"
+gpii-handlebars@1.0.0-dev.20170106T133859Z.ea8de03:
+  version "1.0.0-dev.20170106T133859Z.ea8de03"
+  resolved "https://registry.yarnpkg.com/gpii-handlebars/-/gpii-handlebars-1.0.0-dev.20170106T133859Z.ea8de03.tgz#dda5b505f415da81cc45177b281002140d4c87b8"
   dependencies:
     express-handlebars "1.2.2"
     gpii-binder "1.0.0-dev.20161219T173834Z.5ecfb7b"
-    gpii-express "1.0.1"
+    gpii-express "1.0.1-dev.20170106T131203Z.a048e61"
     handlebars "4.0.6"
     infusion "2.0.0-dev.20161219T170555Z.5778f7e"
     marked "0.3.6"
     pagedown "1.1.0"
     underscore-node "0.1.2"
 
-gpii-webdriver@1.0.0-dev.20161219T175107Z.5a2a1c1:
-  version "1.0.0-dev.20161219T175107Z.5a2a1c1"
-  resolved "https://registry.yarnpkg.com/gpii-webdriver/-/gpii-webdriver-1.0.0-dev.20161219T175107Z.5a2a1c1.tgz#d714d34564c69c18a8b30b0e71e8a58ba20a90ef"
+gpii-webdriver@1.0.0-dev.20170106T132630Z.34b5431:
+  version "1.0.0-dev.20170106T132630Z.34b5431"
+  resolved "https://registry.yarnpkg.com/gpii-webdriver/-/gpii-webdriver-1.0.0-dev.20170106T132630Z.34b5431.tgz#b60de7077a7f2ec378d416881abcd770b290e802"
   dependencies:
     accessibility-developer-tools "2.11.0"
     axe-core "2.0.7"
@@ -1173,18 +1169,6 @@ infusion@2.0.0-dev.20151130T180545Z.18ee3f8:
   resolved "https://registry.yarnpkg.com/infusion/-/infusion-2.0.0-dev.20151130T180545Z.18ee3f8.tgz#07ade23574f012178be2218a8f5141bab14bdaa2"
   dependencies:
     resolve "1.1.6"
-
-infusion@2.0.0-dev.20160519T222603Z.754d2c6:
-  version "2.0.0-dev.20160519T222603Z.754d2c6"
-  resolved "https://registry.yarnpkg.com/infusion/-/infusion-2.0.0-dev.20160519T222603Z.754d2c6.tgz#c50ecd08d6fb950be98cb2254ace373e3b37f877"
-  dependencies:
-    resolve "1.1.6"
-
-infusion@2.0.0-dev.20161027T155641Z.0bcd507:
-  version "2.0.0-dev.20161027T155641Z.0bcd507"
-  resolved "https://registry.yarnpkg.com/infusion/-/infusion-2.0.0-dev.20161027T155641Z.0bcd507.tgz#207e474cdd3e326f99c262560849de9cd6c8dfa9"
-  dependencies:
-    fluid-resolve "1.2.0"
 
 infusion@2.0.0-dev.20161219T170555Z.5778f7e:
   version "2.0.0-dev.20161219T170555Z.5778f7e"
@@ -1433,19 +1417,19 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.3.6"
 
-kettle@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/kettle/-/kettle-1.2.2.tgz#169cf6948da181170e56ae7c33b36f77ef7eb339"
+kettle@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/kettle/-/kettle-1.3.0.tgz#ac3e63d10f0b31ac6edf4abfd4ed6ba78e96a541"
   dependencies:
     body-parser "1.15.2"
     cookie-parser "1.4.3"
     express "4.14.0"
     express-session "1.14.0"
-    infusion "2.0.0-dev.20160519T222603Z.754d2c6"
+    fluid-resolve "1.2.0"
+    infusion "2.0.0-dev.20161219T170555Z.5778f7e"
     json5 "0.5.0"
     jsonlint "1.6.0"
     path-to-regexp "1.5.3"
-    resolve "1.1.6"
     serve-static "1.11.1"
     ws "1.1.1"
 
@@ -1943,9 +1927,13 @@ resolve@1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.6.tgz#d3492ad054ca800f5befa612e61beac1eec98f8f"
 
-resolve@1.1.7, resolve@1.1.x, resolve@^1.1.6, resolve@~1.1.0:
+resolve@1.1.x, resolve@~1.1.0:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
+
+resolve@1.2.0, resolve@^1.1.6:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.2.0.tgz#9589c3f2f6149d1417a40becc1663db6ec6bc26c"
 
 restore-cursor@^1.0.1:
   version "1.0.1"
@@ -1960,13 +1948,13 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@^2.0.3, rimraf@^2.5.4:
+rimraf@^2.0.3, rimraf@^2.2.8, rimraf@^2.5.4:
   version "2.5.4"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.5.4.tgz#96800093cbf1a0c86bd95b4625467535c29dfa04"
   dependencies:
     glob "^7.0.5"
 
-rimraf@^2.2.8, rimraf@~2.2.8:
+rimraf@~2.2.8:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
 
