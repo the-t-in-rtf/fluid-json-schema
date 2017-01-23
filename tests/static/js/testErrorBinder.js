@@ -14,7 +14,7 @@
         },
         schemaKey: "evolved.json",
         templates: {
-            initial:     "errorBinder-viewport"
+            initial: "errorBinder-viewport"
         },
         rules: {
             modelToRequestPayload: {
