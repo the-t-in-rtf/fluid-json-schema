@@ -14,18 +14,32 @@ This package is intended to help with three key use cases:
 2.  Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request).  See the [middleware documentation](./docs/middleware) for more details.
 3.  Adding appropriate headers to JSON responses so that it is clear what JSON Schema they adhere to.  See the [handler documentation](./docs/handler.md) for more details.
 
-# Requirements
+# Running the tests
 
-Before you can install this package, `browserify` must be installed and in your path.  You can install `browserify`
-globally using a command like:
+Before you can successfully run the tests, you will need to have the following installed:
 
-`npm install -g browserify`
+# `node` (4.x or 6.x)
+# `npm` or [`yarn`](http://yarnpkg.com/)
+# [`chromedriver`](https://sites.google.com/a/chromium.org/chromedriver/)
+
+Once you have these installed, you can run the tests using commands like:
+
+1. `yarn install`
+2. `yarn test`
+
+Or, if you're using `npm`, you can use commands like:
+
+1. `npm install`
+2. `npm test`
+
+NOTE:  When using `npm` version 3.10.10, the `test` script does not work properly.  You can still run the tests with
+that version of `npm` using commands like:
+
+1. `npm install`
+2. `node tests/all-tests.js`
 
 # Using these components in a browser
 
-This package depends on AJV.  AJV can be used on the client-side, but must first be bundled using `browserify`.
-
-The AJV package provides an npm script to run `browserify` with the correct options.  We use the `grunt-exec` plugin to
-run this task automatically as part of our `postinstall` tasks.
-
-Once the `postinstall` tasks have completed, the bundled version of AJV can be found in `./node_modules/ajv/ajv.bundle.js`.
+This package depends on AJV.  AJV can be used on the client-side, but must first be bundled using `browserify`.  The
+AJV package takes care of this automatically when it's installed, the required client-side bundle can be found in
+`./node_modules/ajv/dist/ajv.bundle.js` once you've installed this package's dependencies.

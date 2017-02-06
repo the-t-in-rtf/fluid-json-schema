@@ -13,6 +13,7 @@ apps:
     run_in: fedora
     deploy: false
     setup:
+      - sudo yum install -y chromedriver
       - yarn install
     test_cmds:
       - BROWSERS=chrome yarn test
