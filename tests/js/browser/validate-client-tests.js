@@ -21,6 +21,7 @@ var gpii  = fluid.registerNamespace("gpii");
 
 require("../lib/errors");
 require("../lib/harness");
+require("./environment");
 require("../common/validate-common-test-definitions");
 
 require("../../../");
@@ -29,9 +30,6 @@ require("../../../");
 // jqUnit.asyncTest("Waiting for stuff to start....", function () {
 //     setTimeout(function () { jqUnit.start(); jqUnit.assert("Stuff has started"); }, 1000);
 // });
-
-require("gpii-webdriver");
-gpii.webdriver.loadTestingSupport();
 
 fluid.registerNamespace("gpii.tests.schema.validator.browser");
 
@@ -156,31 +154,10 @@ fluid.defaults("gpii.tests.schema.validator.browser.caseHolder", {
 });
 
 fluid.defaults("gpii.tests.schema.validator.browser.environment", {
-    gradeNames: ["gpii.test.webdriver.testEnvironment.withExpress"],
-    port:   6984,
-    url: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args: ["http://localhost:%port/content/validate-client-tests.html", {port: "{that}.options.port"}]
-        }
-    },
+    gradeNames: ["gpii.tests.schema.browser.environment"],
+    port:   6985,
+    endpoint: "/content/validate-client-tests.html",
     components: {
-        express: {
-            type: "gpii.test.schema.harness",
-            options: {
-                port: "{testEnvironment}.options.port"
-            }
-        },
-        webdriver: {
-            options: {
-                listeners: {
-                    "onError": {
-                        funcName: "fluid.log",
-                        args: ["BROWSER ERROR:", "{arguments}.0"]
-                    }
-                }
-            }
-        },
         caseHolder: {
             type: "gpii.tests.schema.validator.browser.caseHolder"
         }

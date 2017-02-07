@@ -4,10 +4,7 @@ var fluid = require("infusion");
 fluid.setLogging(true);
 var gpii  = fluid.registerNamespace("gpii");
 
-require ("gpii-webdriver");
-gpii.webdriver.loadTestingSupport();
-
-require("../lib/harness");
+require("./environment");
 
 fluid.registerNamespace("gpii.tests.schema.errorBinder");
 
@@ -379,23 +376,11 @@ fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
     }]
 });
 
-
 fluid.defaults("gpii.tests.schema.errorBinder.environment", {
-    gradeNames: ["gpii.test.webdriver.testEnvironment.withExpress"],
+    gradeNames: ["gpii.tests.schema.browser.environment"],
     port:   6984,
-    url: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args: ["http://localhost:%port/content/errorBinder-tests.html", {port: "{that}.options.port"}]
-        }
-    },
+    endpoint: "/content/errorBinder-tests.html",
     components: {
-        express: {
-            type: "gpii.test.schema.harness",
-            options: {
-                port: "{testEnvironment}.options.port"
-            }
-        },
         caseHolder: {
             type: "gpii.tests.schema.errorBinder.caseHolder"
         }
