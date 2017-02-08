@@ -22,6 +22,10 @@ Before you can successfully run the tests, you will need to have the following i
 # `npm` or [`yarn`](http://yarnpkg.com/)
 # [`chromedriver`](https://sites.google.com/a/chromium.org/chromedriver/)
 
+*Note:* You cannot use the [https://www.npmjs.com/package/chromedriver](https://www.npmjs.com/package/chromedriver) npm
+package to install chromedriver globally, as this will not be detected on Windows until
+[this bug](https://github.com/giggio/node-chromedriver/issues/90) is resolved.
+
 Once you have these installed, you can run the tests using commands like:
 
 1. `yarn install`
