@@ -1,0 +1,40 @@
+{
+  "name": "gpii-json-schema",
+  "version": "1.0.0",
+  "description": "Fluid components to add support for JSON Schema validation.",
+  "main": "",
+  "scripts": {
+    "test": "node_modules/.bin/istanbul cover tests/all-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GPII/gpii-json-schema"
+  },
+  "author": "Tony Atkins <tony@raisingthefloor.org>",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "ajv": "4.11.2",
+    "gpii-binder": "1.0.0-dev.20170127T144054Z.54a5ef2",
+    "gpii-express": "1.0.2",
+    "gpii-handlebars": "1.0.0-dev.20170127T160953Z.4d15347",
+    "infusion": "3.0.0-dev.20170127T130413Z.103de6e",
+    "json-schema-ref-parser": "3.1.2",
+    "jsonpointer.js": "0.4.0",
+    "quoted-printable": "1.0.1"
+  },
+  "devDependencies": {
+    "eslint": "3.15.0",
+    "eslint-config-fluid": "1.1.0",
+    "fluid-grunt-eslint": "18.1.2",
+    "foundation-sites": "6.3.0",
+    "gpii-webdriver": "1.0.0-dev.20170127T135806Z.aa30519",
+    "grunt": "1.0.1",
+    "grunt-jsonlint": "1.1.0",
+    "handlebars": "4.0.6",
+    "istanbul": "0.4.5",
+    "kettle": "1.3.2",
+    "node-jqunit": "1.1.4",
+    "pagedown": "1.1.0",
+    "request": "2.79.0"
+  }
+}

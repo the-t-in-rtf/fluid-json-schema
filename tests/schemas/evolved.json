@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "id": "evolved.json",
+  "title": "'Evolved' schema for use in testing v5 emulation...",
+  "definitions": {
+    "testString": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 9,
+      "pattern": ".*CAT.*",
+      "errors": {
+        "minLength": "You must enter a test string that is at least four characters long.",
+        "maxLength": "You must enter a test string that is no more than nine characters long.",
+        "pattern":   "You must enter a test string which contains the word \"CAT\"."
+      }
+    },
+    "testAllOf": {
+      "allOf": [
+        {
+          "type": "string",
+          "errors": { "type" : "The 'allOf' field must be a string." }
+        },
+        {
+          "minLength": 4,
+          "errors": { "minLength": "The 'allOf' string must be at least four characters long." }
+        },
+        {
+          "maxLength": 9,
+          "errors": { "maxLength": "The 'allOf' string cannot be longer than nine characters." }
+        },
+        {
+          "pattern": ".*CAT.*",
+          "errors": { "pattern": "The 'allOf' string must contain the word 'CAT'." }
+        }
+      ]
+    },
+    "deep": {
+      "type": "object",
+      "properties": {
+        "deeplyRequired": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "deeplyRequired"
+      ]
+    },
+    "hasNoErrorsMetadata": {
+      "type": "string",
+      "minLength": 3
+    }
+  },
+  "properties": {
+    "testString": {
+      "$ref": "#/definitions/testString"
+    },
+    "testAllOf": {
+      "$ref": "#/definitions/testAllOf"
+    },
+    "deep": {
+      "$ref": "#/definitions/deep"
+    },
+    "hasNoErrorsMetadata": {
+      "$ref": "#/definitions/hasNoErrorsMetadata"
+    },
+    "definedDirectly": {
+      "type": "string",
+      "maxLength": 1,
+      "errors": { "maxLength": "The 'definedDirectly' field must contain a single character."}
+    },
+    "definedDirectlyHasNoErrorsMetadata": {
+      "type": "string",
+      "maxLength": 1
+    }
+  },
+  "required": [
+    "shallowlyRequired"
+  ],
+  "errors": {
+    "#/required/0": "The 'shallowlyRequired' field is required."
+  }
+}

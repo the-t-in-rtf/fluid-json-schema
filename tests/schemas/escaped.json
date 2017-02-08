@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Schema to test names that would otherwise conflict with the path handling",
+    "type":  "object",
+    "properties": {
+        "this.that": {
+            "type": "object",
+            "properties": {
+                "th'other": {
+                    "type": "object",
+                    "description": "How do increasingly sloppy variable names make you feel?",
+                    "properties": {
+                        "required": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["required"]
+                }
+            },
+            "required": ["th'other"]
+        },
+        "[x][x]": {
+            "type": "string",
+            "description": "How do textual cross marks make you feel?"
+        }
+    },
+    "required" : ["[x][x]"]
+}

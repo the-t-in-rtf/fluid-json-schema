@@ -1,0 +1,16 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Deep schema to test variable nesting and paths.",
+    "type":  "object",
+    "properties": {
+        "deep": {
+            "type": "object",
+            "properties": {
+                "required": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["required"]
+        }
+    }
+}
