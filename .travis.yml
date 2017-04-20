@@ -10,4 +10,4 @@ install:
   - npm install -g yarn
   - yarn install
 script:
-  - yarn test
+  - BROWSERS=chrome yarn test
