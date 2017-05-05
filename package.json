@@ -16,7 +16,7 @@
     "ajv": "4.11.2",
     "gpii-binder": "1.0.2",
     "gpii-express": "1.0.7",
-    "gpii-handlebars": "1.0.1-dev.20170504T110727Z.33dc87b",
+    "gpii-handlebars": "1.0.1",
     "infusion": "3.0.0-dev.20170322T234120Z.278de35",
     "json-schema-ref-parser": "3.1.2",
     "jsonpointer.js": "0.4.0",
