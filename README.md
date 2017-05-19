@@ -16,15 +16,28 @@ This package is intended to help with three key use cases:
 
 # Running the tests
 
-Before you can successfully run the tests, you will need to have the following installed:
+## Running the Tests in a Virtual Machine
+
+The preferred way to run the tests is to create a virtual machine and run the tests in that supported and
+pre-configured environment.  To run the tests in a virtual machine, you will need to have VirtualBox, Vagrant, and the
+Vagrant CI Plugin installed.  See the [QI development environment requirements](https://github.com/GPII/qi-development-environments/#requirements) for more details.
+
+Once you have satisfied the requirements, you can run the tests using the following commands from the root of the
+repository:
+
+1. `vagrant up`
+2. `vagrant ci test`
+
+If you would like to remove the VM, use the command `vagrant destroy` from the root of the repository.
+
+## Running the Tests on a Local Machine
+
+Before you can successfully run the tests on a local machine, you will need to have the following installed:
 
 # `node` (4.x or 6.x)
 # `npm` or [`yarn`](http://yarnpkg.com/)
+# [Chrome](https://www.google.com/chrome/)
 # [`chromedriver`](https://sites.google.com/a/chromium.org/chromedriver/)
-
-*Note:* You cannot use the [https://www.npmjs.com/package/chromedriver](https://www.npmjs.com/package/chromedriver) npm
-package to install chromedriver globally, as this will not be detected on Windows until
-[this bug](https://github.com/giggio/node-chromedriver/issues/90) is resolved.
 
 Once you have these installed, you can run the tests using commands like:
 
@@ -35,12 +48,6 @@ Or, if you're using `npm`, you can use commands like:
 
 1. `npm install`
 2. `npm test`
-
-NOTE:  When using `npm` version 3.10.10, the `test` script does not work properly.  You can still run the tests with
-that version of `npm` using commands like:
-
-1. `npm install`
-2. `node tests/all-tests.js`
 
 # Using these components in a browser
 

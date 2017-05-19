@@ -31,7 +31,7 @@ gpii.schema.parser.loadSchemas = function (that) {
         fluid.each(fs.readdirSync(resolvePathToDir), function (filename) {
             if (filename.match(/.json$/i)) {
                 var fullPathToFile = path.resolve(resolvePathToDir, filename);
-                promises.push(gpii.schema.parser.dereferenceSchema(that, fullPathToFile, filename));
+                promises.push(gpii.schema.parser.dereferenceSchema(that, "file://" + fullPathToFile, filename));
             }
         });
     });
