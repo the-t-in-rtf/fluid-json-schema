@@ -733,7 +733,7 @@ eslint-scope@^3.7.1:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint@^4.2.0:
+eslint@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-4.2.0.tgz#a2b3184111b198e02e9c7f3cca625a5e01c56b3d"
   dependencies:
@@ -1142,7 +1142,7 @@ forwarded@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.0.tgz#19ef9874c4ae1c297bcf078fde63a09b66a84363"
 
-foundation-sites@^6.4.1:
+foundation-sites@6.4.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/foundation-sites/-/foundation-sites-6.4.1.tgz#49bbf7b59675f9690c04528f4141cd0147094532"
   dependencies:
@@ -1288,7 +1288,7 @@ gpii-binder@1.0.2:
   dependencies:
     infusion "3.0.0-dev.20170322T234120Z.278de35"
 
-gpii-binder@^1.0.3-dev.20170505T070144Z.9dc2d8c:
+gpii-binder@1.0.3-dev.20170505T070144Z.9dc2d8c:
   version "1.0.3-dev.20170505T070144Z.9dc2d8c"
   resolved "https://registry.yarnpkg.com/gpii-binder/-/gpii-binder-1.0.3-dev.20170505T070144Z.9dc2d8c.tgz#cee5fd51bcb0fe45dc26623695a61eb4c83c4c0d"
   dependencies:
@@ -1304,7 +1304,7 @@ gpii-express@1.0.7:
     express-session "1.15.2"
     infusion "3.0.0-dev.20170322T234120Z.278de35"
 
-gpii-express@^1.0.8:
+gpii-express@1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/gpii-express/-/gpii-express-1.0.8.tgz#899212f77f3bb7eeeb5104138244314c8a85136c"
   dependencies:
@@ -1314,7 +1314,7 @@ gpii-express@^1.0.8:
     express-session "1.15.3"
     infusion "3.0.0-dev.20170713T172705Z.330ed53"
 
-gpii-handlebars@^1.0.2-dev.20170629T094606Z.7194f07:
+gpii-handlebars@1.0.2-dev.20170629T094606Z.7194f07:
   version "1.0.2-dev.20170629T094606Z.7194f07"
   resolved "https://registry.yarnpkg.com/gpii-handlebars/-/gpii-handlebars-1.0.2-dev.20170629T094606Z.7194f07.tgz#94dbc6980bba65ebc5a1a3fd6a3e92786bfe34d4"
   dependencies:
@@ -1415,6 +1415,16 @@ grunt@1.0.1:
     path-is-absolute "~1.0.0"
     rimraf "~2.2.8"
 
+handlebars@4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.10.tgz#3d30c718b09a3d96f23ea4cc1f403c4d3ba9ff4f"
+  dependencies:
+    async "^1.4.0"
+    optimist "^0.6.1"
+    source-map "^0.4.4"
+  optionalDependencies:
+    uglify-js "^2.6"
+
 handlebars@4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.6.tgz#2ce4484850537f9c97a8026d5399b935c4ed4ed7"
@@ -1428,16 +1438,6 @@ handlebars@4.0.6:
 handlebars@^4.0.1:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.8.tgz#22b875cd3f0e6cbea30314f144e82bc7a72ff420"
-  dependencies:
-    async "^1.4.0"
-    optimist "^0.6.1"
-    source-map "^0.4.4"
-  optionalDependencies:
-    uglify-js "^2.6"
-
-handlebars@^4.0.10:
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.10.tgz#3d30c718b09a3d96f23ea4cc1f403c4d3ba9ff4f"
   dependencies:
     async "^1.4.0"
     optimist "^0.6.1"
@@ -1889,7 +1889,7 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.3.6"
 
-kettle@^1.6.2:
+kettle@1.6.2:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/kettle/-/kettle-1.6.2.tgz#65892c8b97f0ab1504330956716d2e135c4a689d"
   dependencies:
@@ -2108,7 +2108,7 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-node-jqunit@^1.1.5:
+node-jqunit@1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/node-jqunit/-/node-jqunit-1.1.5.tgz#314c8d93583fd15ebb9bc68ee6860555d15d3250"
   dependencies:
