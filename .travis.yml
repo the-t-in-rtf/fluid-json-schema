@@ -1,9 +1,11 @@
 language: node_js
-node_js: "6.9.1"
+node_js: "6"
 addons:
   apt:
     packages:
-      - xvfb
+    - g++-4.8
+    - gcc-4.8
+    - xvfb
 install:
   - sudo apt-get install -y chromedriver
   - export DISPLAY=':99.0'
