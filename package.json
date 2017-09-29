@@ -15,15 +15,15 @@
   "dependencies": {
     "ajv": "4.11.2",
     "gpii-binder": "1.0.3",
-    "gpii-express": "1.0.9",
-    "gpii-handlebars": "1.0.2-dev.20170629T094606Z.7194f07",
-    "infusion": "3.0.0-dev.20170724T165035Z.eee50c1",
-    "json-schema-ref-parser": "3.1.2",
+    "gpii-express": "1.0.10",
+    "gpii-handlebars": "1.0.2",
+    "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
+    "json-schema-ref-parser": "3.3.1",
     "jsonpointer.js": "0.4.0",
     "quoted-printable": "1.0.1"
   },
   "devDependencies": {
-    "eslint": "4.3.0",
+    "eslint": "4.7.2",
     "eslint-config-fluid": "1.1.0",
     "fluid-grunt-eslint": "18.1.2",
     "foundation-sites": "6.4.1",
@@ -32,9 +32,9 @@
     "grunt-jsonlint": "1.1.0",
     "handlebars": "4.0.10",
     "istanbul": "0.4.5",
-    "kettle": "1.6.4",
-    "node-jqunit": "1.1.6",
+    "kettle": "1.7.0",
+    "node-jqunit": "1.1.7",
     "pagedown": "1.1.0",
-    "request": "2.81.0"
+    "request": "2.83.0"
   }
 }

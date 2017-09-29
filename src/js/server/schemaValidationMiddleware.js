@@ -12,6 +12,8 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 require("../common/hasRequiredOptions");
+require("./lib/schemaLinkHeaders");
+
 fluid.registerNamespace("gpii.schema.validationMiddleware");
 
 /**
@@ -26,6 +28,9 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, ne
     var results = that.validator.validate(that.options.schemaKey, toValidate);
     if (results) {
         var transformedValidationErrors = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
+        if (that.options.schemaUrls.error) {
+            gpii.schema.schemaLinks.addHeaders(res, that.options.schemaUrls.error);
+        }
         next(transformedValidationErrors);
     }
     else {
@@ -48,8 +53,11 @@ fluid.defaults("gpii.schema.validationMiddleware", {
         "rules.validationErrorsToResponse": true,
         schemaKey:                          true
     },
-    responseSchemaKey: "message.json",
-    responseSchemaUrl: "http://terms.raisingthefloor.org/schema/message.json",
+    addSchemaHeaders: true,
+    schemaUrls: {
+        error: "http://terms.raisingthefloor.org/schema/message.json"
+    },
+    sendResponseOnValidationError: true,
     messages: {
         error: "The JSON you have provided is not valid."
     },

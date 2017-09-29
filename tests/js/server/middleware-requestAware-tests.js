@@ -24,10 +24,10 @@ fluid.registerNamespace("gpii.tests.schema.middleware.caseHolder");
 gpii.tests.schema.middleware.caseHolder.examineResponse = function (response, body, shouldBeValid) {
 
     if (shouldBeValid) {
-        gpii.test.schema.checkResponseHeaders(response, body);
+        gpii.test.schema.checkResponseHeaders(response, "message.json");
     }
     else {
-        gpii.test.schema.checkResponseHeaders(response, body, "message.json", "message.json");
+        gpii.test.schema.checkResponseHeaders(response, "message.json");
 
         try {
             var jsonData = typeof body === "string" ? JSON.parse(body) : body;

@@ -10,16 +10,9 @@ var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
 fluid.registerNamespace("gpii.test.schema");
-gpii.test.schema.checkResponseHeaders = function (response, body, typePattern, linkPattern) {
-    if (typePattern) {
-        var contentType = response.headers["content-type"];
-        jqUnit.assertTrue("The content type header should contain our key...", contentType && contentType.match(typePattern));
-    }
-
-    if (linkPattern) {
-        var link = response.headers.link;
-        jqUnit.assertTrue("The link header should contain our key...", link && link.match(linkPattern) !== -1);
-    }
-
-    jqUnit.assertNotUndefined("There should be body content", body);
+gpii.test.schema.checkResponseHeaders = function (response, schemaPattern) {
+    fluid.each(["content-type", "link"], function (headerName) {
+        var headerValue = response.headers[headerName];
+        jqUnit.assertTrue("The '" + headerName + "' header should match the expected schema...", headerValue && headerValue.indexOf(schemaPattern) !== -1);
+    });
 };

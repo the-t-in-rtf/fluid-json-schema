@@ -1,0 +1,46 @@
+{
+    "type": "object",
+    "id": "validation-error-message.json",
+    "description": "The common format used for JSON validation error messages.  Derived from the AJV documentation: https://github.com/epoberezkin/ajv#validation-errors",
+    "properties": {
+        "isError": { "$ref": "message.json#/definitions/isError" },
+        "message": { "$ref": "message.json#/definitions/message" },
+        "fieldErrors": { "$ref": "#/definitions/fieldErrors" }
+    },
+    "definitions": {
+        "fieldErrors": {
+            "type": "array",
+            "description": "The validation error output produced by AJV",
+            "items": {
+                "$ref": "#/definitions/validationError"
+            }
+        },
+        "validationError": {
+            "type": "object",
+            "properties": {
+                "keyword": {
+                    "type": "string",
+                    "description": "validation keyword"
+                },
+                "dataPath": {
+                    "type": "string",
+                    "description": "The path to the part of the data that was validated."
+                },
+                "schemaPath": {
+                    "type": "string",
+                    "description": "The path (JSON-pointer as a URI fragment) to the schema of the keyword that failed validation."
+                },
+                "params": { "$ref": "#/definitions/paramsField" },
+                "message": {
+                    "type": "string",
+                    "description": "The error message returned by the underlying validator."
+                }
+            }
+        },
+        "paramsField": {
+            "type": "object",
+            "description": "Additional information on the failure, varies depending on the keyword that failed validation, see the AJV docs for details.."
+        }
+    },
+    "required": ["message"]
+}
