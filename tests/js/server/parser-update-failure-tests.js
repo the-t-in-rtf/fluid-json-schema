@@ -14,43 +14,27 @@ kettle.loadTestingSupport();
 
 var jqUnit = require("node-jqunit");
 
-require("../../../index");
+fluid.require("%gpii-express");
+gpii.express.loadTestingSupport();
+gpii.express.loadGlobalFailureHandler();
+
+
+fluid.require("%gpii-json-schema");
 
 fluid.defaults("gpii.tests.schema.parser.bornToDie", {
     gradeNames: ["gpii.schema.parser"],
     schemaDirs: "%gpii-json-schema/tests/badSchemas"
 });
 
-/*
-
-    Global error handling used in this specific test, adapted from:
-
-    https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L111
-    https://github.com/amb26/kettle/blob/KETTLE-32/tests/ErrorTests.js#L115
-
- */
-
 fluid.registerNamespace("gpii.tests.schema.parser.failure");
-gpii.tests.schema.parser.failure.confirmErrorFired = function (error) {
-    jqUnit.assertTrue("Attempting to load bad remote schemas fails as expected...", error && error.message && (error.message.indexOf("ENOENT") !== -1));
-};
-
-gpii.tests.schema.awaitGlobalError = function (priority, message) {
-    jqUnit.assert(message);
-};
-
-fluid.defaults("gpii.tests.schema.globalErrorHandler", {
-    gradeNames: ["fluid.component", "fluid.resolveRootSingle"],
-    singleRootType: "kettle.tests.logNotifierHolder",
-    events: {
-        onError: null
-    }
-});
-
-var globalErrorHandler = gpii.tests.schema.globalErrorHandler();
-
-gpii.tests.schema.notifyGlobalError = function () {
-    globalErrorHandler.events.onError.fire(fluid.makeArray(arguments));
+// TODO: Wire this into the listener
+gpii.tests.schema.parser.failure.confirmErrorFired = function (errors) {
+    var matchingError = fluid.find(errors, function (error) {
+        if (error.message && error.message.indexOf("ENOENT") !== -1) {
+            return true;
+        }
+    });
+    jqUnit.assertTrue("There should be an error that matches what we expecte...", matchingError);
 };
 
 fluid.defaults("gpii.tests.schema.parser.failure.caseholder", {
@@ -64,15 +48,16 @@ fluid.defaults("gpii.tests.schema.parser.failure.caseholder", {
                 sequence: [
                     {
                         funcName: "kettle.test.pushInstrumentedErrors",
-                        args:     ["gpii.tests.schema.notifyGlobalError"]
+                        args:     ["gpii.test.notifyGlobalFailure"]
                     },
                     {
                         funcName: "gpii.tests.schema.parser.bornToDie",
                         args:     []
                     },
                     {
-                        event:    "{globalErrorHandler}.events.onError",
-                        listener: "gpii.tests.schema.awaitGlobalError"
+                        event:    "{globalFailureHandler}.events.onError",
+                        listener: "gpii.tests.schema.parser.failure.confirmErrorFired",
+                        args:     ["{arguments}.0"] // errors
                     },
                     {
                         funcName: "kettle.test.popInstrumentedErrors"
