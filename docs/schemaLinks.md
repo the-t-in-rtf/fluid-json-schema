@@ -26,8 +26,12 @@ invalid or a server error occurs.
 An extension of [`gpii.express.handler`](https://github.com/GPII/gpii-express/blob/master/docs/handler.md) that adds
 the HTTP headers when the `sendResponse` or `sendError` invoker is called.  This grade only adds headers, it does not
 decide what success or failure looks like.  It is designed to be overlayed with any existing `gpii.express.handler`
-grade that relies on the standard `sendResponse` and `sendError` functions.  If you are already customising these in
-your handler, this grade will likely not work as expected for you.
+grade that relies on the standard `sendResponse` and `sendError` functions.
+
+If you are already customising these in your handler, you should be careful if you are:
+
+1. Setting the `Content-Type` or `Link` headers yourself.
+2. Sending a response yourself using the `response` object's `send` method, in which case this grade's invoker will not have a chance to send the headers.
 
 ### Component Options
 
