@@ -34,7 +34,7 @@ gpii.tests.schema.parser.failure.confirmErrorFired = function (errors) {
             return true;
         }
     });
-    jqUnit.assertTrue("There should be an error that matches what we expecte...", matchingError);
+    jqUnit.assertTrue("There should be an error that matches what we expected...", matchingError);
 };
 
 fluid.defaults("gpii.tests.schema.parser.failure.caseholder", {
