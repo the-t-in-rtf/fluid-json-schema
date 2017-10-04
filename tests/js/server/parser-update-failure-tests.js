@@ -27,7 +27,7 @@ fluid.defaults("gpii.tests.schema.parser.bornToDie", {
 });
 
 fluid.registerNamespace("gpii.tests.schema.parser.failure");
-// TODO: Wire this into the listener
+
 gpii.tests.schema.parser.failure.confirmErrorFired = function (errors) {
     var matchingError = fluid.find(errors, function (error) {
         if (error.message && error.message.indexOf("ENOENT") !== -1) {
