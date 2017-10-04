@@ -15,7 +15,7 @@
   "dependencies": {
     "ajv": "4.11.2",
     "gpii-binder": "1.0.3",
-    "gpii-express": "1.0.11-dev.20171002T083805Z.8b3ef9d",
+    "gpii-express": "1.0.11",
     "gpii-handlebars": "1.0.2",
     "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
     "json-schema-ref-parser": "3.3.1",
