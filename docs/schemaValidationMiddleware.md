@@ -63,7 +63,7 @@ The default options validate the request body, as expected with a `POST` or `PUT
 below for examples of how different rules can handle different types of request data.
 
 The transformed request data is validated against the schema. Any validation errors are then transformed using
-`options.rules.validationErrorsToResponse` before they are sent to the user.  The default format looks roughly like:
+`options.rules.validationErrorsToResponse`.  The default format looks roughly like:
 
      {
        ok: false,
@@ -73,23 +73,23 @@ The transformed request data is validated against the schema. Any validation err
        }
      }
 
-The rejection output of this middleware is delivered using a [`schemaHandler`](./handler.md). It should match the JSON
-Schema specified in `options.responseSchemaKey` and `options.responseSchemaUrl`.
+If there are validation errors, the validation output of this middleware is passed on to the next piece of middleware
+in the error-handling chain.  If there are no validation errors, the next piece of middleware in non-error-handling
+chain is called.  In both cases, this middleware does not send any kind of response itself.  You are expected to ensure
+that middleware further along in the chain sends the response and/or [sets HTTP headers](schemaLinks.md).
 
 ### Component Options
 
 The following component configuration options are supported:
 
-| Option              | Type     | Description |
-| ------------------- | -------- | ----------- |
-| `handlerGrades` | `Array` | An array of grade names that will be used in constructing our request handler. |
-| `method` | `String` | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
-| `responseSchemaKey` | `String` | The schema key that [our handler](./handler.md) will use in constructing response headers. |
-| `responseSchemaUrl` | `String` | The base URL where `responseSchemaKey` can be found. |
-| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
-| `rules.validationErrorsToResponse` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) validation errors before they are sent to the user (see above). |
-| `schemaKey`         | `String` |  The key (also the filename) of the schema to be used for validation. |
-| `schemaDirs`        | `String` | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
+| Option                             | Type      | Description |
+| ---------------------------------- | --------- | ----------- |
+| `handlerGrades`                    | `Array`   | An array of grade names that will be used in constructing our request handler. |
+| `method`                           | `String`  | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
+| `rules.requestContentToValidate`   | `Object`  | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
+| `rules.validationErrorsToResponse` | `Object`  | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) validation errors before they are sent to the user (see above). |
+| `schemaKey`                        | `String`  |  The key (also the filename) of the schema to be used for validation. |
+| `schemaDirs`                       | `String`  | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
 
 The default `rules.requestContentToValidate` in this grade are intended for use with `PUT` or `POST` body data.  This
 can be represented as follows:

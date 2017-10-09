@@ -49,6 +49,12 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
         testString:        "CATs",
         testAllOf:         "CATs"
     },
+    postValidationFailurePayload: {
+        shallowlyRequired:   true,
+        testString:          "CATs",
+        testAllOf:           "CATs",
+        failAfterValidation: true
+    },
     invalidPayload: {
         testString: "CATs",
         testAllOf:  "CATs"
@@ -70,10 +76,13 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
                 }
             ]
         },
-        validText: "I am happy to hear from you.",
+        validText: "Everything is fine.",
         validJson: {
-            ok: true,
-            "message": "I am happy to hear from you."
+            "message": "Everything is fine."
+        },
+        validPostSubsequentFailure: {
+            isError: true,
+            "message": "Your payload was valid, but still destined for failure."
         }
     },
     rawModules: [
@@ -134,11 +143,38 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
                         {
                             func: "jqUnit.assertEquals",
                             args: ["The status code should indicate that we were successful...", 200, "{validPostJsonHeader}.nativeResponse.statusCode"]
+                        },
+                        {
+                            func: "gpii.test.schema.checkResponseHeaders",
+                            args: ["{validPostJsonHeader}.nativeResponse", "message.json"] // response, schemaPattern
                         }
                     ]
                 },
                 {
-                    name: "Testing an invalid POST response with no 'Accept' header...",
+                    name: "Testing a valid POST for which a subsequent error response should be sent...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{validPostSubsequentFailure}.send",
+                            args: ["{that}.options.postValidationFailurePayload"]
+                        },
+                        {
+                            listener: "jqUnit.assertDeepEq",
+                            event:    "{validPostSubsequentFailure}.events.onComplete",
+                            args:     ["We should receive a JSON payload indicating 'failure'...", "{that}.options.expected.validPostSubsequentFailure", "@expand:JSON.parse({arguments}.0)"]
+                        },
+                        {
+                            func: "jqUnit.assertEquals",
+                            args: ["The status code should indicate that we were unsuccessful...", 500, "{validPostSubsequentFailure}.nativeResponse.statusCode"]
+                        },
+                        {
+                            func: "gpii.test.schema.checkResponseHeaders",
+                            args: ["{validPostSubsequentFailure}.nativeResponse", "message.json"] // response, schemaPattern
+                        }
+                    ]
+                },
+                {
+                    name: "Testing an invalid POST response with no 'Accept' header (should return HTML)...",
                     type: "test",
                     sequence: [
                         {
@@ -191,6 +227,10 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
                         {
                             func: "jqUnit.assertEquals",
                             args: ["The status code should indicate that we were unsuccessful...", 400, "{invalidPostJsonHeader}.nativeResponse.statusCode"]
+                        },
+                        {
+                            func: "gpii.test.schema.checkResponseHeaders",
+                            args: ["{invalidPostJsonHeader}.nativeResponse", "validation-error-message.json"] // response, schemaPattern
                         }
                     ]
                 }
@@ -205,6 +245,9 @@ fluid.defaults("gpii.test.schema.middleware.contentAware.caseHolder", {
             type: "gpii.test.schema.middleware.contentAware.request.html"
         },
         validPostJsonHeader: {
+            type: "gpii.test.schema.middleware.contentAware.request.json"
+        },
+        validPostSubsequentFailure: {
             type: "gpii.test.schema.middleware.contentAware.request.json"
         },
         invalidPostNoHeader: {

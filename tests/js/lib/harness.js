@@ -5,12 +5,12 @@
 "use strict";
 var fluid = require("infusion");
 
-require("../../../");
-require("gpii-express");
-
-require("gpii-handlebars");
+fluid.require("%gpii-json-schema");
+fluid.require("%gpii-express");
+fluid.require("%gpii-handlebars");
 
 require("./middleware-fixtures.js");
+fluid.require("%gpii-json-schema/src/js/server/lib/schemaUrlAssembler.js");
 
 fluid.defaults("gpii.test.schema.harness", {
     gradeNames: ["gpii.express"],
@@ -34,11 +34,22 @@ fluid.defaults("gpii.test.schema.harness", {
             args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
         }
     },
+    schemaBaseUrl: {
+        expander: {
+            funcName: "gpii.schema.urlAssembler",
+            args:     ["{that}.options.baseUrl", "/schemas"]
+        }
+    },
+    schemaDirs: ["%gpii-json-schema/src/schemas", "%gpii-json-schema/tests/schemas"],
     config:  {
         express: {
             "port" : "{that}.options.port",
             baseUrl: "{that}.options.url"
         }
+    },
+    distributeOptions: {
+        source: "{that}.options.schemaBaseUrl",
+        target: "{that gpii.schema.schemaLink.schemaUrlHolder}.options.schemaBaseUrl"
     },
     components: {
         json: {
@@ -69,6 +80,13 @@ fluid.defaults("gpii.test.schema.harness", {
                         func: "{gpii.test.schema.harness}.events.onGatedRequestAwareRouterReady.fire"
                     }
                 }
+            }
+        },
+        schemaContent: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/schemas",
+                content: "{gpii.test.schema.harness}.options.schemaDirs"
             }
         },
         gatedContentAware: {
@@ -122,24 +140,10 @@ fluid.defaults("gpii.test.schema.harness", {
         inlineSchemas: {
             type: "gpii.schema.inlineMiddleware",
             options: {
-                schemaDirs: "%gpii-json-schema/tests/schemas",
+                schemaDirs: "{gpii.test.schema.harness}.options.schemaDirs",
                 listeners: {
                     "onSchemasDereferenced.notifyEnvironment": {
                         func: "{gpii.test.schema.harness}.events.onInlineRouterReady.fire"
-                    }
-                }
-            }
-        },
-        htmlHeaderMiddleware: {
-            type: "gpii.express.middleware.headerSetter.error",
-            options: {
-                priority:  "after:gatedContentAware",
-                namespace: "htmlHeaderMiddleware",
-                headers: {
-                    contentType: {
-                        fieldName: "Content-Type",
-                        template:  "text/html",
-                        dataRules: {}
                     }
                 }
             }
@@ -153,29 +157,17 @@ fluid.defaults("gpii.test.schema.harness", {
                 templateKey: "partials/validation-error-summary"
             }
         },
-        jsonHeaderMiddleware: {
-            type: "gpii.express.middleware.headerSetter.error",
-            options: {
-                priority:  "after:htmlErrorHandler",
-                namespace: "jsonHeaderMiddleware",
-                headers: {
-                    contentType: {
-                        fieldName: "Content-Type",
-                        template:  "application/json",
-                        dataRules: {}
-                    }
-                }
-            }
-        },
         validationErrorHeaderMiddleware: {
-            type: "gpii.schema.schemaLinkMiddleware.error",
+            type: "gpii.schema.schemaLink.middleware.error",
             options: {
-                schemaKey: "message.json",
-                schemaUrl: "http://some.fake.site/schemas/message.json",
+                schemaPaths: {
+                    error: "validation-error-message.json"
+                },
                 priority:  "after:jsonHeaderMiddleware"
             }
         },
-        defaultErrorHandler: {
+        // This should never be reached
+        defaultErrorMiddleware: {
             type: "gpii.express.middleware.error",
             options: {
                 priority:  "after:validationErrorHeaderMiddleware",

@@ -72,7 +72,7 @@ fluid.defaults("gpii.tests.schema.parser.environment", {
             type: "gpii.schema.parser",
             createOnEvent: "constructFixtures",
             options: {
-                schemaDirs: "%gpii-json-schema/tests/schemas"
+                schemaDirs: ["%gpii-json-schema/tests/schemas", "%gpii-json-schema/src/schemas"]
             }
         },
         caseHolder: {

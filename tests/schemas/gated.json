@@ -4,6 +4,9 @@
   "title": "'Gated' schema...",
   "description": "Schema for use in exercising our middleware and client-side components.",
   "definitions": {
+    "failAfterValidation": {
+      "type": "boolean"
+    },
     "testString": {
       "type": "string",
       "minLength": 4,
@@ -39,9 +42,10 @@
     }
   },
   "properties": {
-    "testString": { "$ref": "#/definitions/testString" },
-    "testAllOf":  { "$ref": "#/definitions/testAllOf" },
-    "deep":       { "$ref": "#/definitions/deep" }
+    "failAfterValidation": { "$ref": "#/definitions/failAfterValidation" },
+    "testString":          { "$ref": "#/definitions/testString" },
+    "testAllOf":           { "$ref": "#/definitions/testAllOf" },
+    "deep":                { "$ref": "#/definitions/deep" }
   },
   "required": [
     "shallowlyRequired"

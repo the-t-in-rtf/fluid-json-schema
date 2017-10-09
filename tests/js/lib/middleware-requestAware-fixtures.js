@@ -137,10 +137,11 @@ fluid.defaults("gpii.test.schema.middleware.router", {
     },
     components: {
         linkHeaderMiddleware: {
-            type: "gpii.schema.schemaLinkMiddleware",
+            type: "gpii.schema.schemaLink.middleware",
             options: {
-                schemaKey: "message.json",
-                schemaUrl: "http://terms.raisingthefloor.org/schema/message.json"
+                schemaPaths: {
+                    success: "success-message.json"
+                }
             }
         },
         get: {

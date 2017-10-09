@@ -6,50 +6,41 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("gpii-express");
-require("../../../");
+fluid.require("%gpii-express");
+fluid.require("%gpii-json-schema");
 
-fluid.registerNamespace("gpii.test.schema.contentAware.error.defaultHandler");
-gpii.test.schema.contentAware.error.defaultHandler.sendSummary = function (that) {
-    var output = [];
-    output.push(that.options.validationErrors.message);
-    fluid.each(that.options.validationErrors.fieldErrors, function (error) {
-        var label = error.dataPath.length ? error.dataPath.substring(1) : error.params.missingProperty;
-        output.push("  * " + label + ": " + error.message);
-    });
-
-    that.sendResponse(400, output.join("\n"));
-};
-
-// Convert the JSON output to a string before sending it onward
-//
-fluid.defaults("gpii.test.schema.contentAware.error.defaultHandler", {
-    gradeNames: ["gpii.express.handler"],
-    invokers: {
-        handleRequest: {
-            funcName: "gpii.test.schema.contentAware.error.defaultHandler.sendSummary",
-            args:     ["{that}"]
-        }
-    }
-});
-
-fluid.defaults("gpii.test.schema.contentAware.success.defaultHandler", {
+fluid.defaults("gpii.test.schema.contentAware.htmlHandler", {
     gradeNames: ["gpii.express.handler"],
     timeout: 1000000,
     invokers: {
         handleRequest: {
             func: "{that}.sendResponse",
-            args: [200, "I am happy to hear from you."]
+            args: [200, "Everything is fine."]
         }
     }
 });
 
-fluid.defaults("gpii.test.schema.contentAware.success.jsonHandler", {
-    gradeNames: ["gpii.express.handler"],
+fluid.registerNamespace("gpii.test.schema.contentAware.jsonHandler");
+
+gpii.test.schema.contentAware.jsonHandler.handleRequest = function (that) {
+    if (that.options.request.body.failAfterValidation) {
+        that.sendError(500, { isError: true, message: "Your payload was valid, but still destined for failure."});
+    }
+    else {
+        that.sendResponse(200, { message: "Everything is fine."});
+    }
+};
+
+fluid.defaults("gpii.test.schema.contentAware.jsonHandler", {
+    gradeNames: ["gpii.schema.schemaLink.handler"],
+    schemaPaths: {
+        error:   "message.json",
+        success: "success-message.json"
+    },
     invokers: {
         handleRequest: {
-            func: "{that}.sendResponse",
-            args: [ 200, { ok: true, message: "I am happy to hear from you."} ]
+            funcName: "gpii.test.schema.contentAware.jsonHandler.handleRequest",
+            args:     ["{that}"]
         }
     }
 });
@@ -80,11 +71,11 @@ fluid.defaults("gpii.test.schema.contentAware", {
                 handlers: {
                     "html": {
                         contentType:   "text/html",
-                        handlerGrades: ["gpii.test.schema.contentAware.success.defaultHandler"]
+                        handlerGrades: ["gpii.test.schema.contentAware.htmlHandler"]
                     },
                     json: {
                         contentType:  "application/json",
-                        handlerGrades: ["gpii.test.schema.contentAware.success.jsonHandler"]
+                        handlerGrades: ["gpii.test.schema.contentAware.jsonHandler"]
                     }
                 }
             }

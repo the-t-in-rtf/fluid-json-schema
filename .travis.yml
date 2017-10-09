@@ -1,14 +1,19 @@
 language: node_js
-node_js: "6.9.1"
+node_js: "6"
 addons:
   apt:
     packages:
-      - xvfb
+    - g++-4.8
+    - gcc-4.8
+    - xvfb
+before_install:
+  - wget https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip -O /tmp/chromedriver
+  - chmod 777 /tmp/chromedriver
+  - export CHROME_DRIVER_PATH=/tmp/chromedriver
+  - export PATH=$PATH:/tmp
 install:
-  - sudo apt-get install -y chromedriver
   - export DISPLAY=':99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-  - npm install -g yarn
-  - yarn install
+  - npm install
 script:
-  - BROWSERS=chrome yarn test
+  - BROWSERS=chrome npm test
