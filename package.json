@@ -1,6 +1,6 @@
 {
   "name": "gpii-json-schema",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Fluid components to add support for JSON Schema validation.",
   "main": "",
   "scripts": {
