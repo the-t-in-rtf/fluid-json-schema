@@ -34,23 +34,19 @@ If you would like to remove the VM, use the command `vagrant destroy` from the r
 
 Before you can successfully run the tests on a local machine, you will need to have the following installed:
 
-# `node` (4.x or 6.x)
-# `npm` or [`yarn`](http://yarnpkg.com/)
-# [Chrome](https://www.google.com/chrome/)
-# [`chromedriver`](https://sites.google.com/a/chromium.org/chromedriver/)
+* `node` (4.x or 6.x)
+* `npm` (3.x)
+* [Chrome](https://www.google.com/chrome/)
+* [`chromedriver`](https://sites.google.com/a/chromium.org/chromedriver/)
 
 Once you have these installed, you can run the tests using commands like:
-
-1. `yarn install`
-2. `yarn test`
-
-Or, if you're using `npm`, you can use commands like:
 
 1. `npm install`
 2. `npm test`
 
 # Using these components in a browser
 
-This package depends on AJV.  AJV can be used on the client-side, but must first be bundled using `browserify`.  The
-AJV package takes care of this automatically when it's installed, the required client-side bundle can be found in
-`./node_modules/ajv/dist/ajv.bundle.js` once you've installed this package's dependencies.
+This package depends on [AJV](https://github.com/epoberezkin/ajv).  AJV can be used on the client-side, but must first
+be bundled using `browserify`.  The AJV package takes care of this automatically when it's installed, the required
+client-side bundle can be found in `./node_modules/ajv/dist/ajv.bundle.js` once you've installed this package's
+dependencies.
