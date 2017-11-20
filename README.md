@@ -11,7 +11,7 @@ to help add the power of [JSON Schemas](http://json-schema.org) to your project.
 This package is intended to help with three key use cases:
 
 1.  Validating arbitrary JSON data and reporting problems to the end user.  See the [validator documentation](./docs/validator.md) and [parser documentation](./docs/parser.md) for more details.
-2.  Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request).  See the [middleware documentation](./docs/middleware) for more details.
+2.  Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request).  See the [middleware documentation](./docs/schemaValidationMiddleware.md) for more details.
 3.  Adding appropriate headers to JSON responses so that it is clear what JSON Schema they adhere to.  See the [handler documentation](./docs/handler.md) for more details.
 
 # Running the tests
