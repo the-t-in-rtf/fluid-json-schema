@@ -29,7 +29,7 @@ you can created "gated" REST endpoints that only pass through valid payloads to 
           args:     [200, "Someone sent me a valid JSON payload."]
         }
       }
-    );
+    });
 
     gpii.express({
       gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
@@ -37,8 +37,9 @@ you can created "gated" REST endpoints that only pass through valid payloads to 
       schemaKey:         "valid.json",
       schemaDirs:        ["%my-package/src/schemas"],
       responseSchemaKey: "message.json",
-      responseSchemaUrl: "http://my.site/schemas/"
-      path:              "/gatekeeper"
+      responseSchemaUrl: "http://my.site/schemas/",
+      path:              "/gatekeeper",
+      port: 3000
     });
 
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads
