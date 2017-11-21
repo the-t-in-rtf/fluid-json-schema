@@ -15,31 +15,35 @@ The base middleware is intended to be used with a `gpii.express` or `gpii.expres
 `gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting point.  With that router,
 you can created "gated" REST endpoints that only pass through valid payloads to the underlying handlers, as show here:
 
-    var fluid = require("infusion");
-    var gpii  = fluid.registerNamespace("gpii");
+```javascript
+var fluid = require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
 
-    require("gpii-express");
-    require("gpii-json-schema");
+require("gpii-express");
+require("gpii-json-schema");
 
-    fluid.defaults("gpii.schema.tests.handler", {
-      gradeNames: ["gpii.express.handler"],
-      invokers: {
-        handleRequest: {
-          funcName: "{that}.sendResponse",
-          args:     [200, "Someone sent me a valid JSON payload."]
-        }
-      }
-    );
+fluid.defaults("gpii.schema.tests.handler", {
+  gradeNames: ["gpii.express.handler"],
+  invokers: {
+    handleRequest: {
+      funcName: "{that}.sendResponse",
+      args:     [200, "Someone sent me a valid JSON payload."]
+    }
+  }
+});
 
-    gpii.express({
-      gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
-      handlerGrades:     ["gpii.schema.tests.handler"],
-      schemaKey:         "valid.json",
-      schemaDirs:        ["%my-package/src/schemas"],
-      responseSchemaKey: "message.json",
-      responseSchemaUrl: "http://my.site/schemas/"
-      path:              "/gatekeeper"
-    });
+gpii.express({
+  gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
+  handlerGrades:     ["gpii.schema.tests.handler"],
+  schemaKey:         "valid.json",
+  schemaDirs:        ["%my-package/src/schemas"],
+  responseSchemaKey: "message.json",
+  responseSchemaUrl: "http://my.site/schemas/",
+  path:              "/gatekeeper",
+  port:              3000
+});
+```
+
 
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads
 to the schema `valid.json`, which can be found in `%my-package/src/schemas`. If a payload is valid according to the
@@ -65,13 +69,15 @@ below for examples of how different rules can handle different types of request 
 The transformed request data is validated against the schema. Any validation errors are then transformed using
 `options.rules.validationErrorsToResponse`.  The default format looks roughly like:
 
-     {
-       ok: false,
-       message: "The JSON you have provided is not valid.",
-       errors: {
-         field1: ["This field is required."]
-       }
-     }
+```json
+ {
+   "ok": false,
+   "message": "The JSON you have provided is not valid.",
+   "errors": {
+     "field1": ["This field is required."]
+   }
+ }
+```
 
 If there are validation errors, the validation output of this middleware is passed on to the next piece of middleware
 in the error-handling chain.  If there are no validation errors, the next piece of middleware in non-error-handling
@@ -94,9 +100,11 @@ The following component configuration options are supported:
 The default `rules.requestContentToValidate` in this grade are intended for use with `PUT` or `POST` body data.  This
 can be represented as follows:
 
-      requestContentToValidate: {
-          "": "body"
-      }
+```snippet
+requestContentToValidate: {
+  "": "body"
+}
+```
 
 See `gpii.schema.validationMiddleware.handlesGetMethod` below for an example of working with query data.
 
@@ -121,6 +129,8 @@ This function is expected to be called by Express (or by an instance of `gpii.ex
 A mix-in grade that configures an instance of `gpii.schema.validationMiddleware` to validate query data.
 Sets `rules.requestContentToValidate` to the following:
 
-      requestContentToValidate: {
-          "": "query"
-      }
+```snippet
+requestContentToValidate: {
+  "": "query"
+}
+```

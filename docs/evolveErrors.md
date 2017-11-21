@@ -5,7 +5,7 @@ adds an `errors` keyword, which is a map of relative JSON pointers and replaceme
 either the document level, or when defining an individual field.  Here is an example of using `errors` at the document
 level, taken from the v5 draft proposal:
 
-```
+```json
 {
   "properties": {
     "age": { "minimum": 13 },
@@ -23,7 +23,7 @@ level, taken from the v5 draft proposal:
 
 Here is an example of using `errors` within an individual field, again taken from the v5 draft proposal:
 
-```
+```json
 {
   "properties": {
     "age": {
@@ -49,7 +49,7 @@ Here is an example of using `errors` within an individual field, again taken fro
 
 Let's say that we have the following schema:
 
-```
+```json
 {
   "properties": {
     "field": {
@@ -62,7 +62,7 @@ Let's say that we have the following schema:
 
 If we were to validate the simply JSON document `{ "field": "lowercase" }`, the validator would return output like:
 
-```
+```json
 [
   {
     "keyword": "pattern",
@@ -78,7 +78,7 @@ If we were to validate the simply JSON document `{ "field": "lowercase" }`, the 
 
 Here's the same schema with the v5 error definition added.
 
-```
+```json
 {
   "properties": {
     "field": {
@@ -94,7 +94,7 @@ Here's the same schema with the v5 error definition added.
 
 Now the validator (with our help) can return the following output:
 
-```
+```json
 [
   {
     "keyword": "pattern",
@@ -117,7 +117,7 @@ function does not support this.  As such, we also  do not support the longer for
 error is an object that contains a `text` and `action`).  Instead, we support only the simplest of the forms outlined
 above, as in this updated snippet:
 
-```
+```snippet
 "age": {
   "minimum": 13,
   "errors": {
@@ -130,7 +130,7 @@ The working draft is not clear on how "required" fields should be evolved to use
 the schema proposed [in this GitHub issue](https://github.com/json-schema/json-schema/issues/222).  Here is an example
 of how this module expects `errors` data to be entered for required fields:
 
-```
+```json
 {
   "properties": {
     "shallowlyRequired": {
@@ -161,12 +161,12 @@ Although this has not yet been established in the standard or in AJV, we have ch
 `errors` in a way that will allow overlaying errors on an existing schema, as in the following
 example:
 
-```
+```json
 {
   "id": "person.json",
   "definitions": {
-    "firstname": { type: "string" },
-    "lastname":  { type: "string" }
+    "firstname": { "type": "string" },
+    "lastname":  { "type": "string" }
   },
   "properties": {
     "firstname": { "$ref": "#/definitions/firstname" },
@@ -177,7 +177,7 @@ example:
 
 Here is a schema with overlayed error messages in English:
 
-```
+```json
 {
   "id": "person-en.json",
   "properties": {
