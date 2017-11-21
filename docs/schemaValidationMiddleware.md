@@ -39,7 +39,7 @@ you can created "gated" REST endpoints that only pass through valid payloads to 
       responseSchemaKey: "message.json",
       responseSchemaUrl: "http://my.site/schemas/",
       path:              "/gatekeeper",
-      port: 3000
+      port:              3000
     });
 
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads

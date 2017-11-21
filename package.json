@@ -1,40 +1,45 @@
 {
-  "name": "gpii-json-schema",
-  "version": "1.0.4",
-  "description": "Fluid components to add support for JSON Schema validation.",
-  "main": "",
-  "scripts": {
-    "test": "node node_modules/istanbul/lib/cli.js cover tests/all-tests.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/GPII/gpii-json-schema"
-  },
-  "author": "Tony Atkins <tony@raisingthefloor.org>",
-  "license": "BSD-3-Clause",
-  "dependencies": {
-    "ajv": "4.11.2",
-    "gpii-binder": "1.0.3",
-    "gpii-express": "1.0.11",
-    "gpii-handlebars": "1.0.2",
-    "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
-    "json-schema-ref-parser": "3.3.1",
-    "jsonpointer.js": "0.4.0",
-    "quoted-printable": "1.0.1"
-  },
-  "devDependencies": {
-    "eslint": "4.7.2",
-    "eslint-config-fluid": "1.1.0",
-    "fluid-grunt-eslint": "18.1.2",
-    "foundation-sites": "6.4.1",
-    "gpii-webdriver": "1.0.2",
-    "grunt": "1.0.1",
-    "grunt-jsonlint": "1.1.0",
-    "handlebars": "4.0.10",
-    "istanbul": "0.4.5",
-    "kettle": "1.7.0",
-    "node-jqunit": "1.1.7",
-    "pagedown": "1.1.0",
-    "request": "2.83.0"
-  }
+    "name": "gpii-json-schema",
+    "version": "1.0.4",
+    "description": "Fluid components to add support for JSON Schema validation.",
+    "main": "index.js",
+    "scripts": {
+        "test": "node node_modules/istanbul/lib/cli.js cover tests/all-tests.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/GPII/gpii-json-schema"
+    },
+    "author": "Tony Atkins <tony@raisingthefloor.org>",
+    "license": "BSD-3-Clause",
+    "dependencies": {
+        "ajv": "4.11.2",
+        "gpii-binder": "1.0.3",
+        "gpii-express": "1.0.11",
+        "gpii-handlebars": "1.0.2",
+        "infusion": "3.0.0-dev.20170830T182157Z.392b2f8",
+        "json-schema-ref-parser": "3.3.1",
+        "jsonpointer.js": "0.4.0",
+        "quoted-printable": "1.0.1"
+    },
+    "devDependencies": {
+        "eslint": "4.7.2",
+        "eslint-config-fluid": "1.1.0",
+        "eslint-plugin-markdown": "1.0.0-beta.6",
+        "fluid-grunt-eslint": "18.1.2",
+        "fluid-grunt-json5lint": "1.0.0",
+        "foundation-sites": "6.4.1",
+        "gpii-express": "1.0.11",
+        "gpii-grunt-mdjson-lint": "1.0.0-dev.20171024T123903Z.3c91988",
+        "grunt": "1.0.1",
+        "grunt-jsonlint": "1.1.0",
+        "grunt-markdownlint": "1.0.42",
+        "gpii-webdriver": "1.0.2",
+        "handlebars": "4.0.10",
+        "istanbul": "0.4.5",
+        "kettle": "1.7.0",
+        "node-jqunit": "1.1.7",
+        "pagedown": "1.1.0",
+        "request": "2.83.0"
+    }
 }
