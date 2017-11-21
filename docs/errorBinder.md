@@ -12,7 +12,7 @@ The `errorBinder` uses model->view bindings like those used with [`gpii-binder`]
 associate validation errors reported by the validator with onscreen elements.  That "binding" structure looks something
 like:
 
-```
+```snippet
 bindings: {
     "key": {
         selector: "selector1",
