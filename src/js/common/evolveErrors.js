@@ -15,7 +15,7 @@ fluid.registerNamespace("gpii.schema.errors");
  *
  * @param schemaContent {Object} - The full dereferenced content of the schema we are working with.
  * @param error {Object} - The validator error to be evolved.
- * @returns An "evolved" copy of the original error.
+ * @return An "evolved" copy of the original error.
  */
 gpii.schema.errors.evolveError = function (schemaContent, error) {
     var evolvedError = fluid.copy(error);
