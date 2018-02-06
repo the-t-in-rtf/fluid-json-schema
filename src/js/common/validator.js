@@ -26,7 +26,7 @@ gpii.schema.validator.ajv.init = function (that) {
  * @param that {Object} the validator component itself.
  * @param key {String} The key of the JSON Schema we are validating against.
  * @param content {Object} The JSON data to be validated.
- * @returns `{Object}` sanitized validation errors, if there are any, or `undefined` if there are no validation errors.
+ * @return `{Object}` sanitized validation errors, if there are any, or `undefined` if there are no validation errors.
  *
  */
 gpii.schema.validator.ajv.validate = function (that, key, content) {
@@ -51,7 +51,7 @@ gpii.schema.validator.ajv.validate = function (that, key, content) {
  * @param that - The validator component itself.
  * @param schemaKey {String} - The filename/id of the schema we are working with.
  * @param rawErrors {Object} - The raw error data returned by AJV.
- * @returns An {Object} representing the original error data combined with any "evolved" error messages we were able to find.
+ * @return An {Object} representing the original error data combined with any "evolved" error messages we were able to find.
  */
 gpii.schema.validator.ajv.sanitizeValidationErrors = function (that, schemaKey, rawErrors) {
     var schemaContent = that.model.schemas[schemaKey];

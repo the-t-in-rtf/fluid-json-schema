@@ -53,7 +53,7 @@ gpii.schema.parser.loadSchemas = function (that) {
  * @param that - The parser component itself.
  * @param schemaPath {String} - The full path to the schema we are derferencing.
  * @param schemaKey {String} - The filename/id of the schema we are dereferencing.
- * @returns A `fluid.promise` that will be resolved once the parser has finished dereferencing the schema.
+ * @return A `fluid.promise` that will be resolved once the parser has finished dereferencing the schema.
  *
  */
 gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
@@ -71,7 +71,7 @@ gpii.schema.parser.dereferenceSchema = function (that, schemaPath, schemaKey) {
  * @param that - The parser component itself.
  * @param schemaKey - The filename/id of the schema we are dereferencing.
  * @param promise - The promise the parser will either resolve or reject once it completes its work.
- * @returns A {Function} that can be passed directly to the parser as a callback.
+ * @return A {Function} that can be passed directly to the parser as a callback.
  *
  */
 gpii.schema.parser.getParserCallback = function (that, schemaKey, promise) {
