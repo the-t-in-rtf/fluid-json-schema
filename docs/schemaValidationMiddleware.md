@@ -44,20 +44,19 @@ gpii.express({
 });
 ```
 
-
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads
 to the schema `valid.json`, which can be found in `%my-package/src/schemas`. If a payload is valid according to the
 schema, the handler defined above would output a canned "success" message.  If the payload is invalid, the underlying
 `gpii.express.middleware` instance steps in and responds with a failure message.
 
-# Displaying validation messages onscreen
+## Displaying validation messages onscreen
 
 The [`errorBinder`](errorBinder.md) component included with this package is designed to associate the validation error
 messages produced by `gpii.schema.validationMiddleware` with on-screen elements.  See that component's documentation for details.
 
-# Components
+## Components
 
-## `gpii.schema.validationMiddleware`
+### `gpii.schema.validationMiddleware`
 
 Validates information available in the request object. The incoming request is first transformed using
 `fluid.model.transformWithRules` and`options.rules.requestContentToValidate`. The results are validated against
@@ -66,36 +65,20 @@ Validates information available in the request object. The incoming request is f
 The default options validate the request body, as expected with a `POST` or `PUT` request.  See the mix-in grades
 below for examples of how different rules can handle different types of request data.
 
-The transformed request data is validated against the schema. Any validation errors are then transformed using
-`options.rules.validationErrorsToResponse`.  The default format looks roughly like:
+The transformed request data is validated against the schema. If there are validation errors, the validation output of
+this middleware is passed on to the next piece of middleware in the error-handling chain.  If there are no validation
+errors, the next piece of middleware in non-error-handling chain is called.  In both cases, this middleware does not
+send any kind of response itself.  You are expected to ensure that middleware further along in the chain sends the
+response and/or [sets HTTP headers](schemaLinks.md).
 
-```json
- {
-   "ok": false,
-   "message": "The JSON you have provided is not valid.",
-   "errors": {
-     "field1": ["This field is required."]
-   }
- }
-```
-
-If there are validation errors, the validation output of this middleware is passed on to the next piece of middleware
-in the error-handling chain.  If there are no validation errors, the next piece of middleware in non-error-handling
-chain is called.  In both cases, this middleware does not send any kind of response itself.  You are expected to ensure
-that middleware further along in the chain sends the response and/or [sets HTTP headers](schemaLinks.md).
-
-### Component Options
+#### Component Options
 
 The following component configuration options are supported:
 
-| Option                             | Type      | Description |
-| ---------------------------------- | --------- | ----------- |
-| `handlerGrades`                    | `Array`   | An array of grade names that will be used in constructing our request handler. |
-| `method`                           | `String`  | The method(s) the inner router will respond to.  These should be lowercase strings corresponding to the methods exposed by Express routers.  The default is to use the `POST` method, there are convenience grades for each method. |
-| `rules.requestContentToValidate`   | `Object`  | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
-| `rules.validationErrorsToResponse` | `Object`  | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) validation errors before they are sent to the user (see above). |
-| `schemaKey`                        | `String`  |  The key (also the filename) of the schema to be used for validation. |
-| `schemaDirs`                       | `String`  | The path to the schema directories that contain a file matching `options.schemaKey`.  This is expected to be an array of package-relative paths such as `%gpii-handlebars/tests/schemas`. |
+| Option                           | Type     | Description |
+| -------------------------------- | -------- | ----------- |
+| `inputSchema`                    | `Object` | The [GSS](gss.md) schema to use in validating incoming request data. |
+| `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
 
 The default `rules.requestContentToValidate` in this grade are intended for use with `PUT` or `POST` body data.  This
 can be represented as follows:
@@ -106,11 +89,13 @@ requestContentToValidate: {
 }
 ```
 
-See `gpii.schema.validationMiddleware.handlesGetMethod` below for an example of working with query data.
+These rules extract POST and PUT payloads from the request body created by the [Express body parser
+middleware](https://github.com/expressjs/body-parser).  See `gpii.schema.validationMiddleware.handlesGetMethod` below
+for an example of working with query data.
 
-### Invokers
+#### Invokers
 
-#### `{middleware}.middleware(request, response, next)`
+##### `{middleware}.middleware(request, response, next)`
 
 * `request`: An object representing the individual user's request.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for details.
 * `response`: The response object, which can be used to send information to the requesting user.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for details.
@@ -124,7 +109,7 @@ function and let some other downstream piece of middleware continue the conversa
 
 This function is expected to be called by Express (or by an instance of `gpii.express`).
 
-## `gpii.schema.validationMiddleware.handlesQueryData`
+### `gpii.schema.validationMiddleware.handlesQueryData`
 
 A mix-in grade that configures an instance of `gpii.schema.validationMiddleware` to validate query data.
 Sets `rules.requestContentToValidate` to the following:

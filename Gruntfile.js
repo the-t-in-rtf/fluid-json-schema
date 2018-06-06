@@ -39,7 +39,7 @@ module.exports = function (grunt) {
                         "ol-prefix": {style: "ordered"} // 1. 2. 3. etc
                     }
                 },
-                src: ["./*.md", "src/docs/**/*.md"]
+                src: ["./*.md", "./docs/**/*.md"]
             }
         },
         mdlint: ["./*.md", "src/docs/**/*.md"]

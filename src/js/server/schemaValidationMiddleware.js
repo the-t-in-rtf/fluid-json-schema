@@ -11,30 +11,35 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("../common/hasRequiredOptions");
-require("./lib/schemaLinkHeaders");
-
 fluid.registerNamespace("gpii.schema.validationMiddleware");
+
+require("../common/validator");
+require("../common/schemaValidatedComponent");
 
 /**
  *
- * @param that {Object} The middleware component itself.
- * @param req {Object} The Express request object.
- * @param res {Object} The Express response object.
- * @param next {Function} The function to be executed next in the middleware chain.
+ * @param {Object} that - The middleware component itself.
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @param {Function} next - The function to be executed next in the middleware chain.
+ *
  */
 gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, next) {
     var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
-    var results = that.validator.validate(that.options.schemaKey, toValidate);
-    if (results) {
-        var transformedValidationErrors = fluid.model.transformWithRules(results, that.options.rules.validationErrorsToResponse);
-        if (that.options.schemaUrls.error) {
-            gpii.schema.schemaLinks.addHeaders(res, that.options.schemaUrls.error);
-        }
-        next(transformedValidationErrors);
+
+    var validationResults = gpii.schema.validator.validate(toValidate, that.options.inputSchema, that.options.ajvOptions);
+
+    if (validationResults.isError) {
+        next(validationResults);
+    }
+    else if (validationResults.isValid) {
+        next();
     }
     else {
-        next();
+        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, that.model.messages, that.options.localisationTransform);
+        var localisedPayload = fluid.copy(validationResults);
+        localisedPayload.errors = localisedErrors;
+        next(localisedPayload);
     }
 };
 
@@ -46,52 +51,43 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, ne
 
  */
 fluid.defaults("gpii.schema.validationMiddleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.hasRequiredOptions"],
+    gradeNames: ["gpii.express.middleware", "gpii.schema.component", "fluid.modelComponent"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
-    requiredFields: {
-        "rules.requestContentToValidate":   true,
-        "rules.validationErrorsToResponse": true,
-        schemaKey:                          true
+    schema: {
+        properties: {
+            inputSchema: {
+                $ref: "gss-v7-full#"
+            },
+            localisationTransform: {
+                type: "object",
+                minProperties: 1
+            },
+            rules: {
+                properties: {
+                    requestContentToValidate: {
+                        type: "object",
+                        required: true
+                    }
+                }
+            }
+        }
     },
-    addSchemaHeaders: true,
-    schemaUrls: {
-        error: "http://terms.raisingthefloor.org/schema/message.json"
+    inputSchema: {
+        "$schema": "gss-v7-full#"
     },
-    sendResponseOnValidationError: true,
-    messages: {
-        error: "The JSON you have provided is not valid."
+    localisationTransform: {
+        "": ""
+    },
+    model: {
+        messages: gpii.schema.messages.validationErrors
     },
     // We prevent merging of individual options, but allow them to be individually replaced.
     mergeOptions: {
-        "rules.validationErrorsToResponse": "nomerge",
         "rules.requestContentToValidate":   "nomerge"
     },
     rules: {
         requestContentToValidate: {
             "": "body"
-        },
-        validationErrorsToResponse: {
-            isError: { literalValue: true},
-            message: {
-                literalValue: "{that}.options.messages.error"
-            },
-            fieldErrors: ""
-        }
-    },
-    events: {
-        onSchemasDereferenced: null
-    },
-    components: {
-        validator: {
-            type: "gpii.schema.validator.ajv.server",
-            options: {
-                schemaDirs: "{gpii.schema.validationMiddleware}.options.schemaDirs",
-                listeners: {
-                    "onSchemasDereferenced.notifyMiddleware": {
-                        func: "{gpii.schema.validationMiddleware}.events.onSchemasDereferenced.fire"
-                    }
-                }
-            }
         }
     },
     invokers: {
