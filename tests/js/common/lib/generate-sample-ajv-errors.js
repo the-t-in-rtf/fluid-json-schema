@@ -121,7 +121,4 @@ fluid.each(defs, function (def, key) {
     }
 });
 
-
 console.log(JSON.stringify(fluid.merge({}, gpii.tests.validator.ajvErrors, combinedResults), null, 2));
-
-

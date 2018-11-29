@@ -8,7 +8,7 @@
         "test": "npm run test:node && npm run test:browser",
         "test:node": "node node_modules/nyc/bin/nyc.js --reporter none node tests/all-node-tests.js",
         "test:browser": "node node_modules/testem/testem.js ci --file tests/testem.js",
-        "posttest": "node node_modules/nyc/bin/nyc.js report --temp-directory coverage"
+        "posttest": "node node_modules/nyc/bin/nyc.js report"
     },
     "repository": {
         "type": "git",
@@ -17,30 +17,25 @@
     "author": "Tony Atkins <tony@raisingthefloor.org>",
     "license": "BSD-3-Clause",
     "dependencies": {
-        "ajv": "6.5.0",
-        "gpii-binder": "1.0.4-dev.20180126T160723Z.eb74939",
-        "gpii-express": "1.0.14",
+        "ajv": "6.5.5",
+        "gpii-binder": "1.0.4",
+        "gpii-express": "1.0.15",
         "gpii-handlebars": "1.1.1-dev.20180605T123729Z.cfe452f",
         "infusion": "3.0.0-dev.20180417T124624Z.ba5376f.FLUID-6148"
     },
     "devDependencies": {
-        "eslint": "4.19.1",
+        "eslint": "5.9.0",
         "eslint-config-fluid": "1.3.0",
-        "eslint-plugin-markdown": "1.0.0-beta.6",
-        "fluid-grunt-eslint": "18.1.2",
-        "fluid-grunt-json5lint": "1.0.0",
+        "gpii-grunt-lint-all": "1.0.5",
         "foundation-sites": "6.4.1",
-        "gpii-grunt-mdjson-lint": "1.0.0-dev.20171024T123903Z.3c91988",
-        "gpii-testem": "2.1.1-dev.20180531T175933Z.0ea0a91",
-        "grunt": "1.0.2",
-        "grunt-jsonlint": "1.1.0",
-        "grunt-markdownlint": "1.1.6",
-        "kettle": "1.7.1",
-        "markdown-it": "8.4.1",
+        "gpii-testem": "2.1.6",
+        "grunt": "1.0.3",
+        "kettle": "1.8.1",
+        "markdown-it": "8.4.2",
         "mkdirp": "0.5.1",
         "node-jqunit": "1.1.8",
-        "nyc": "12.0.1",
-        "request": "2.87.0",
+        "nyc": "13.1.0",
+        "request": "2.88.0",
         "rimraf": "2.6.2"
     }
 }

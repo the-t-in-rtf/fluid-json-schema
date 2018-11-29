@@ -67,4 +67,3 @@ var jqUnit      = jqUnit      || {};
         jqUnit.assertTrue("The schema should be reported as valid.", validSchemaIsValid);
     });
 })(fluid_3_0_0, Ajv, jqUnit);
-

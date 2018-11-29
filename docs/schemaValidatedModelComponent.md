@@ -8,8 +8,8 @@ syntax for standard framework features like invokers, et cetera.
 
 ## Component Options
 
-In addition to the options supported by the underlying [`gpii.schema.component`](schemaValidatedComponent.md) grade, this component supports the
-following key option:
+In addition to the options supported by the underlying [`gpii.schema.component`](schemaValidatedComponent.md) grade,
+this component supports the following key option:
 
 | Option        | Type     | Description |
 | ------------- | -------- | ----------- |

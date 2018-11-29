@@ -46,6 +46,12 @@
         "uniqueItems": "schema-validator-uniqueItems"
     };
 
+    gpii.schema.validator.defaultAjvOptions = {
+        verbose: false,  // Prevent invalid data (such as passwords) from being displayed in error messages
+        messages: false, // Ignore AJV's error messages.
+        allErrors: true  // Generate a complete list of errors rather than stopping on the first failure.
+    };
+
     /**
      *
      * Validate material against a "GPII Schema System" schema.
@@ -57,17 +63,17 @@
      *
      */
     gpii.schema.validator.validate = function (toValidate, gssSchema, ajvOptions) {
-        ajvOptions = ajvOptions || {
-            verbose: false,  // Prevent invalid data (such as passwords) from being displayed in error messages
-            messages: false, // Ignore AJV's error messages.
-            allErrors: true  // Generate a complete list of errors rather than stopping on the first failure.
-        };
-        var ajv = new AJV(ajvOptions);
-        ajv.addMetaSchema(gpii.schema.metaSchema);
+        ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
 
         // Validate the GSS schema against the metaschema before proceeding.
-        var gssSchemaValid = ajv.validateSchema(gssSchema);
-        if (gssSchemaValid) {
+        var schemaValidationResults = gpii.schema.validator.validateSchema(gssSchema, ajvOptions);
+        if (fluid.get(schemaValidationResults, "isError")) {
+            return schemaValidationResults;
+        }
+        else {
+            var ajv = new AJV(ajvOptions);
+            ajv.addMetaSchema(gpii.schema.metaSchema);
+
             // We have to validate against a transformed copy of the original rawSchema so that AJV can enforce our
             // required fields, which it would otherwise ignore.
             var rawSchema = gpii.schema.gssToJsonSchema(gssSchema);
@@ -75,6 +81,27 @@
             validator(toValidate);
 
             return gpii.schema.validator.standardiseAjvErrors(gssSchema, validator.errors);
+        }
+    };
+
+    /**
+     *
+     * Validate a "GPII Schema System" schema.
+     *
+     * @param {Object} gssSchema - A GSS schema definition.
+     * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
+     * @return {Object} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
+     *
+     */
+    gpii.schema.validator.validateSchema = function (gssSchema, ajvOptions) {
+        ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
+        var ajv = new AJV(ajvOptions);
+        ajv.addMetaSchema(gpii.schema.metaSchema);
+
+        // Validate the GSS schema against the metaschema before proceeding.
+        var gssSchemaValid = ajv.validateSchema(gssSchema);
+        if (gssSchemaValid) {
+            return {};
         }
         else {
             return { isError: true, message: "Invalid GSS Schema:\n" + JSON.stringify(ajv.errors, null, 2) };
@@ -424,4 +451,3 @@
         return requiredChildren;
     };
 })(fluid, typeof Ajv !== "undefined" ? Ajv : false);
-

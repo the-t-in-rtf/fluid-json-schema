@@ -61,7 +61,8 @@ for more details about supported options.
 
 #### `{gpii.schemas.client.errorAwareForm.clientSideValidation}.submitForm(event)`
 
-* `event {Object}`: The [jQuery event object](http://api.jquery.com/Types/#Event) passed to us by the DOM elements we're bound to.
+* `event {Object}`: The [jQuery event object](http://api.jquery.com/Types/#Event) passed to us by the DOM elements we're
+  bound to.
 * Returns: Nothing.
 
 A gatekeeper function that only allows the form to be submitted if client-side validation succeeds.  For details on

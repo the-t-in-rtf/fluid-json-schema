@@ -20,7 +20,8 @@ System (GSS) is based on the underlying JSON Schema language, and:
 
 The GSS consists of:
 
-1. A GSS "metaschema", which describes in JSON Schema format the rules that can be used to define a GSS Schema (see below).
+1. A GSS "metaschema", which describes in JSON Schema format the rules that can be used to define a GSS Schema (see
+   below).
 2. A validator which can validate arbitrary JSON payloads against a GSS schema.
 3. Base Fluid component grades that validate component options against a GSS schema on startup.
 4. Base Fluid component grades that validate model changes against a GSS schema in real time.
@@ -94,8 +95,8 @@ We can make use of the above message keys in a GSS Schema that looks like:
 }
 ```
 
-Let's talk first about the `hint` element.  A single `hint` is allowed for a given element, and the value is expected
-to be an i18n message key.  In an HTML UI, this might be displayed near the field to be entered using an html `<label>`
+Let's talk first about the `hint` element.  A single `hint` is allowed for a given element, and the value is expected to
+be an i18n message key.  In an HTML UI, this might be displayed near the field to be entered using an html `<label>`
 element.
 
 The `errors` element is somewhat more complex, as an element may have failed validation for a number of reasons.  The
@@ -109,8 +110,8 @@ default messages for each type of rule which are used instead of the raw output 
 below).
 
 The `enumLabels` element is specifically designed to allow internationalising the text displayed for things like radio
-groups or drop-down lists.  Using the above message bundle and GSS Schema, we might generate a drop-down list to input
-a `badgeColor` that looks something like:
+groups or drop-down lists.  Using the above message bundle and GSS Schema, we might generate a drop-down list to input a
+`badgeColor` that looks something like:
 
 ```html
 <select name="badgeColor">
@@ -123,8 +124,8 @@ a `badgeColor` that looks something like:
 ## Validator
 
 Although we use a particular industry standard JSON Schema validator ([AJV](https://github.com/epoberezkin/ajv)), the
-validation functions provided in this package standardise validation errors to conform to our own independent format,
-as shown here:
+validation functions provided in this package standardise validation errors to conform to our own independent format, as
+shown here:
 
 ```json
 
@@ -160,9 +161,9 @@ An individual error contains the following:
 * `rule`: The rule that was violated.
 * `message`: The i18n key for the validation error.
 
-Although you may supply i18n messages that follow whatever conventions you choose, the default validation error messages included with this
-package support the use of variables that come from the error. Continuing the above example, let's look at how the
-second failure might be used with an i18n message template.  That error looks like:
+Although you may supply i18n messages that follow whatever conventions you choose, the default validation error messages
+included with this package support the use of variables that come from the error. Continuing the above example, let's
+look at how the second failure might be used with an i18n message template.  That error looks like:
 
 ```javascript
 // This would ordinarily be delivered by the validator, but is presented here in isolation for illustration purposes.
@@ -174,7 +175,6 @@ var error = {
 };
 
 // This is simplified for illustration purposes, this would nearly always be delivered as part of a more complex bundle.
-validation-errors.js
 var messages = {
     "validation-invalid-field-type": "The value supplied should be a(n) %rule.type."
 };
@@ -253,7 +253,8 @@ The underlying JSON Schema draft standard provides a `$ref` operator that allow 
 }
 ```
 
-This allows us to only define a rule once and reuse it in multiple places.  Infusion provides a handful of mechanisms that can be used instead, namely:
+This allows us to only define a rule once and reuse it in multiple places.  Infusion provides a handful of mechanisms
+that can be used instead, namely:
 
 1. [options merging](https://docs.fluidproject.org/infusion/development/OptionsMerging.html)
 2. [options distribution](https://docs.fluidproject.org/infusion/development/IoCSS.html)
@@ -265,20 +266,20 @@ The above example might be represented in GSS as follows:
 fluid.defaults("my.email.grade", {
     gradeName: ["gpii.schema.component"],
     schema: {
-          "description": "Simple email schema.",
-          "definitions": {
-              "ourEmails": {
+        "description": "Simple email schema.",
+        "definitions": {
+            "ourEmails": {
                 "type": "string",
                 "format": "email",
                 "pattern": "^.+@ourdomain.com$"
-              }
-          },
-          "properties": {
+            }
+        },
+        "properties": {
             "to":   "{my.email.grade}.options.schema.definitions.ourEmails",
             "from": "{my.email.grade}.options.schema.definitions.ourEmails",
             "subject": { "type": "string" },
             "body": { "type": "string" }
-          }
+        }
     }
 });
 ```

@@ -1,19 +1,20 @@
 # The Schema "Gatekeeper" Validation Middleware
 
-Although you usually will build some fault tolerance into your components, on some level they expect to deal with
-data that has a particular structure, and which contains the expected type of information (strings, booleans, dates,
-etc).  Although it cannot confirm whether data supplied by an end user is accurate or meaningful, [the JSON Schema validation component](validator.md)
-provided by this package can at least verify whether the supplied data is "valid", i.e. that it matches the rules
-outlined in a particular JSON Schema.
+Although you usually will build some fault tolerance into your components, on some level they expect to deal with data
+that has a particular structure, and which contains the expected type of information (strings, booleans, dates, etc).
+Although it cannot confirm whether data supplied by an end user is accurate or meaningful, [the JSON Schema validation
+component](validator.md) provided by this package can at least verify whether the supplied data is "valid", i.e. that it
+matches the rules outlined in a particular JSON Schema.
 
 The `gpii.schema.validationMiddleware` component provided with this package validates all incoming requests, and rejects
 invalid payloads.  This allows your server-side components to at least assume they will only receive JSON data that is
-valid according to the supplied schema.  The "gatekeeper" doesn't know anything about how you intend to use the data.
-It only examines the payload and steps in if the payload is not valid according to the configured JSON Schema.
+valid according to the supplied schema.  The "gatekeeper" doesn't know anything about how you intend to use the data. It
+only examines the payload and steps in if the payload is not valid according to the configured JSON Schema.
 
 The base middleware is intended to be used with a `gpii.express` or `gpii.express.router` instance.  The
-`gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting point.  With that router,
-you can created "gated" REST endpoints that only pass through valid payloads to the underlying handlers, as show here:
+`gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting point.  With that
+router, you can created "gated" REST endpoints that only pass through valid payloads to the underlying handlers, as show
+here:
 
 ```javascript
 var fluid = require("infusion");
@@ -23,24 +24,24 @@ require("gpii-express");
 require("gpii-json-schema");
 
 fluid.defaults("gpii.schema.tests.handler", {
-  gradeNames: ["gpii.express.handler"],
-  invokers: {
-    handleRequest: {
-      funcName: "{that}.sendResponse",
-      args:     [200, "Someone sent me a valid JSON payload."]
+    gradeNames: ["gpii.express.handler"],
+    invokers: {
+        handleRequest: {
+            funcName: "{that}.sendResponse",
+            args:     [200, "Someone sent me a valid JSON payload."]
+        }
     }
-  }
 });
 
 gpii.express({
-  gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
-  handlerGrades:     ["gpii.schema.tests.handler"],
-  schemaKey:         "valid.json",
-  schemaDirs:        ["%my-package/src/schemas"],
-  responseSchemaKey: "message.json",
-  responseSchemaUrl: "http://my.site/schemas/",
-  path:              "/gatekeeper",
-  port:              3000
+    gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
+    handlerGrades:     ["gpii.schema.tests.handler"],
+    schemaKey:         "valid.json",
+    schemaDirs:        ["%my-package/src/schemas"],
+    responseSchemaKey: "message.json",
+    responseSchemaUrl: "http://my.site/schemas/",
+    path:              "/gatekeeper",
+    port:              3000
 });
 ```
 
@@ -52,7 +53,8 @@ schema, the handler defined above would output a canned "success" message.  If t
 ## Displaying validation messages onscreen
 
 The [`errorBinder`](errorBinder.md) component included with this package is designed to associate the validation error
-messages produced by `gpii.schema.validationMiddleware` with on-screen elements.  See that component's documentation for details.
+messages produced by `gpii.schema.validationMiddleware` with on-screen elements.  See that component's documentation for
+details.
 
 ## Components
 
@@ -62,8 +64,8 @@ Validates information available in the request object. The incoming request is f
 `fluid.model.transformWithRules` and`options.rules.requestContentToValidate`. The results are validated against
 `options.schemaKey`.
 
-The default options validate the request body, as expected with a `POST` or `PUT` request.  See the mix-in grades
-below for examples of how different rules can handle different types of request data.
+The default options validate the request body, as expected with a `POST` or `PUT` request.  See the mix-in grades below
+for examples of how different rules can handle different types of request data.
 
 The transformed request data is validated against the schema. If there are validation errors, the validation output of
 this middleware is passed on to the next piece of middleware in the error-handling chain.  If there are no validation
@@ -97,9 +99,15 @@ for an example of working with query data.
 
 ##### `{middleware}.middleware(request, response, next)`
 
-* `request`: An object representing the individual user's request.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for details.
-* `response`: The response object, which can be used to send information to the requesting user.  See [the `gpii-express` documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for details.
-* `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
+* `request`: An object representing the individual user's request.  See [the `gpii-express`
+  documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for
+  details.
+* `response`: The response object, which can be used to send information to the requesting user.  See [the
+  `gpii-express`
+  documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for
+  details.
+* `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for
+  details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
 This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It examines the `request`
@@ -111,8 +119,8 @@ This function is expected to be called by Express (or by an instance of `gpii.ex
 
 ### `gpii.schema.validationMiddleware.handlesQueryData`
 
-A mix-in grade that configures an instance of `gpii.schema.validationMiddleware` to validate query data.
-Sets `rules.requestContentToValidate` to the following:
+A mix-in grade that configures an instance of `gpii.schema.validationMiddleware` to validate query data. Sets
+`rules.requestContentToValidate` to the following:
 
 ```snippet
 requestContentToValidate: {

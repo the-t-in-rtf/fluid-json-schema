@@ -57,8 +57,10 @@ and the raw error message will be displayed in a top-level `messages` element, a
 
 * `{Array<Object>} validationErrors`:An array of validation errors.
 * `{Any} validatedData`:The (optional) data that was validated.
-* `{Object} messages`:An (optional) map of message templates (see below).  Will always fail over to the default message bundle provided by this package (see below).
-* `{Object} localisationTransform`:An optional set of rules that control what information is available when localising validation errors (see above).
+* `{Object} messages`:An (optional) map of message templates (see below).  Will always fail over to the default message
+  bundle provided by this package (see below).
+* `{Object} localisationTransform`:An optional set of rules that control what information is available when localising
+  validation errors (see above).
 * Returns: An `{Array}` containing one or more validation errors, with all message keys replaced with localised strings.
 
 This function takes the validation output returned by `gpii.schema.validator.validate` (see above) and replaces all
