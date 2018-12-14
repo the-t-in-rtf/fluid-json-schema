@@ -204,6 +204,13 @@ var jqUnit      = jqUnit      || {};
                     "dataPath": "['don\\'t']"
                 },
                 expected: ["don't"]
+            },
+            complexMixture: {
+                message: "We should be able to handle complex interleaved data paths.",
+                error: {
+                    "dataPath": ".settingsHandlers['configure'].supportedSettings['MagnificationMode'].schema"
+                },
+                expected: ["settingsHandlers", "configure", "supportedSettings", "MagnificationMode", "schema"]
             }
         };
         fluid.each(testDefs, function (testDef) {

@@ -136,10 +136,10 @@
      */
     gpii.schema.validator.extractElDataPathSegmentsFromError = function (rawError) {
         // We have to use this approach so that we can correctly break up dataPath values that contain escaped dots and apostrophes, i.e. `normal.['dotted.field'].alsoNormal`.
-        var rawPathSegments = rawError.dataPath.match(/(([^\[\.]+)|\['(.+)'\])/g) || [];
+        var rawPathSegments = rawError.dataPath.match(/(([^\[\.]+)|\['([^\]]+)'\])/g) || [];
         var ajvPathSegments = fluid.transform(rawPathSegments, function (pathSegment) {
             // Extract the inner value from enclosing brackets and quotes and remove backslashes.
-            return pathSegment.replace(/\['(.+)'\]/, "$1").replace(/\\/g, "");
+            return pathSegment.replace(/\['([^\]]+)'\]/, "$1").replace(/\\/g, "");
         });
 
         if (rawError.keyword === "required") {
