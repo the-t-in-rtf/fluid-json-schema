@@ -80,13 +80,17 @@
                         "components": {
                             "type": "object",
                             "additionalProperties": {
-                                "type": "object",
-                                "properties": {
-                                    "type": { "type": "string", "required": true },
-                                    "createOnEvent": { "type": "string" },
-                                    "container": { "type": "string" },
-                                    "options": { "type": "object"}
-                                }
+                                "type": "object"
+                                // We cannot inspect the components in the "shadow" record any further because the
+                                // sub-component options have not yet been merged, and are instead instances of
+                                // `fluid.mergingArray`.
+                                //
+                                //"properties": {
+                                //    "type": { "type": "string", "required": true },
+                                //    "createOnEvent": { "type": "string" },
+                                //    "container": { "type": "string" },
+                                //    "options": { "type": "object"}
+                                //}
                             }
                         },
                         "container": { "type": "string" },
