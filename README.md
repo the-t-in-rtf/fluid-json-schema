@@ -59,6 +59,16 @@ npm install
 npm test
 ```
 
+### Running the Browser Tests without Instrumentation
+
+By default, the browser tests are run against instrumented code so that we can prepare a code coverage report at the end
+of each test run.  If you need to troubleshoot a problem with the browser tests, you can also run the tests against the
+raw source code by hosting the content in a standalone web server and then opening the tests in a browser.  For example,
+if you have python installed, you can  use the command `python -m SimpleHTTPServer` from the root of the repository, and
+then open
+[http://localhost:8000/tests/browser-fixtures/all-tests.html](http://localhost:8000/tests/browser-fixtures/all-tests.html)
+in a browser.
+
 ## Using these components in a browser
 
 This package depends on [AJV](https://github.com/epoberezkin/ajv).  AJV can be used on the client-side, but must first
