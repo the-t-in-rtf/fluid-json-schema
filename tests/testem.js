@@ -27,7 +27,7 @@ var testemComponent = gpii.testem.instrumentation({
         gated: "/gated"
     },
     testemOptions: {
-        skip: "PhantomJS,Safari"
+        skip: "PhantomJS,Safari,IE"
     },
     components: {
         express: {
