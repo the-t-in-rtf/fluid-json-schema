@@ -59,7 +59,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                         "depsCount": 1,
                         "deps": "bar"
                     },
-                    "message": "should have property bar when property foo is present"
+                    "message": "schema-validator-dependencies"
                 }
             ],
             "schema": {
@@ -103,7 +103,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                                 ]
                             }
                         },
-                        "message": "should have property bar when property foo is present"
+                        "message": "schema-validator-dependencies"
                     }
                 ]
             }
@@ -158,7 +158,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                     {
                         "dataPath": [],
                         "schemaPath": [
-                            "if"
+                            "else"
                         ],
                         "rule": {
                             "if": {
@@ -171,7 +171,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "schema-validator-if"
+                        "message": "schema-validator-else"
                     }
                 ]
             }
@@ -893,7 +893,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                     {
                         "dataPath": [],
                         "schemaPath": [
-                            "if"
+                            "then"
                         ],
                         "rule": {
                             "if": {
@@ -906,7 +906,7 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "schema-validator-if"
+                        "message": "schema-validator-then"
                     }
                 ]
             }

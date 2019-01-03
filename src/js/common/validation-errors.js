@@ -7,6 +7,7 @@
 
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.schema.messages");
+
     gpii.schema.messages.validationErrors = {
         "schema-validator-anyOf": "The value must match at least one valid format.",
         "schema-validator-contains": "The array is missing one or more required values.",
@@ -17,6 +18,7 @@
         "schema-validator-exclusiveMinimum": "The value must be more than %error.rule.exclusiveMinimum characters long.",
         "schema-validator-format": "The supplied string does not match the specified format (%error.rule.format).",
         "schema-validator-general-failure": "The data you have supplied is invalid.",
+        "schema-validator-if": "An 'if' block in the schema does not match the supplied data.",
         "schema-validator-maxItems": "The supplied array must contain less than %error.rule.maxItems items.",
         "schema-validator-maxLength": "The value must be %error.rule.maxLength characters or less long.",
         "schema-validator-maxProperties": "The object can only contain %error.rule.maxProperties properties.",

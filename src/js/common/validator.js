@@ -16,16 +16,14 @@
 
     gpii.schema.validator.defaultI18nKeysByRule = {
         "": "schema-validator-general-failure",
-        "additionalItems": "schema-validator-additionalItems",
-        "additionalProperties": "schema-validator-additionalProperties",
         "anyOf": "schema-validator-anyOf",
         "contains": "schema-validator-contains",
+        "dependencies": "schema-validator-dependencies",
         "else": "schema-validator-else",
         "enum": "schema-validator-enum",
         "exclusiveMaximum": "schema-validator-exclusiveMaximum",
         "exclusiveMinimum": "schema-validator-exclusiveMinimum",
         "format": "schema-validator-format",
-        "if": "schema-validator-if",
         "maxItems": "schema-validator-maxItems",
         "maxLength": "schema-validator-maxLength",
         "maxProperties": "schema-validator-maxProperties",
@@ -38,7 +36,6 @@
         "not": "schema-validator-not",
         "oneOf": "schema-validator-oneOf",
         "pattern": "schema-validator-pattern",
-        "patternProperties": "schema-validator-patternProperties",
         "propertyNames": "schema-validator-propertyNames",
         "required": "schema-validator-required",
         "then": "schema-validator-then",
@@ -162,11 +159,16 @@
      */
     gpii.schema.validator.extractElSchemaPathSegmentsFromError = function (ajvError) {
         var rawSegments = gpii.schema.validator.jsonPointerToElPath(ajvError.schemaPath);
+        var segmentsToContainingElement = rawSegments.slice(0,-1);
         if (ajvError.keyword === "required") {
-            var segmentsToContainingElement = rawSegments.slice(0,-1);
             var segmentsToRequiredRule = segmentsToContainingElement.concat(["properties", gpii.schema.validator.trimLeadingDot(ajvError.params.missingProperty), "required"]);
             return segmentsToRequiredRule;
         }
+        else if (ajvError.keyword === "if") {
+            var segmentsToFailingIfBranch = segmentsToContainingElement.concat([gpii.schema.validator.trimLeadingDot(ajvError.params.failingKeyword)]);
+            return segmentsToFailingIfBranch;
+        }
+
         else {
             return rawSegments;
         }
@@ -351,16 +353,11 @@
         messages = messages || gpii.schema.messages.validationErrors;
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
-            if (validationError.message) {
-                var messageTemplate = fluid.get(messages, validationError.message);
-                var data = validatedData && fluid.get(validatedData, validationError.dataPath);
-                var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
-                var localisedMessage = fluid.stringTemplate(messageTemplate, localisationContext);
-                return fluid.merge({}, validationError, { message: localisedMessage});
-            }
-            else {
-                return validationError;
-            }
+            var messageTemplate = fluid.get(messages, validationError.message);
+            var data = validatedData && fluid.get(validatedData, validationError.dataPath);
+            var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
+            var localisedMessage = fluid.stringTemplate(messageTemplate, localisationContext);
+            return fluid.merge({}, validationError, { message: localisedMessage});
         });
         return localisedErrors;
     };
