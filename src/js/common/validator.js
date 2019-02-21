@@ -354,10 +354,15 @@
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
             var messageTemplate = fluid.get(messages, validationError.message);
-            var data = validatedData && fluid.get(validatedData, validationError.dataPath);
-            var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
-            var localisedMessage = fluid.stringTemplate(messageTemplate, localisationContext);
-            return fluid.merge({}, validationError, { message: localisedMessage});
+            if (messageTemplate) {
+                var data = validatedData && fluid.get(validatedData, validationError.dataPath);
+                var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
+                var localisedMessage = fluid.stringTemplate(messageTemplate, localisationContext);
+                return fluid.merge({}, validationError, { message: localisedMessage});
+            }
+            else {
+                return validationError;
+            }
         });
         return localisedErrors;
     };

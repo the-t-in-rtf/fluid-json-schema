@@ -9,6 +9,7 @@
     fluid.registerNamespace("gpii.schema.messages");
 
     gpii.schema.messages.validationErrors = {
+        "schema-validator-additionalProperties": "The property must match the requirements for additional properties.",
         "schema-validator-anyOf": "The value must match at least one valid format.",
         "schema-validator-contains": "The array is missing one or more required values.",
         "schema-validator-dependencies": "A dependency between two fields is not satisfied.",
