@@ -353,7 +353,8 @@
         messages = messages || gpii.schema.messages.validationErrors;
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
-            var messageTemplate = fluid.get(messages, validationError.message);
+            var messageKey = fluid.get(validationError, "message");
+            var messageTemplate = messageKey && fluid.get(messages, messageKey);
             if (messageTemplate) {
                 var data = validatedData && fluid.get(validatedData, validationError.dataPath);
                 var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
