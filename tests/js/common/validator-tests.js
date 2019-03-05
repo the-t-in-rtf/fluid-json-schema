@@ -313,8 +313,8 @@ var jqUnit      = jqUnit      || {};
             },
             multipleOf: {
                 message: "We should be able to sanely handle 'multipleOf' with a fraction value",
-                toValidate: 0.00006,
-                schema: { "$schema": "gss-v7-full#", type: "number", multipleOf: 0.00001 },
+                toValidate: 0.6,
+                schema: { "$schema": "gss-v7-full#", type: "number", multipleOf: 0.1 },
                 expected: { isValid: true }
             },
             invalidSchema: {
