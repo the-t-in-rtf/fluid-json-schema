@@ -52,7 +52,6 @@
 
         // Increase the precision of "multipleOf" checks beyond integers.
         // See https://github.com/epoberezkin/ajv#advanced-options
-        //multipleOfPrecision: 100000,
         multipleOfPrecision: 100000000000,
 
         // Prevent invalid data (such as passwords) from being displayed in error messages
