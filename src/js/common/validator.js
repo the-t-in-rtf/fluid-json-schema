@@ -52,7 +52,7 @@
 
         // Increase the precision of "multipleOf" checks beyond integers.
         // See https://github.com/epoberezkin/ajv#advanced-options
-        multipleOfPrecision: 10, // WORKS
+        multipleOfPrecision: 10,
 
         // Prevent invalid data (such as passwords) from being displayed in error messages
         verbose: false
