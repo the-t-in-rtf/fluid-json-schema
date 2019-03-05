@@ -44,9 +44,19 @@
     };
 
     gpii.schema.validator.defaultAjvOptions = {
-        verbose: false,  // Prevent invalid data (such as passwords) from being displayed in error messages
-        messages: false, // Ignore AJV's error messages.
-        allErrors: true  // Generate a complete list of errors rather than stopping on the first failure.
+        // Generate a complete list of errors rather than stopping on the first failure.
+        allErrors: true,
+
+        // Ignore AJV's error messages.
+        messages: false,
+
+        // Increase the precision of "multipleOf" checks beyond integers.
+        // See https://github.com/epoberezkin/ajv#advanced-options
+        //multipleOfPrecision: 100000,
+        multipleOfPrecision: 100000000000,
+
+        // Prevent invalid data (such as passwords) from being displayed in error messages
+        verbose: false
     };
 
     /**

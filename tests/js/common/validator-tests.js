@@ -311,6 +311,12 @@ var jqUnit      = jqUnit      || {};
                 schema: { "$schema": "gss-v7-full#", type: "number" },
                 expected: { isValid: true }
             },
+            multipleOf: {
+                message: "We should be able to sanely handle 'multipleOf' with a fraction value",
+                toValidate: 0.00006,
+                schema: { "$schema": "gss-v7-full#", type: "number", multipleOf: 0.00001 },
+                expected: { isValid: true }
+            },
             invalidSchema: {
                 message: "We should be able to handle an invalid GSS Schema.",
                 toValidate: 1,
