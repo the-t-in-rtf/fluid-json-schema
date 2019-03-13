@@ -50,8 +50,8 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, ne
     to function properly.  See the grades below for an example.
 
  */
-fluid.defaults("gpii.schema.validationMiddleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.schema.component", "fluid.modelComponent"],
+fluid.defaults("gpii.schema.validationMiddleware.base", {
+    gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
     schema: {
         properties: {
@@ -100,13 +100,34 @@ fluid.defaults("gpii.schema.validationMiddleware", {
 
 /*
 
-    A mix-in grade to configure an instance of `gpii.schema.validationMiddleware` to work with query data.
+    The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
+    Express router or middleware function.  Must be combined with either the `requestAware` or `contentAware` grades
+    to function properly.  See the grades below for an example.
+
+ */
+fluid.defaults("gpii.schema.validationMiddleware", {
+    gradeNames: ["gpii.express.middleware", "gpii.schema.validationMiddleware.base"]
+});
+
+/*
+
+    A mix-in grade to configure an instance of `gpii.schema.validationMiddleware.base` to work with query data.
 
  */
 fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
     rules: {
         requestContentToValidate: {
             "": "query"
+        }
+    }
+});
+
+fluid.defaults("gpii.schema.kettle.request.http", {
+    gradeNames: ["kettle.request.http", "gpii.schema.validationMiddleware.base"],
+    requestMiddleware: {
+        schemaValidation: {
+            middleware: "{gpii.schema.validationMiddleware.base}.middleware",
+            priority:   "first"
         }
     }
 });

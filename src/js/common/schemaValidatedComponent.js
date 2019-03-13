@@ -40,32 +40,39 @@
             "$schema": "gss-v7-full#",
             "definitions": {
                 "singleListenerDefinition": {
-                    "type": "object",
-                    "oneOf": [
+                    "anyOf": [
+                        { "type": "string" },
                         {
+                            "type": "object",
+
+                            "oneOf": [
+                                {
+                                    "properties": {
+                                        "func": { "required": true }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "funcName": { "type": "string", "required": true }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "method": { "type": "string", "required": true},
+                                        "this": { "type": "string", "required": true }
+                                    }
+                                }
+                            ],
                             "properties": {
-                                "func": { "required": true }
+                                "args": { "type": "array"},
+                                "namespace": { "type": "string"},
+                                "priority": {
+                                    "oneOf": [ {"type": "string"}, { "type": "number", "multipleOf": 1 }]
+                                }
                             }
                         },
-                        {
-                            "properties": {
-                                "funcName": { "type": "string", "required": true }
-                            }
-                        },
-                        {
-                            "properties": {
-                                "method": { "type": "string", "required": true},
-                                "this": { "type": "string", "required": true }
-                            }
-                        }
-                    ],
-                    "properties": {
-                        "args": { "type": "array"},
-                        "namespace": { "type": "string"},
-                        "priority": {
-                            "oneOf": [ {"type": "string"}, { "type": "number", "multipleOf": 1 }]
-                        }
-                    }
+                        { type: "object"} // Required to handle functions.  TODO: Discuss this down the road, supporting functions also means supporting nearly any other kind of object.
+                    ]
                 }
             },
             "properties": {
@@ -163,35 +170,49 @@
                             "items": { type: "string" }
                         },
                         "invokers": {
-                            "additionalProperties": {
-                                "type": "object",
-                                "oneOf": [
-                                    {
+                            "oneOf": [
+                                // Named global function shorthand.
+                                { type: "string" },
+                                // Full declaration.
+                                {
+                                    "additionalProperties": {
+                                        "oneOf": [
+                                            // Shorthand to use a named global function
+                                            { type: "string" },
+                                            // Full declaration.
+                                            {
+                                                "type": "object",
+                                                "oneOf": [
+                                                    {
+                                                        "properties": {
+                                                            "func": { "required": true }
+                                                        }
+                                                    },
+                                                    {
+                                                        "properties": {
+                                                            "funcName": { "type": "string", "required": true }
+                                                        }
+                                                    },
+                                                    {
+                                                        "properties": {
+                                                            "method": { "type": "string", "required": true},
+                                                            "this": { "type": "string", "required": true }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ],
                                         "properties": {
-                                            "func": { "required": true }
-                                        }
-                                    },
-                                    {
-                                        "properties": {
-                                            "funcName": { "type": "string", "required": true }
-                                        }
-                                    },
-                                    {
-                                        "properties": {
-                                            "method": { "type": "string", "required": true},
-                                            "this": { "type": "string", "required": true }
+                                            "args": { "type": "array"}
                                         }
                                     }
-                                ],
-                                "properties": {
-                                    "args": { "type": "array"}
-                                }
-                            }
+                                },
+                                { type: "object"} // Support for an inline function as invoker.  TODO: Discuss somehow hardening this further.
+                            ]
                         },
                         "listeners": {
                             "additionalProperties": {
                                 "oneOf": [
-                                    { "type": "string" },
                                     "{gpii.schema.component}.options.schema.definitions.singleListenerDefinition",
                                     {
                                         "type": "array",

@@ -6,7 +6,7 @@ var jqUnit = require("node-jqunit");
 
 fluid.require("%gpii-json-schema");
 
-jqUnit.module("Core tests for validation middleware grade.");
+jqUnit.module("Core tests for express validation middleware grade.");
 
 jqUnit.test("We should be able to instantiate the base grade without errors.", function () {
     gpii.schema.validationMiddleware();

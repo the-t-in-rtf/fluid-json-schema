@@ -1,5 +1,8 @@
 /*
-    Test harness common to all tests that use `gpii-express`.  Loads all required server-side components.
+
+    Test harness common to all tests that use `gpii-json-schema` in combination with `gpii-express`.  Loads all
+    required server-side components.
+
  */
 /* eslint-env node */
 "use strict";
@@ -9,7 +12,7 @@ fluid.require("%gpii-json-schema");
 fluid.require("%gpii-express");
 fluid.require("%gpii-handlebars");
 
-require("./middleware-fixtures.js");
+require("./middleware-express-fixtures.js");
 
 fluid.defaults("gpii.test.schema.harness", {
     gradeNames: ["gpii.express"],
