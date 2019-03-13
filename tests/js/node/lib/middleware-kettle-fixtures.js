@@ -113,7 +113,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
 });
 
 fluid.defaults("gpii.test.schema.kettle.app", {
-    gradeNames: ["kettle.app"],
+    gradeNames: ["gpii.schema.kettle.app"],
     requestHandlers: {
         gatedBody: {
             type: "gpii.test.schema.kettle.handlers.base",
@@ -141,5 +141,5 @@ fluid.defaults("gpii.test.schema.middleware.kettle.request", {
     headers: {
         accept: "application/json"
     },
-    port:       "{testEnvironment}.options.port"
+    port:  "{testEnvironment}.options.port"
 });
