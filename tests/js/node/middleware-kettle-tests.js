@@ -14,17 +14,11 @@ var jqUnit = require("node-jqunit");
 fluid.registerNamespace("gpii.tests.schema.middleware.kettle.caseHolder");
 gpii.tests.schema.middleware.kettle.caseHolder.examineResponse = function (body, shouldBeValid) {
     if (shouldBeValid) {
-        jqUnit.assertEquals("The response body should be correct.", "Nothing can be ill.", body);
+        jqUnit.assertEquals("The response body should be correct.", "Payload accepted.", body.message);
     }
     else {
-        try {
-            var jsonData = typeof body === "string" ? JSON.parse(body) : body;
-            jqUnit.assertEquals("The data should be flagged as invalid.", jsonData.isValid, false);
-            jqUnit.assertTrue("There should be at least one validation error", jsonData.errors.length > 0);
-        }
-        catch (e) {
-            jqUnit.fail("There should be no parsing errors:\n" + e);
-        }
+        jqUnit.assertEquals("The data should be flagged as invalid.", body.isValid, false);
+        jqUnit.assertTrue("There should be at least one validation error", body.errors.length > 0);
     }
 };
 
@@ -65,7 +59,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validBodyRequest}.events.onComplete",
-                            args:     ["{validBodyRequest}.nativeResponse", "{arguments}.0", false]
+                            args:     ["@expand:JSON.parse({arguments}.0)", true]
                         }
                     ]
                 }

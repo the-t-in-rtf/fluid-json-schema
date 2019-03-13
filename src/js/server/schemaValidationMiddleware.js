@@ -122,11 +122,51 @@ fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
     }
 });
 
+fluid.registerNamespace("gpii.schema.kettle.middleware");
+
+gpii.schema.kettle.middleware.handle  = function (that, req) {
+    var validationPromise = fluid.promise();
+
+    gpii.schema.validationMiddleware.rejectOrForward(that, req.req, undefined, function (error) {
+        if (error) {
+            validationPromise.reject(error);
+        }
+        else {
+            validationPromise.resolve();
+        }
+    });
+
+    return validationPromise;
+};
+
+fluid.defaults("gpii.schema.kettle.middleware", {
+    gradeNames: ["kettle.middleware", "fluid.modelComponent"],
+    invokers: {
+        handle: {
+            funcName: "gpii.schema.kettle.middleware.handle",
+            args: ["{that}", "{arguments}.0"] // request
+        }
+    }
+});
+
 fluid.defaults("gpii.schema.kettle.request.http", {
     gradeNames: ["kettle.request.http", "gpii.schema.validationMiddleware.base"],
+    components: {
+        validationMiddleware: {
+            type: "gpii.schema.kettle.middleware",
+            options: {
+                inputSchema: "{gpii.schema.kettle.request.http}.options.inputSchema",
+                rules: "{gpii.schema.kettle.request.http}.options.rules",
+                localisationTransform: "{gpii.schema.kettle.request.http}.options.localisationTransform",
+                model: {
+                    messages: "{gpii.schema.kettle.request.http}.model.messages"
+                }
+            }
+        }
+    },
     requestMiddleware: {
         schemaValidation: {
-            middleware: "{that}.middleware",
+            middleware: "{that}.validationMiddleware",
             priority:   "first"
         }
     }
