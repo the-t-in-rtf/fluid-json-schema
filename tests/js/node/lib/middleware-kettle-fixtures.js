@@ -113,7 +113,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
 });
 
 fluid.defaults("gpii.test.schema.kettle.app", {
-    gradeNames: ["gpii.schema.kettle.app"],
+    gradeNames: ["kettle.app"],
     requestHandlers: {
         gatedBody: {
             type: "gpii.test.schema.kettle.handlers.base",

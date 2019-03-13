@@ -123,21 +123,11 @@ fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
 });
 
 fluid.defaults("gpii.schema.kettle.request.http", {
-    gradeNames: ["kettle.request.http"],
+    gradeNames: ["kettle.request.http", "gpii.schema.validationMiddleware.base"],
     requestMiddleware: {
         schemaValidation: {
-            middleware: "{kettle.app}.middleware",
+            middleware: "{that}.middleware",
             priority:   "first"
-        }
-    }
-});
-
-fluid.defaults("gpii.schema.kettle.app", {
-    gradeNames: ["kettle.app"],
-    invokers: {
-        middleware: {
-            funcName: "gpii.schema.validationMiddleware.rejectOrForward",
-            args:     ["{request}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // request, response, next
         }
     }
 });
