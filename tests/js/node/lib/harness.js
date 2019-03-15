@@ -8,7 +8,8 @@
 "use strict";
 var fluid = require("infusion");
 
-fluid.require("%gpii-json-schema");
+// We must pass the current `require` to `fluid.require`, as nyc's instrumentation is hooked into it.
+fluid.require("%gpii-json-schema", require);
 fluid.require("%gpii-express");
 fluid.require("%gpii-handlebars");
 

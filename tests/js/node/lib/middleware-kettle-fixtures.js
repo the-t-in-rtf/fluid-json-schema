@@ -16,9 +16,20 @@ gpii.test.schema.kettle.handlers.base.reportSuccess = function (request) {
     request.events.onSuccess.fire({ message: "Payload accepted." });
 };
 
-// By default we are looking for body content and validated that against our schema.
+// The base grade, which just wires up a success response if the request content is valid.
 fluid.defaults("gpii.test.schema.kettle.handlers.base", {
     gradeNames: ["gpii.schema.kettle.request.http"],
+    inputSchema: {},
+    invokers: {
+        handleRequest: {
+            funcName: "gpii.test.schema.kettle.handlers.base.reportSuccess"
+        }
+    }
+});
+
+// Looking for body content and validate that against our schema.
+fluid.defaults("gpii.test.schema.kettle.handlers.gatedBody", {
+    gradeNames: ["gpii.test.schema.kettle.handlers.base"],
     inputSchema: {
         type: "object",
         properties: {
@@ -28,11 +39,6 @@ fluid.defaults("gpii.test.schema.kettle.handlers.base", {
                 enum: ["good"],
                 enumLabels: ["Good Choice"]
             }
-        }
-    },
-    invokers: {
-        handleRequest: {
-            funcName: "gpii.test.schema.kettle.handlers.base.reportSuccess"
         }
     }
 });
@@ -83,7 +89,10 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
                 type: "object",
                 properties: {
                     hasParamContent: {
-                        required: "true"
+                        type: "string",
+                        required: true,
+                        enum: ["good"],
+                        enumLabels: ["Good Choice"]
                     }
                 }
             },
@@ -91,7 +100,10 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
                 type: "object",
                 properties: {
                     hasBodyContent: {
-                        required: "true"
+                        type: "string",
+                        required: true,
+                        enum: ["good"],
+                        enumLabels: ["Good Choice"]
                     }
                 }
             },
@@ -99,7 +111,10 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
                 type: "object",
                 properties: {
                     hasQueryContent: {
-                        required: "true"
+                        type: "string",
+                        required: true,
+                        enum: ["good"],
+                        enumLabels: ["Good Choice"]
                     }
                 }
             }
@@ -116,7 +131,7 @@ fluid.defaults("gpii.test.schema.kettle.app", {
     gradeNames: ["kettle.app"],
     requestHandlers: {
         gatedBody: {
-            type: "gpii.test.schema.kettle.handlers.base",
+            type: "gpii.test.schema.kettle.handlers.gatedBody",
             route: "/gated/body",
             method: "post"
         },
@@ -130,7 +145,7 @@ fluid.defaults("gpii.test.schema.kettle.app", {
         },
         gatedCombined: {
             type: "gpii.test.schema.kettle.handlers.gatedCombined",
-            route: "/gated/combined",
+            route: "/gated/combined/:hasParamContent",
             method: "post"
         }
     }

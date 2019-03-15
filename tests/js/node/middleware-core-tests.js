@@ -4,7 +4,8 @@ var fluid  = require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("node-jqunit");
 
-fluid.require("%gpii-json-schema");
+// We must pass the current `require` to `fluid.require`, as nyc's instrumentation is hooked into it.
+fluid.require("%gpii-json-schema", require);
 
 jqUnit.module("Core tests for express validation middleware grade.");
 

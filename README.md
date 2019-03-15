@@ -26,8 +26,8 @@ with the following specific use cases:
    [model](https://docs.fluidproject.org/infusion/development/ChangeApplier.html) of a [schema-validated
    modelComponent](./docs/schemaValidatedModelComponent.md), and automatically (re)validating the model when changes are
    made.
-3. (In Node) Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request).  See the [middleware
-   documentation](./docs/schemaValidationMiddleware.md) for more details.
+3. (In Node) Rejecting invalid data sent to a REST endpoint (presumably via a POST or PUT request) served up by either
+   gpii-express or kettle.  See the [middleware documentation](./docs/schemaValidationMiddleware.md) for more details.
 4. (In a browser) Associating model material with HTML DOM elements, and displaying validation errors in context using
    the ["error binder"](./docs/errorBinder.md).
 

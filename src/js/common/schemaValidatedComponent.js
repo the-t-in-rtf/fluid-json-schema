@@ -170,45 +170,38 @@
                             "items": { type: "string" }
                         },
                         "invokers": {
-                            "oneOf": [
-                                // Named global function shorthand.
-                                { type: "string" },
-                                // Full declaration.
-                                {
-                                    "additionalProperties": {
-                                        "oneOf": [
-                                            // Shorthand to use a named global function
-                                            { type: "string" },
-                                            // Full declaration.
-                                            {
-                                                "type": "object",
-                                                "oneOf": [
-                                                    {
-                                                        "properties": {
-                                                            "func": { "required": true }
-                                                        }
-                                                    },
-                                                    {
-                                                        "properties": {
-                                                            "funcName": { "type": "string", "required": true }
-                                                        }
-                                                    },
-                                                    {
-                                                        "properties": {
-                                                            "method": { "type": "string", "required": true},
-                                                            "this": { "type": "string", "required": true }
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        ],
+                            "additionalProperties": {
+                                "anyOf": [
+                                    // Shorthand to use a named global function
+                                    {type: "string" },
+                                    {type: "object" }, // Support for an inline function as invoker.  TODO: Discuss somehow hardening this further.
+                                    // Full declaration.
+                                    {
+                                        "type": "object",
                                         "properties": {
-                                            "args": { "type": "array"}
-                                        }
+                                            "args": { "type": "array" }
+                                        },
+                                        "oneOf": [
+                                            {
+                                                "properties": {
+                                                    "func": {"required": true}
+                                                }
+                                            },
+                                            {
+                                                "properties": {
+                                                    "funcName": {"type": "string", "required": true}
+                                                }
+                                            },
+                                            {
+                                                "properties": {
+                                                    "method": {"type": "string", "required": true},
+                                                    "this": {"type": "string", "required": true}
+                                                }
+                                            }
+                                        ]
                                     }
-                                },
-                                { type: "object"} // Support for an inline function as invoker.  TODO: Discuss somehow hardening this further.
-                            ]
+                                ]
+                            }
                         },
                         "listeners": {
                             "additionalProperties": {

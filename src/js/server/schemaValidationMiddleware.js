@@ -18,6 +18,14 @@ require("../common/schemaValidatedComponent");
 
 /**
  *
+ * The core of both the gpii-express and kettle validation middleware.  Transforms an incoming request and validates the
+ * transformed output (this allows for focusing on particular aspects of the request without validating complex,
+ * potentially circular nested objects).
+ *
+ * As is the convention with Express middleware, if there are no validation errors, the `next` callback is called with
+ * no arguments.  If there are errors, the `next` callback is called with a localised/internationalised copy of the
+ * validation errors.
+ *
  * @param {Object} that - The middleware component itself.
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
@@ -45,9 +53,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, ne
 
 /*
 
-    The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
-    Express router or middleware function.  Must be combined with either the `requestAware` or `contentAware` grades
-    to function properly.  See the grades below for an example.
+    The base middleware used with both gpii-express and kettle.  Cannot be used on its own.
 
  */
 fluid.defaults("gpii.schema.validationMiddleware.base", {
@@ -83,7 +89,7 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
     },
     // We prevent merging of individual options, but allow them to be individually replaced.
     mergeOptions: {
-        "rules.requestContentToValidate":   "nomerge"
+        "rules.requestContentToValidate": "nomerge"
     },
     rules: {
         requestContentToValidate: {
@@ -111,7 +117,8 @@ fluid.defaults("gpii.schema.validationMiddleware", {
 
 /*
 
-    A mix-in grade to configure an instance of `gpii.schema.validationMiddleware.base` to work with query data.
+    A mix-in grade to configure an instance of `gpii.schema.validationMiddleware.base` (kettle or gpii-express) to work
+    with query data.
 
  */
 fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
@@ -124,6 +131,15 @@ fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
 
 fluid.registerNamespace("gpii.schema.kettle.middleware");
 
+/**
+ *
+ * Call the base validation function and handle its output in the way that is expected for `kettle.middleware` grades.
+ *
+ * @param {Object} that - The `kettle.middleware` component (see below).
+ * @param {Object} req  - The Express request object.
+ * @return {Promise}    - A `fluid.promise` that is resolved if the request is validated and rejected if the request is
+ *                        invalid.
+ */
 gpii.schema.kettle.middleware.handle  = function (that, req) {
     var validationPromise = fluid.promise();
 
@@ -151,6 +167,9 @@ fluid.defaults("gpii.schema.kettle.middleware", {
 
 fluid.defaults("gpii.schema.kettle.request.http", {
     gradeNames: ["kettle.request.http", "gpii.schema.validationMiddleware.base"],
+    inputSchema: {
+        "$schema": "gss-v7-full#"
+    },
     components: {
         validationMiddleware: {
             type: "gpii.schema.kettle.middleware",

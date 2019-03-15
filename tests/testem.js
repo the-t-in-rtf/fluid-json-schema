@@ -7,7 +7,7 @@ fluid.require("%gpii-testem");
 fluid.require("%gpii-json-schema");
 fluid.require("%gpii-handlebars");
 
-require("./js/node/lib/middleware-fixtures");
+require("./js/node/lib/middleware-express-fixtures");
 
 var testemComponent = gpii.testem.instrumentation({
     reportsDir: "reports",

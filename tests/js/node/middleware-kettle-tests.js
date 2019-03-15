@@ -29,24 +29,13 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
         validBody: {
             hasBodyContent: "good"
         },
-        invalidBody: {}
+        invalidBody: {
+            hasBodyContent: "bad"
+        }
     },
     rawModules: [
-        // TODO: Valid Body
-        // TODO: Invalid Body
-
-        // TODO: Valid URL params.
-        // TODO: Invalid URL params.
-
-        // TODO: Valid GET query data
-        // TODO: Invalid GET query data
-
-        // TODO: Valid Combined
-        // TODO: Invalid Combined (body)
-        // TODO: Invalid Combined (query)
-        // TODO: Invalid Combined (params)
         {
-            name: "A valid JSON body should be accepted.",
+            name: "Kettle schema middleware tests.",
             tests: [
                 {
                     name: "Testing a valid JSON body sent via POST.",
@@ -60,6 +49,111 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validBodyRequest}.events.onComplete",
                             args:     ["@expand:JSON.parse({arguments}.0)", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing an invalid JSON body sent via POST.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{invalidBodyRequest}.send",
+                            args: ["{that}.options.inputs.invalidBody"]
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{invalidBodyRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a valid URL parameter.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{validParamsRequest}.send",
+                            args: []
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{validParamsRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing an invalid URL parameter.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{invalidParamsRequest}.send",
+                            args: []
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{invalidParamsRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing valid query data.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{validQueryRequest}.send",
+                            args: []
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{validQueryRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing invalid query data.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{invalidQueryRequest}.send",
+                            args: []
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{invalidQueryRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a request with valid POST, query, and URL parameter data.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{validCombinedRequest}.send",
+                            args: ["{that}.options.inputs.validBody"]
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{validCombinedRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing a post with invalid POST, param, and query data.",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{invalidCombinedRequest}.send",
+                            args: ["{that}.options.inputs.invalidBody"]
+                        },
+                        {
+                            listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
+                            event:    "{invalidCombinedRequest}.events.onComplete",
+                            args:     ["@expand:JSON.parse({arguments}.0)", false]
                         }
                     ]
                 }
@@ -79,6 +173,48 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
             options: {
                 method: "POST",
                 path: "/gated/body"
+            }
+        },
+        validParamsRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "GET",
+                path: "/gated/params/good"
+            }
+        },
+        invalidParamsRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "GET",
+                path: "/gated/params/bad"
+            }
+        },
+        validQueryRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "GET",
+                path: "/gated/query?hasQueryContent=good"
+            }
+        },
+        invalidQueryRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "GET",
+                path: "/gated/query?hasQueryContent=bad"
+            }
+        },
+        validCombinedRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "POST",
+                path: "/gated/combined/good?hasQueryContent=good"
+            }
+        },
+        invalidCombinedRequest: {
+            type: "gpii.test.schema.middleware.kettle.request",
+            options: {
+                method: "POST",
+                path: "/gated/combined/bad?hasQueryContent=bad"
             }
         }
     }
