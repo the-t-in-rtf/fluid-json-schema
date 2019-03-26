@@ -35,8 +35,11 @@ var jqUnit      = jqUnit      || {};
 
 
     jqUnit.test("Testing valid component options.", function () {
-        gpii.tests.schema.valid({ newBoolean: true });
+        var component = gpii.tests.schema.valid({ newBoolean: true });
         jqUnit.assert("We should have been able to instantiate our custom component with valid options.");
+
+        jqUnit.assertTrue("The resulting component should have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.potentiaII"));
+        jqUnit.assertFalse("The resulting component should not have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.legacy"));
     });
 
     jqUnit.test("Testing invalid component options.", function () {

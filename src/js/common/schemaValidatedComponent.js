@@ -11,14 +11,22 @@
 
     fluid.registerNamespace("gpii.schema.component");
 
+    gpii.schema.component.validateShadowRecord = function (shadowRecord) {
+        return gpii.schema.component.validateComponent(shadowRecord.that);
+    };
+
     /**
      *
-     * @param {Object} shadowRecord - A "shadow record" of the component created during its early construction.
+     * Validate a component's options based on its schema.  For "potentia ii" (future) versions of Infusion, a "shadow"
+     * record is validated as part of the component's workflow.  For "legacy" (pre potentia II) versions, the record
+     * itself is validated on component creation.  The distinction is handled by a context-aware core grade that mixes
+     * in a grade with the correct strategy to use.
      *
+     * @param {Object} componentToValidate - The component to validate.
      */
-    gpii.schema.component.validateComponent = function (shadowRecord) {
-        if (fluid.componentHasGrade(shadowRecord.that, "gpii.schema.component")) {
-            var validationResults = gpii.schema.validator.validate(shadowRecord.that, shadowRecord.that.options.schema);
+    gpii.schema.component.validateComponent = function (componentToValidate) {
+        if (fluid.componentHasGrade(componentToValidate, "gpii.schema.component")) {
+            var validationResults = gpii.schema.validator.validate(componentToValidate, componentToValidate.options.schema);
             if (validationResults.isError) {
                 fluid.fail(validationResults.message);
             }
@@ -34,8 +42,41 @@
         }
     };
 
-    fluid.defaults("gpii.schema.component", {
+    gpii.schema.component.hasRegisterPotentia = function () {
+        return fluid.registerPotentia ? true : false;
+    };
+
+    fluid.contextAware.makeChecks({
+        "fluid.hasRegisterPotentia": "gpii.schema.component.hasRegisterPotentia"
+    });
+
+    // Validate the component as part of its startup "workflow".
+    fluid.defaults("gpii.schema.component.potentiaII", {
         gradeNames: ["fluid.component"],
+        workflows: {
+            local: {
+                validateOptions: {
+                    priority: "after:concludeComponentObservation",
+                    funcName: "gpii.schema.component.validateShadowRecord",
+                    args:     ["{that}"]
+                }
+            }
+        }
+    });
+
+    // For components that don't have a workflow, validate on the `onCreate` event.
+    fluid.defaults("gpii.schema.component.legacy", {
+        gradeNames: ["fluid.component"],
+        listeners: {
+            "onCreate.validate": {
+                funcName: "gpii.schema.component.validateComponent",
+                args:     ["{that}"]
+            }
+        }
+    });
+
+    fluid.defaults("gpii.schema.component", {
+        gradeNames: ["fluid.component", "fluid.contextAware"],
         schema: {
             "$schema": "gss-v7-full#",
             "definitions": {
@@ -250,12 +291,18 @@
                 }
             }
         },
-        workflows: {
-            local: {
-                validateOptions: {
-                    priority: "after:concludeComponentObservation",
-                    funcName: "gpii.schema.component.validateComponent",
-                    args: ["{that}"]
+        contextAwareness: {
+            validationStrategy: {
+                checks: {
+                    hasRegisterPotentia: {
+                        contextValue: "{fluid.hasRegisterPotentia}",
+                        gradeNames: "gpii.schema.component.potentiaII"
+                    },
+                    legacy: {
+                        contextValue: "{fluid.hasRegisterPotentia}",
+                        equals: false,
+                        gradeNames: "gpii.schema.component.legacy"
+                    }
                 }
             }
         }
