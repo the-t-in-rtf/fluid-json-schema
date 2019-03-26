@@ -5,8 +5,8 @@ var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 fluid.require("%gpii-express");
-// We must pass the current `require` to `fluid.require`, as nyc's instrumentation is hooked into it.
-fluid.require("%gpii-json-schema", require);
+
+require("../../../../");
 require("./middleware-gss-schema");
 
 fluid.registerNamespace("gpii.tests.schema.middleware.gatedMiddleware");

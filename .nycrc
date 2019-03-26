@@ -1,6 +1,6 @@
 {
   "reporter": ["html", "text-summary"],
   "report-dir": "reports",
-  "temp-dir": "coverage",
+  "temp-directory": "coverage",
   "include": [ "./src/**/*.js", "./index.js"]
 }
