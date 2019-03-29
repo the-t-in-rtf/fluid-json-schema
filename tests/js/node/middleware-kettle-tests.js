@@ -9,8 +9,6 @@ require("./lib/middleware-kettle-fixtures");
 
 var jqUnit = require("node-jqunit");
 
-// gpii.schema.kettle.request.http
-
 fluid.registerNamespace("gpii.tests.schema.middleware.kettle.caseHolder");
 gpii.tests.schema.middleware.kettle.caseHolder.examineResponse = function (body, shouldBeValid) {
     if (shouldBeValid) {
