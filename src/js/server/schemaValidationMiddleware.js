@@ -170,6 +170,11 @@ fluid.defaults("gpii.schema.kettle.request.http", {
     inputSchema: {
         "$schema": "gss-v7-full#"
     },
+    rules: {
+        requestContentToValidate: {
+            "": "body"
+        }
+    },
     components: {
         validationMiddleware: {
             type: "gpii.schema.kettle.middleware",
