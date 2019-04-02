@@ -10,11 +10,13 @@ require("./lib/middleware-kettle-fixtures");
 var jqUnit = require("node-jqunit");
 
 fluid.registerNamespace("gpii.tests.schema.middleware.kettle.caseHolder");
-gpii.tests.schema.middleware.kettle.caseHolder.examineResponse = function (body, shouldBeValid) {
+gpii.tests.schema.middleware.kettle.caseHolder.examineResponse = function (response, body, shouldBeValid) {
     if (shouldBeValid) {
+        jqUnit.assertEquals("The response status code should indicate that the request was successful.", 200, response.statusCode);
         jqUnit.assertEquals("The response body should be correct.", "Payload accepted.", body.message);
     }
     else {
+        jqUnit.assertEquals("The response status code should indicate that the request was bad.", 400, response.statusCode);
         jqUnit.assertEquals("The data should be flagged as invalid.", body.isValid, false);
         jqUnit.assertTrue("There should be at least one validation error", body.errors.length > 0);
     }
@@ -46,7 +48,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validBodyRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                            args:     ["{validBodyRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", true]
                         }
                     ]
                 },
@@ -61,7 +63,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{invalidBodyRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                            args:     ["{invalidBodyRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", false]
                         }
                     ]
                 },
@@ -76,7 +78,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validParamsRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                            args:     ["{validParamsRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", true]
                         }
                     ]
                 },
@@ -91,7 +93,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{invalidParamsRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                            args:     ["{invalidParamsRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", false]
                         }
                     ]
                 },
@@ -106,7 +108,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validQueryRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                            args:     ["{validQueryRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", true]
                         }
                     ]
                 },
@@ -121,7 +123,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{invalidQueryRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                            args:     ["{invalidQueryRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", false]
                         }
                     ]
                 },
@@ -136,7 +138,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{validCombinedRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", true]
+                            args:     ["{validCombinedRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", true]
                         }
                     ]
                 },
@@ -151,7 +153,7 @@ fluid.defaults("gpii.tests.schema.middleware.kettle.caseHolder", {
                         {
                             listener: "gpii.tests.schema.middleware.kettle.caseHolder.examineResponse",
                             event:    "{invalidCombinedRequest}.events.onComplete",
-                            args:     ["@expand:JSON.parse({arguments}.0)", false]
+                            args:     ["{invalidCombinedRequest}.nativeResponse", "@expand:JSON.parse({arguments}.0)", false]
                         }
                     ]
                 }

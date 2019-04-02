@@ -92,6 +92,14 @@ The schema validation [kettle middleware](https://github.com/fluid-project/kettl
 be used in combination with a grade that derives from `gpii.schema.kettle.request.http`.  See "kettle example" below
 for an example of using this grade.
 
+### Component Options
+
+In addition to the options supported by the base grade above, this grade supports the following options:
+
+| Option           | Type     | Description |
+| ---------------- | -------- | ----------- |
+| `errorTemplate`  | `Object` | If there are validation errors, this object will be merged with the raw error to set the kettle-specific options like `message` and `statusCode`. |
+
 ## `gpii.schema.kettle.request.http`
 
 The [request handler](https://github.com/fluid-project/kettle/blob/master/docs/RequestHandlersAndApps.md) portion of

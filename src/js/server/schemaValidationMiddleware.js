@@ -145,7 +145,7 @@ gpii.schema.kettle.middleware.handle  = function (that, req) {
 
     gpii.schema.validationMiddleware.rejectOrForward(that, req.req, undefined, function (error) {
         if (error) {
-            validationPromise.reject(error);
+            validationPromise.reject(fluid.extend({}, error, that.options.errorTemplate));
         }
         else {
             validationPromise.resolve();
@@ -157,6 +157,11 @@ gpii.schema.kettle.middleware.handle  = function (that, req) {
 
 fluid.defaults("gpii.schema.kettle.middleware", {
     gradeNames: ["kettle.middleware", "fluid.modelComponent"],
+    errorTemplate: {
+        // "Bad Request": https://developer.mozilla.org/nl/docs/Web/HTTP/Status/400
+        statusCode: 400,
+        message: "Your request was invalid.  See the errors for details."
+    },
     invokers: {
         handle: {
             funcName: "gpii.schema.kettle.middleware.handle",
