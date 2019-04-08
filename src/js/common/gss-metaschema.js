@@ -112,6 +112,7 @@
             "not": { "$ref": "#" }
         },
         "default": true,
-        dependencies: { enum: ["enumLabels"], enumLabels: ["enum"] }
+        "dependencies": { enum: ["enumLabels"], enumLabels: ["enum"] },
+        "additionalProperties": false
     };
 })(fluid);

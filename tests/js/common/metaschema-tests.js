@@ -65,5 +65,36 @@ var jqUnit      = jqUnit      || {};
         };
         var validSchemaIsValid = ajv.validateSchema(validGssSchema);
         jqUnit.assertTrue("The schema should be reported as valid.", validSchemaIsValid);
+
+        var minIsAllowed = ajv.validateSchema({
+            "$schema": "gss-v7-full#",
+            "type": "integer",
+            "min": 0
+        });
+
+        jqUnit.assertFalse("The deprecated 'min' keyword should be disallowed.", minIsAllowed);
+
+        var maxIsAllowed = ajv.validateSchema({
+            "$schema": "gss-v7-full#",
+            "type": "integer",
+            "max": 5
+        });
+
+        jqUnit.assertFalse("The deprecated 'max' keyword should be disallowed.", maxIsAllowed);
+
+        var divisibleByIsAllowed = ajv.validateSchema({
+            "$schema": "gss-v7-full#",
+            "type": "integer",
+            "divisibleBy": 2
+        });
+
+        jqUnit.assertFalse("The deprecated 'divisibleBy' keyword should be disallowed.", divisibleByIsAllowed);
+
+        var additionalPropertiesAllowed = ajv.validateSchema({
+            "$schema": "gss-v7-full#",
+            "extra": "bonus material"
+        });
+
+        jqUnit.assertFalse("Additional properties not found in the GSS schema should be disallowed.", additionalPropertiesAllowed);
     });
 })(fluid_3_0_0, Ajv, jqUnit);
