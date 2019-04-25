@@ -301,7 +301,7 @@
      *  ]
      * }
      *
-     * Note that as in the examples above, the FSL metaschema defines "error hints" that result in message keys
+     * Note that as in the examples above, the GSS metaschema defines "error hints" that result in message keys
      * being returned.
      *
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
@@ -387,12 +387,12 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} originalFsl - The FSL schema.
+     * @param {Object} originalGss - The GSS schema.
      * @return {Object} - The equivalent JSON Schema rules.
      *
      */
-    gpii.schema.gssToJsonSchema = function (originalFsl) {
-        var transformedSchema = gpii.schema.gssSegmentToJsonSchemaSegment(originalFsl);
+    gpii.schema.gssToJsonSchema = function (originalGss) {
+        var transformedSchema = gpii.schema.gssSegmentToJsonSchemaSegment(originalGss);
         // Obviously this needs to be more flexibly defined.
         transformedSchema.$schema = "http://json-schema.org/draft-07/schema#";
         return transformedSchema;
@@ -447,8 +447,8 @@
 
     /**
      *
-     * As of JSON Schema draft v4, the `required` property is now a property of the enclosing element.  FSL uses the v3
-     * syntax, where `required` is a property of the object itself.  This function converts FSL-style properties to an
+     * As of JSON Schema draft v4, the `required` property is now a property of the enclosing element.  GSS uses the v3
+     * syntax, where `required` is a property of the object itself.  This function converts GSS-style properties to an
      * array of required "child" elements that can be used to represent the same list of required fields in modern JSON
      * Schema syntax.
      *
