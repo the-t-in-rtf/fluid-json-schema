@@ -76,7 +76,7 @@
 
         // Validate the GSS schema against the metaschema before proceeding.
         var schemaValidationResults = gpii.schema.validator.validateSchema(gssSchema, ajvOptions);
-        if (fluid.get(schemaValidationResults, "isError")) {
+        if (schemaValidationResults.isError) {
             return schemaValidationResults;
         }
         else {
