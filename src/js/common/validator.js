@@ -75,6 +75,57 @@
      *
      * @typedef ajvErrors
      * @property {Array<ajvError>} [errors] - The errors returned during the validation run.
+     *
+     * @typedef GssSchema
+     * @property {String} [$id] - The ID for this schema (not typically used in GSS schemas, but allowed).
+     * @property {String} [$schema] - The URI where the "metaschema" (version of the GSS language) can be found.
+     * @property {String} [$ref] - Replace material at this point with external material at the given URL.  The only allowed value for this in GSS is the GSS schema itself.
+     * @property {String} [$comment] - A comment, presumably about this level of the schema.
+     * @property {String} [title] - A title for the material represented by this part of the schema.
+     * @property {String} [description] - A description of the material represented by this part of the schema.
+     * @property {Boolean} [required] - Whether or not a value is required at this point in the schema.
+     * @property {Any} [default] - The default value for the material represented by this part of the schema.
+     * @property {GssSchema} [if] - A sub-schema that will be used to conditionally check content.  Must be used in combination with `then` or `else`.
+     * @property {GssSchema} [then] - If the material is valid according to the `if` sub-schema, it must also follow these rules.
+     * @property {GssSchema} [else] - If the material is invalid according to the `if` sub-schema, it must follow these rules.
+     * @property {Array<GssSchema>} [allOf] - The material must match all of the supplied sub-schemas.
+     * @property {Array<GssSchema>} [anyOf] - The material must match one or more of the supplied sub-schemas.
+     * @property {Array<GssSchema>} [oneOf] - The material must match exactly one of the supplied sub-schemas.
+     * @property {GssSchema} [not] - The material must not match the supplied sub-schema.
+     * @property {String} [hint] - A UI "hint" for a user entering the value.  Typically a  message key rather than a literal value.
+     * @property {Object<String,String>} [errors] - Replacements for the default error messages, keyed by the failing "keyword", or "" for all failures.  The value is a string template.
+     * @property {Object.<String,GssSchema>} [definitions] - An object containing reusable pieces of schema material.  Not usable outside of the metaschema itself.
+     * @property {Boolean} [readOnly] - Whether or not this part of the schema is "read only".
+     * @property {Array} [examples] - One or more examples of allowed values.
+     * @property {Any} [const] - A literal value that the value must exactly match.
+     * @property {Array} [enum] - An array of literal allowed values.
+     * @property {Array<String>} [enumLabels] - An array of string labels to describe the `enum` values in a UI.
+     * @property {String} [type] - The type of material described by this part of the schema.  Must be one of "number", "integer", "string", "array", or "object".
+     * @property {GssSchema|Boolean} [additionalItems] - (For array types), if `items` is defined as an array of schemas, `additionalItems` will cover any additional entries.
+     * @property {GssSchema} [contains] - (For array types), at least one item must match the supplied sub-schema.
+     * @property {GssSchema|Array<GssSchema>} [items] - (For array types), either a literal schema for all items, or an array of schemas, in the order of the array items that are expected.
+     * @property {Number} [maxItems] - (For array types), the maximum number of items allowed.
+     * @property {Number} [minItems] - (For array types), the minimum number of items allowed.
+     * @property {Boolean} [uniqueItems] - (For array types), whether or not all items must be unique.
+     * @property {Number} [exclusiveMaximum] - (For numeric types), the value must be less than this number.
+     * @property {Number} [exclusiveMinimum] - (For numeric types), the value must be more than this number.
+     * @property {Number} [maximum] - (For numeric types), the maximum allowed value.
+     * @property {Number} [minimum] - (For numeric types), the minimum allowed value.
+     * @property {Number} [multipleOf] - (For numeric types), a number that the value must be a multiple of.
+     * @property {GssSchema|Boolean}  [additionalProperties] - (For object types), a GSS schema describing rules that any properties not explicitly described in `properties` must follow.  If set to `false`, additional properties are disallowed.
+     * @property {Object.<String,Array<String>>} [dependencies] - (For object types), an object whose keys are properties.  Each value represents field names that must also be present if the named field is found.
+     * @property {Number} [maxProperties] - (For object types), the maximum number of properties allowed.
+     * @property {Number} [minProperties] - (For object types), the minimum number of properties required.
+     * @property {Object.<RegExp>} [patternProperties] - (For object types), an object keyed by regular expression.  If a property's name matches the regexp, it must match the associated schema.
+     * @property {Object.<String,GssSchema>} [properties] - (For object types), the rules governing explicitly named properties.
+     * @property {GssSchema} [propertyNames] - (For object types), a sub-schema describing the rules the property names must follow.
+     * @property {Number} [maxLength] - (For string types), the maximum allowed length.
+     * @property {Number} [minLength] - (For string types), the minimum required length.
+     * @property {String} [format] - (For string types), a known format such as "email", "URI", or "date".
+     * @property {String} [pattern] - (For string types), a regular expression the value must match.
+     * @property {String} [contentEncoding] - (For string types), the RFC 2045 content encoding of the value, i.e. how to decode it as a binary object.
+     * @property {String} [contentMediaType] - (For string types), the RFC 2046 media type.
+     *
      */
 
     /**
@@ -82,7 +133,7 @@
      * Validate material against a "GPII Schema System" schema.
      *
      * @param {Any} toValidate - The material to be validated.
-     * @param {Object} gssSchema - A GSS schema definition.
+     * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
      * @return {Object} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
@@ -113,7 +164,7 @@
      *
      * Validate a "GPII Schema System" schema.
      *
-     * @param {Object} gssSchema - A GSS schema definition.
+     * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
      * @return {Object} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
@@ -403,7 +454,7 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} originalGss - The GSS schema.
+     * @param {GssSchema} originalGss - The GSS schema.
      * @return {Object} - The equivalent JSON Schema rules.
      *
      */
@@ -421,7 +472,7 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} gssSegment - A sub-segment of a GSS schema.
+     * @param {GssSchema} gssSegment - A sub-segment of a GSS schema.
      * @return {Object} - The same rules represented as a JSON Schema segment
      *
      */
