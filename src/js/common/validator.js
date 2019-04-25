@@ -61,6 +61,22 @@
         verbose: false
     };
 
+    // JSDoc complex type definitions for our functions.
+    /**
+     * @typedef ajvError
+     * @property {String} keyword - Validation keyword, which is typically the name of the rule that was violated.
+     * @property {String} dataPath - The path to the part of the data that failed validation, by default represented using JSON Pointer notation.
+     * @property {String} schemaPath - The path (JSON Pointer) to the part of the schema that was violated.
+     * @property {Object} [params] - Additional information about the error, for example, the name of a missing required field.
+     * @property {String} [message] - The standard error message provided by AJV (disabled by default).
+     * @property {Object} [schema] - The schema of the keyword, i.e. the text of the rule that was broken (disabled by default).
+     * @property {Object} [parentSchema] - The "parent schema", i.e. the schema of the element enclosing the keyword whose rule was broken (disabled by default).
+     * @property {Any} [data] - The data validated by the keyword (disabled by default to avoid displaying sensitive data such as invalid passwords).
+     *
+     * @typedef ajvErrors
+     * @property {Array<ajvError>} [errors] - The errors returned during the validation run.
+     */
+
     /**
      *
      * Validate material against a "GPII Schema System" schema.
@@ -139,7 +155,7 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} rawError - A single validation error as returned by AJV.
+     * @param {ajvError} rawError - A single validation error as returned by AJV.
      * @return {Array.<String>} - An array of EL path segments representing the path to the invalid or missing material.
      *
      */
@@ -166,7 +182,7 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} ajvError - A single raw validation error as returned by AJV.
+     * @param {ajvError} ajvError - A single raw validation error as returned by AJV.
      * @return {Array.<String>} - An array of EL path segments that point to the failing rule in the schema.
      */
     gpii.schema.validator.extractElSchemaPathSegmentsFromError = function (ajvError) {
@@ -308,7 +324,7 @@
      * which is not guaranteed to remain available.
      *
      * @param {Object} gssSchema - A GSS schema.
-     * @param {Object|Boolean} ajvErrors - The raw errors returned by AJV, if there are any, or `false` if there are no validation Errors.
+     * @param {ajvErrors|Boolean} ajvErrors - The raw errors returned by AJV, if there are any, or `false` if there are no validation Errors.
      * @return {Object} - An object detailing the validation results (see above).
      *
      */
