@@ -184,50 +184,13 @@ var message = fluid.stringTemplate(messages[error.message], error); // The value
 
 ## Schema-validated components
 
-A schema validated component is one whose structure is required to match its "schema" options, which is defined using
-GSS.  A schema validated component will throw an error during its instantiation if there are validation errors.  Among
-many other things, this allows authors to write "dumber" components that can safely assume that all required options
-exist, and that all options are set to a useful value.
+This package provides two "schema-validated" component grades.
 
-### `gpii.schema.component`
-
-The `gpii.schema.component` grade is the base grade for all schema-validated components.  It includes a base schema that
-describes the standard elements of any Fluid component, such as `gradeNames`, `events`, `listeners`, and (sub)
-`components`.
-
-### Creating your own schema-validated grades.
-
-Let's say that you want to create a new component, that has a required option `requiredOption`, which should be a
-non-empty string.  Your grade definition might look like:
-
-```javascript
-fluid.defaults("my.schema.grade", {
-    gradeNames: ["gpii.schema.component"],
-    schema: {
-        properties: {
-            options: {
-                properties: {
-                    requiredOption: {
-                        required: true,
-                        type: "string",
-                        minLength: 1
-                    }
-                }
-            }
-        }
-    }
-});
-```
-
-Someone using or extending your grade must ensure that `options.requiredOption` exists and meets the specified criteria.
-Otherwise, the component will not instantiate, and an error like the following will be thrown:
-
-```text
-Component does not match its own schema, aborting component creation:
-    options -> requiredOption:  This value is required.
-```
-
-## Schema-validated model components
+1. A "schema-validated" component that ensures that the component's structure (and options) conform to a specified
+   schema, and another to ensure that model values in the component conform to a specified schema.  For more
+   information, see the [schema-validated component documentation](schemaValidatedComponent.md).
+2. A "schema-validated model" component, where changes to the model are validated against a specified schema.  For more
+   information, see the [schema-validated model component documentation](schemaValidatedModelComponent.md).
 
 ## Reusing material within a GSS schema.
 

@@ -1,9 +1,9 @@
 # `gpii.schema.component`
 
-A "schema validated component" is one whose entire structure (including all options) is validated as part of its
-creation lifecycle.  Validation occurs immediately after options merging and expansion, but before the component is
-created.  If there are validation errors, the component will not be created, and `fluid.fail` will be called with the
-error.
+A "schema validated component" is one whose structure (including all options) is validated against a specified schema as
+part of its creation lifecycle.  Validation occurs immediately after options merging and expansion, but before the
+component is created.  If there are validation errors, the component will not be created, and `fluid.fail` will be
+called with the error.
 
 ## Component Options
 
