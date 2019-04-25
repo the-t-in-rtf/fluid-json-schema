@@ -1,10 +1,10 @@
 /* globals require */
 /* eslint-env browser */
-var fluid_3_0_0 = fluid_3_0_0 || {};
+var fluid = fluid || {};
 
 (function (fluid) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
     }
     var gpii  = fluid.registerNamespace("gpii");
@@ -977,4 +977,4 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
             }
         }
     };
-})(fluid_3_0_0);
+})(fluid);

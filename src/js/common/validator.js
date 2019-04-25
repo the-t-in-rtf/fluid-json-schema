@@ -1,6 +1,6 @@
 /* eslint-env browser */
 /* globals require, Ajv */
-(function (fluid, AJV) {
+(function (fluid, Ajv) {
     "use strict";
 
     if (!fluid) {
@@ -9,8 +9,8 @@
         require("./validation-errors");
     }
 
-    if (!AJV) {
-        AJV = require("ajv");
+    if (!Ajv) {
+        Ajv = require("ajv");
     }
 
     var gpii  = fluid.registerNamespace("gpii");
@@ -80,7 +80,7 @@
             return schemaValidationResults;
         }
         else {
-            var ajv = new AJV(ajvOptions);
+            var ajv = new Ajv(ajvOptions);
             ajv.addMetaSchema(gpii.schema.metaSchema);
 
             // We have to validate against a transformed copy of the original rawSchema so that AJV can enforce our
@@ -104,7 +104,7 @@
      */
     gpii.schema.validator.validateSchema = function (gssSchema, ajvOptions) {
         ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
-        var ajv = new AJV(ajvOptions);
+        var ajv = new Ajv(ajvOptions);
         ajv.addMetaSchema(gpii.schema.metaSchema);
 
         // Validate the GSS schema against the metaschema before proceeding.

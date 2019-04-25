@@ -1,5 +1,5 @@
 /* global fluid, jQuery, jqUnit */
-var fluid_3_0_0 = fluid_3_0_0 || {};
+var fluid = fluid || {};
 (function (fluid, $, jqUnit) {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
@@ -258,4 +258,4 @@ var fluid_3_0_0 = fluid_3_0_0 || {};
         }
     });
     fluid.test.runTests("gpii.tests.schema.errorBinder.environment");
-})(fluid_3_0_0, jQuery, jqUnit);
+})(fluid, jQuery, jqUnit);

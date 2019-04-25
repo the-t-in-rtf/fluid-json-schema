@@ -1,8 +1,9 @@
 /* eslint-env browser */
 /* globals require */
+var fluid  = fluid  || {};
 (function (fluid) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
     }
 

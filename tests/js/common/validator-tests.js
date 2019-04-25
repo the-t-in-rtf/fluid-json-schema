@@ -1,11 +1,11 @@
 /* globals jqUnit, require */
 /* eslint-env browser */
-var fluid_3_0_0 = fluid_3_0_0 || {};
-var jqUnit      = jqUnit      || {};
+var fluid  = fluid  || {};
+var jqUnit = jqUnit || {};
 
-(function (fluid_3_0_0, jqUnit) {
+(function (fluid, jqUnit) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
         jqUnit = require("node-jqunit");
         require("../../../src/js/common/validator");
@@ -488,4 +488,4 @@ var jqUnit      = jqUnit      || {};
             jqUnit.assertDeepEq(testDef.message, testDef.expected, output);
         });
     });
-})(fluid_3_0_0, jqUnit);
+})(fluid, jqUnit);

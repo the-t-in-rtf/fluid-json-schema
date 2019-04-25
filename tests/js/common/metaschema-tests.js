@@ -6,14 +6,14 @@
 */
 /* globals Ajv, jqUnit, require */
 /* eslint-env browser */
-var fluid_3_0_0 = fluid_3_0_0 || {};
-var Ajv         = Ajv         || {};
-var jqUnit      = jqUnit      || {};
+var fluid  = fluid  || {};
+var Ajv    = Ajv    || {};
+var jqUnit = jqUnit || {};
 
-(function (fluid_3_0_0, Ajv, jqUnit) {
+(function (fluid, Ajv, jqUnit) {
     "use strict";
 
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
         Ajv = require("ajv");
         jqUnit = require("node-jqunit");
@@ -97,4 +97,4 @@ var jqUnit      = jqUnit      || {};
 
         jqUnit.assertFalse("Additional properties not found in the GSS schema should be disallowed.", additionalPropertiesAllowed);
     });
-})(fluid_3_0_0, Ajv, jqUnit);
+})(fluid, Ajv, jqUnit);

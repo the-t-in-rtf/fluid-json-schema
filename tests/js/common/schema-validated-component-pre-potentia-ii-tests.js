@@ -6,13 +6,13 @@
  */
 /* eslint-env browser */
 /* globals require */
-var fluid_3_0_0 = fluid_3_0_0 || {};
-var AJV         = AJV         || {};
-var jqUnit      = jqUnit      || {};
+var fluid  = fluid  || {};
+var Ajv    = Ajv    || {};
+var jqUnit = jqUnit || {};
 
-(function (fluid_3_0_0, AJV, jqUnit) {
+(function (fluid, Ajv, jqUnit) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
         jqUnit = require("node-jqunit");
         require("../../../src/js/common/schemaValidatedComponent");
@@ -62,4 +62,4 @@ var jqUnit      = jqUnit      || {};
     fluid.contextAware.makeChecks({
         "fluid.hasRegisterPotentia": "gpii.schema.component.hasRegisterPotentia"
     });
-})(fluid_3_0_0, AJV, jqUnit);
+})(fluid, Ajv, jqUnit);

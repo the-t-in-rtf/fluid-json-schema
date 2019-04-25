@@ -1,12 +1,12 @@
-/* globals AJV, jqUnit, require */
+/* globals Ajv, jqUnit, require */
 /* eslint-env browser */
-var fluid_3_0_0 = fluid_3_0_0 || {};
-var AJV         = AJV         || {};
-var jqUnit      = jqUnit      || {};
+var fluid  = fluid  || {};
+var Ajv    = Ajv    || {};
+var jqUnit = jqUnit || {};
 
-(function (fluid_3_0_0, AJV, jqUnit) {
+(function (fluid, Ajv, jqUnit) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid.identity) {
         fluid = require("infusion");
         jqUnit = require("node-jqunit");
         require("../../../src/js/common/schemaValidatedModelComponent");
@@ -67,4 +67,4 @@ var jqUnit      = jqUnit      || {};
         jqUnit.stop();
         component.applier.change("validModelVariableIsValid", true);
     });
-})(fluid_3_0_0, AJV, jqUnit);
+})(fluid, Ajv, jqUnit);

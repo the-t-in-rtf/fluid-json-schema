@@ -8,8 +8,8 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var AJV = require("ajv");
-var ajv = new AJV({ allErrors: true });
+var Ajv = require("ajv");
+var ajv = new Ajv({ allErrors: true });
 
 require("../validator-tests-ajv-errors-testDefs");
 
