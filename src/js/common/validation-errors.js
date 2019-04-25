@@ -1,7 +1,7 @@
 /* globals require */
 (function (fluid) {
     "use strict";
-    if (typeof require !== "undefined") {
+    if (!fluid) {
         fluid = require("infusion");
     }
 

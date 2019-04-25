@@ -3,11 +3,14 @@
 (function (fluid, AJV) {
     "use strict";
 
-    if (typeof require !== "undefined") {
+    if (!fluid) {
         fluid = require("infusion");
-        AJV = require("ajv");
         require("./gss-metaschema");
         require("./validation-errors");
+    }
+
+    if (!AJV) {
+        AJV = require("ajv");
     }
 
     var gpii  = fluid.registerNamespace("gpii");
