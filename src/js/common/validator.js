@@ -18,32 +18,32 @@
     fluid.registerNamespace("gpii.schema.validator");
 
     gpii.schema.validator.defaultI18nKeysByRule = {
-        "": "schema-validator-general-failure",
-        "anyOf": "schema-validator-anyOf",
-        "contains": "schema-validator-contains",
-        "dependencies": "schema-validator-dependencies",
-        "else": "schema-validator-else",
-        "enum": "schema-validator-enum",
-        "exclusiveMaximum": "schema-validator-exclusiveMaximum",
-        "exclusiveMinimum": "schema-validator-exclusiveMinimum",
-        "format": "schema-validator-format",
-        "maxItems": "schema-validator-maxItems",
-        "maxLength": "schema-validator-maxLength",
-        "maxProperties": "schema-validator-maxProperties",
-        "maximum": "schema-validator-maximum",
-        "minItems": "schema-validator-minItems",
-        "minLength": "schema-validator-minLength",
-        "minProperties": "schema-validator-minProperties",
-        "minimum": "schema-validator-minimum",
-        "multipleOf": "schema-validator-multipleOf",
-        "not": "schema-validator-not",
-        "oneOf": "schema-validator-oneOf",
-        "pattern": "schema-validator-pattern",
-        "propertyNames": "schema-validator-propertyNames",
-        "required": "schema-validator-required",
-        "then": "schema-validator-then",
-        "type": "schema-validator-type",
-        "uniqueItems": "schema-validator-uniqueItems"
+        "": "gpii.schema.messages.validationErrors.generalFailure",
+        "anyOf": "gpii.schema.messages.validationErrors.anyOf",
+        "contains": "gpii.schema.messages.validationErrors.contains",
+        "dependencies": "gpii.schema.messages.validationErrors.dependencies",
+        "else": "gpii.schema.messages.validationErrors.else",
+        "enum": "gpii.schema.messages.validationErrors.enum",
+        "exclusiveMaximum": "gpii.schema.messages.validationErrors.exclusiveMaximum",
+        "exclusiveMinimum": "gpii.schema.messages.validationErrors.exclusiveMinimum",
+        "format": "gpii.schema.messages.validationErrors.format",
+        "maxItems": "gpii.schema.messages.validationErrors.maxItems",
+        "maxLength": "gpii.schema.messages.validationErrors.maxLength",
+        "maxProperties": "gpii.schema.messages.validationErrors.maxProperties",
+        "maximum": "gpii.schema.messages.validationErrors.maximum",
+        "minItems": "gpii.schema.messages.validationErrors.minItems",
+        "minLength": "gpii.schema.messages.validationErrors.minLength",
+        "minProperties": "gpii.schema.messages.validationErrors.minProperties",
+        "minimum": "gpii.schema.messages.validationErrors.minimum",
+        "multipleOf": "gpii.schema.messages.validationErrors.multipleOf",
+        "not": "gpii.schema.messages.validationErrors.not",
+        "oneOf": "gpii.schema.messages.validationErrors.oneOf",
+        "pattern": "gpii.schema.messages.validationErrors.pattern",
+        "propertyNames": "gpii.schema.messages.validationErrors.propertyNames",
+        "required": "gpii.schema.messages.validationErrors.required",
+        "then": "gpii.schema.messages.validationErrors.then",
+        "type": "gpii.schema.messages.validationErrors.type",
+        "uniqueItems": "gpii.schema.messages.validationErrors.uniqueItems"
     };
 
     gpii.schema.validator.defaultAjvOptions = {
@@ -341,7 +341,7 @@
      *
      */
     gpii.schema.validator.errorHintForRule = function (rulePath, gssSchema, defaultMessage) {
-        defaultMessage = defaultMessage || gpii.schema.validator.defaultI18nKeysByRule["schema-validator-general-failure"];
+        defaultMessage = defaultMessage || gpii.schema.validator.defaultI18nKeysByRule.generalFailure;
         var enclosingDefinitionSegments = rulePath.slice(0, -1);
         var finalRuleSegment = rulePath[rulePath.length - 1];
 
@@ -459,7 +459,7 @@
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
             var messageKey = fluid.get(validationError, "message");
-            var messageTemplate = messageKey && fluid.get(messages, messageKey);
+            var messageTemplate = messageKey && fluid.get(messages, [messageKey]); // We use the segment format because the keys contain dots.
             if (messageTemplate) {
                 var data = validatedData && fluid.get(validatedData, validationError.dataPath);
                 var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);

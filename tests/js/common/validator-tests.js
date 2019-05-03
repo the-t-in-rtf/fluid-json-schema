@@ -14,7 +14,7 @@ var jqUnit = jqUnit || {};
 
     var gpii  = fluid.registerNamespace("gpii");
 
-    jqUnit.module("Testing browser-fixtures validation functions.");
+    jqUnit.module("Testing validation functions.");
 
     jqUnit.test("Testing `gpii.schema.deriveRequiredProperties`.", function () {
         jqUnit.assertDeepEq("We should be able to generate a list of required sub-properties.", ["foo", "bar"], gpii.schema.deriveRequiredProperties({
@@ -131,7 +131,7 @@ var jqUnit = jqUnit || {};
                 gssSchema: {type: "text"},
                 rulePath: ["type"],
                 defaultMessage: "This is the default message.",
-                expected: "schema-validator-type"
+                expected: "gpii.schema.messages.validationErrors.type"
             },
             shortForm: {
                 message: "We should be able to use a 'short form' error definition.",
@@ -296,7 +296,7 @@ var jqUnit = jqUnit || {};
                     "rule": {
                         "required": true
                     },
-                    "message": "schema-validator-required"
+                    "message": "gpii.schema.messages.validationErrors.required"
                 }]}
             },
             invalidData: {
@@ -391,13 +391,13 @@ var jqUnit = jqUnit || {};
         var testDefs = {
             defaultsNoData: {
                 message: "We should be able to resolve error message keys with only the defaults.",
-                errors: [{message: "schema-validator-required"}],
+                errors: [{message: "gpii.schema.messages.validationErrors.required"}],
                 expected: [{message: "This value is required."}]
             },
             defaultData: {
                 message: "We should be able to resolve error message keys with the defaults and the data being validated.",
                 toValidate: true,
-                errors: [{message: "schema-validator-required", dataPath: [""]}],
+                errors: [{message: "gpii.schema.messages.validationErrors.required", dataPath: [""]}],
                 expected: [{message: "This value is required.", dataPath: [""]}]
             },
             noErrors: {
@@ -416,7 +416,7 @@ var jqUnit = jqUnit || {};
                         "type": "string",
                         "maxLength": 2
                     },
-                    "message": "schema-validator-maxLength"
+                    "message": "gpii.schema.messages.validationErrors.maxLength"
                 }],
                 expected: [{
                     "dataPath": [],
@@ -433,10 +433,10 @@ var jqUnit = jqUnit || {};
             customMessageBundle: {
                 message: "We should be able to use a custom message bundle.",
                 messages: {
-                    "schema-validator-maxLength": "The value is too long."
+                    "gpii.schema.messages.validationErrors.maxLength": "The value is too long."
                 },
                 errors: [{
-                    "message": "schema-validator-maxLength"
+                    "message": "gpii.schema.messages.validationErrors.maxLength"
                 }],
                 expected: [{
                     "message": "The value is too long."

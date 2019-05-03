@@ -28,13 +28,13 @@ If there are validation errors, the return value should look like:
          "dataPath": ["requiredField"],
          "schemaPath": ["properties", "requiredField", "required"],
          "rule": { "required": true },
-         "message": "validation-required-field-missing"
+         "message": "gpii.schema.messages.validationErrors.required"
      },
      {
          "dataPath": ["deep", "booleanField"],
          "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
          "rule": { "type": "boolean" },
-         "message": "validation-invalid-field-type"
+         "message": "gpii.schema.messages.validationErrors.type"
      }
  ]
 }
@@ -87,7 +87,7 @@ By default, this rendering process has access to an object like the following:
        "rule": {
            "type": "number"
        },
-       "message": "my-custom-error"
+       "message": "my.namespace.messages.customError"
    }]
 }
 ```
@@ -97,7 +97,7 @@ bundle that looked like:
 
 ```json
 {
-    "my-custom-error": "The value you provided (%data) is not a number."
+    "my.namespace.messages.customError": "The value you provided (%data) is not a number."
 }
 ```
 

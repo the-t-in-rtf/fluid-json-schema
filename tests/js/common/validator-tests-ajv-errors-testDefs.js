@@ -43,7 +43,7 @@ var fluid = fluid || {};
                             "type": "string"
                         }
                     },
-                    "message": "schema-validator-contains"
+                    "message": "gpii.schema.messages.validationErrors.contains"
                 }]
             }
         },
@@ -59,7 +59,7 @@ var fluid = fluid || {};
                         "depsCount": 1,
                         "deps": "bar"
                     },
-                    "message": "schema-validator-dependencies"
+                    "message": "gpii.schema.messages.validationErrors.dependencies"
                 }
             ],
             "schema": {
@@ -103,7 +103,7 @@ var fluid = fluid || {};
                                 ]
                             }
                         },
-                        "message": "schema-validator-dependencies"
+                        "message": "gpii.schema.messages.validationErrors.dependencies"
                     }
                 ]
             }
@@ -153,7 +153,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "boolean"
                         },
-                        "message": "schema-validator-type"
+                        "message": "gpii.schema.messages.validationErrors.type"
                     },
                     {
                         "dataPath": [],
@@ -171,7 +171,7 @@ var fluid = fluid || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "schema-validator-else"
+                        "message": "gpii.schema.messages.validationErrors.else"
                     }
                 ]
             }
@@ -209,7 +209,7 @@ var fluid = fluid || {};
                                 "yes"
                             ]
                         },
-                        "message": "schema-validator-enum"
+                        "message": "gpii.schema.messages.validationErrors.enum"
                     }
                 ]
             }
@@ -243,7 +243,7 @@ var fluid = fluid || {};
                         "rule": {
                             "exclusiveMaximum": 10
                         },
-                        "message": "schema-validator-exclusiveMaximum"
+                        "message": "gpii.schema.messages.validationErrors.exclusiveMaximum"
                     }
                 ]
             }
@@ -277,7 +277,7 @@ var fluid = fluid || {};
                         "rule": {
                             "exclusiveMinimum": 2
                         },
-                        "message": "schema-validator-exclusiveMinimum"
+                        "message": "gpii.schema.messages.validationErrors.exclusiveMinimum"
                     }
                 ]
             }
@@ -311,7 +311,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "format": "email"
                         },
-                        "message": "schema-validator-format"
+                        "message": "gpii.schema.messages.validationErrors.format"
                     }
                 ]
             }
@@ -345,7 +345,7 @@ var fluid = fluid || {};
                             "type": "array",
                             "maxItems": 1
                         },
-                        "message": "schema-validator-maxItems"
+                        "message": "gpii.schema.messages.validationErrors.maxItems"
                     }
                 ]
             }
@@ -379,7 +379,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "maxLength": 2
                         },
-                        "message": "schema-validator-maxLength"
+                        "message": "gpii.schema.messages.validationErrors.maxLength"
                     }
                 ]
             }
@@ -411,7 +411,7 @@ var fluid = fluid || {};
                         "rule": {
                             "maxProperties": 1
                         },
-                        "message": "schema-validator-maxProperties"
+                        "message": "gpii.schema.messages.validationErrors.maxProperties"
                     }
                 ]
             }
@@ -447,7 +447,7 @@ var fluid = fluid || {};
                             "type": "number",
                             "maximum": 3
                         },
-                        "message": "schema-validator-maximum"
+                        "message": "gpii.schema.messages.validationErrors.maximum"
                     }
                 ]
             }
@@ -481,7 +481,7 @@ var fluid = fluid || {};
                             "type": "array",
                             "minItems": 1
                         },
-                        "message": "schema-validator-minItems"
+                        "message": "gpii.schema.messages.validationErrors.minItems"
                     }
                 ]
             }
@@ -513,7 +513,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minLength": 2
                         },
-                        "message": "schema-validator-minLength"
+                        "message": "gpii.schema.messages.validationErrors.minLength"
                     }
                 ]
             }
@@ -545,7 +545,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minProperties": 1
                         },
-                        "message": "schema-validator-minProperties"
+                        "message": "gpii.schema.messages.validationErrors.minProperties"
                     }
                 ]
             }
@@ -579,7 +579,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minimum": 5
                         },
-                        "message": "schema-validator-minimum"
+                        "message": "gpii.schema.messages.validationErrors.minimum"
                     }
                 ]
             }
@@ -611,7 +611,7 @@ var fluid = fluid || {};
                         "rule": {
                             "multipleOf": 2
                         },
-                        "message": "schema-validator-multipleOf"
+                        "message": "gpii.schema.messages.validationErrors.multipleOf"
                     }
                 ]
             }
@@ -645,7 +645,7 @@ var fluid = fluid || {};
                                 "type": "number"
                             }
                         },
-                        "message": "schema-validator-not"
+                        "message": "gpii.schema.messages.validationErrors.not"
                     }
                 ]
             }
@@ -692,7 +692,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "string"
                         },
-                        "message": "schema-validator-type"
+                        "message": "gpii.schema.messages.validationErrors.type"
                     },
                     {
                         "dataPath": [],
@@ -706,7 +706,7 @@ var fluid = fluid || {};
                                 }
                             ]
                         },
-                        "message": "schema-validator-oneOf"
+                        "message": "gpii.schema.messages.validationErrors.oneOf"
                     }
                 ]
             }
@@ -740,7 +740,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "pattern": "a+"
                         },
-                        "message": "schema-validator-pattern"
+                        "message": "gpii.schema.messages.validationErrors.pattern"
                     }
                 ]
             }
@@ -786,7 +786,7 @@ var fluid = fluid || {};
                         "rule": {
                             "pattern": "z.+"
                         },
-                        "message": "schema-validator-pattern"
+                        "message": "gpii.schema.messages.validationErrors.pattern"
                     },
                     {
                         "dataPath": [],
@@ -799,7 +799,7 @@ var fluid = fluid || {};
                                 "pattern": "z.+"
                             }
                         },
-                        "message": "schema-validator-propertyNames"
+                        "message": "gpii.schema.messages.validationErrors.propertyNames"
                     }
                 ]
             }
@@ -838,7 +838,7 @@ var fluid = fluid || {};
                         "rule": {
                             "required": true
                         },
-                        "message": "schema-validator-required"
+                        "message": "gpii.schema.messages.validationErrors.required"
                     }
                 ]
             }
@@ -888,7 +888,7 @@ var fluid = fluid || {};
                         "rule": {
                             "maxLength": 1
                         },
-                        "message": "schema-validator-maxLength"
+                        "message": "gpii.schema.messages.validationErrors.maxLength"
                     },
                     {
                         "dataPath": [],
@@ -906,7 +906,7 @@ var fluid = fluid || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "schema-validator-then"
+                        "message": "gpii.schema.messages.validationErrors.then"
                     }
                 ]
             }
@@ -938,7 +938,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "string"
                         },
-                        "message": "schema-validator-type"
+                        "message": "gpii.schema.messages.validationErrors.type"
                     }
                 ]
             }
@@ -971,7 +971,7 @@ var fluid = fluid || {};
                         "rule": {
                             "uniqueItems": true
                         },
-                        "message": "schema-validator-uniqueItems"
+                        "message": "gpii.schema.messages.validationErrors.uniqueItems"
                     }
                 ]
             }
