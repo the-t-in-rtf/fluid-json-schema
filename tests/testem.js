@@ -27,7 +27,7 @@ var testemComponent = gpii.testem.instrumentation({
         gated: "/gated"
     },
     testemOptions: {
-        skip: "PhantomJS,Safari,IE"
+        skip: "PhantomJS,Safari,IE,Chrome" // Testem now has a "Chrome Headless" launcher built in, so we disable the headed version.
     },
     components: {
         express: {
