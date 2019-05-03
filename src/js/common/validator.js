@@ -1,10 +1,14 @@
 /* eslint-env browser */
 /* globals require, Ajv */
+var fluid  = fluid  || {};
 (function (fluid, Ajv) {
     "use strict";
 
-    if (!fluid) {
+    if (!fluid.identity) {
         fluid = require("infusion");
+    }
+
+    if (fluid.require) {
         require("./gss-metaschema");
         require("./validation-errors");
     }

@@ -1,8 +1,9 @@
 /* globals require */
+var fluid  = fluid  || {};
 (function (fluid) {
     "use strict";
 
-    if (!fluid) {
+    if (!fluid.identity) {
         fluid = require("infusion");
         require("./validator");
     }
