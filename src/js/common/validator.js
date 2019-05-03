@@ -130,12 +130,26 @@
 
     /**
      *
+     * @typedef gssValidationError
+     * @property {Array<String>} dataPath - The path to the failure within the validated material.
+     * @property {Array<String>} schemaPath - The path to the broken rule within the GSS schema.
+     * @property {GssSchema} rule - The specific "rule" that was broken, which is itself a GSS schema.
+     * @property {String} message - An error message (or message key to be resolved to a localised/translated error message).
+     *
+     * @typedef gssValidationResults
+     * @property {Boolean} isValid - `true` if the payload was valid according to the schema, `false` otherwise.
+     * @property {Array<gssValidationError>} [errors] - If the payload was invalid, the details of the validation error(s).
+     *
+     */
+
+    /**
+     *
      * Validate material against a "GPII Schema System" schema.
      *
      * @param {Any} toValidate - The material to be validated.
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
-     * @return {Object} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
+     * @return {gssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
     gpii.schema.validator.validate = function (toValidate, gssSchema, ajvOptions) {
@@ -162,11 +176,20 @@
 
     /**
      *
+     * @typedef schemaValidationResult
+     * @property {Boolean} isError - `true` if there is a validation, `false` (or missing) otherwise.
+     * @property {String} message - A summary of the result.
+     * @property {Array<ajvError>} - An array of validation errors returned by AJV when validating the schema.
+     *
+     */
+
+    /**
+     *
      * Validate a "GPII Schema System" schema.
      *
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
-     * @return {Object} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
+     * @return {schemaValidationResult} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
     gpii.schema.validator.validateSchema = function (gssSchema, ajvOptions) {
@@ -180,7 +203,7 @@
             return {};
         }
         else {
-            return { isError: true, message: "Invalid GSS Schema:\n" + JSON.stringify(ajv.errors, null, 2) };
+            return { isError: true, message: "Invalid GSS Schema.", errors: ajv.errors};
         }
     };
 
@@ -194,6 +217,7 @@
      *
      * @param {String} item - An item to be evaluated.
      * @return {Boolean} - True if the item is of non-zero length, false otherwise.
+     *
      */
     gpii.schema.removeEmptyItems = function (item) { return (typeof item === "string" && item.length) || Number.isInteger(item); };
 
@@ -235,6 +259,7 @@
      *
      * @param {ajvError} ajvError - A single raw validation error as returned by AJV.
      * @return {Array.<String>} - An array of EL path segments that point to the failing rule in the schema.
+     *
      */
     gpii.schema.validator.extractElSchemaPathSegmentsFromError = function (ajvError) {
         var rawSegments = gpii.schema.validator.jsonPointerToElPath(ajvError.schemaPath);
@@ -262,6 +287,7 @@
      *
      * @param {String} rawSegment - The string to be sanitised.
      * @return {String} - The string, with a leading dot removed.
+     *
      */
     gpii.schema.validator.trimLeadingDot = function (rawSegment) {
         return typeof rawSegment === "string" && rawSegment.indexOf(".") === 0 ? rawSegment.substring(1) : rawSegment;
@@ -309,7 +335,7 @@
      * which is not guaranteed to remain available.
      *
      * @param {Array<String>} rulePath - An array of EL path segments.
-     * @param {Object} gssSchema - A GSS schema.
+     * @param {GssSchema} gssSchema - A GSS schema.
      * @param {String} defaultMessage - The default message to use if no information is found in the schema.
      * @return {String} - A message key for the given error, or the unaltered default message if no message key is found.
      *
@@ -374,9 +400,9 @@
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {Object} gssSchema - A GSS schema.
+     * @param {GssSchema} gssSchema - A GSS schema.
      * @param {ajvErrors|Boolean} ajvErrors - The raw errors returned by AJV, if there are any, or `false` if there are no validation Errors.
-     * @return {Object} - An object detailing the validation results (see above).
+     * @return {gssValidationResults} - An object detailing the validation results (see above).
      *
      */
     gpii.schema.validator.standardiseAjvErrors = function (gssSchema, ajvErrors) {
@@ -423,7 +449,7 @@
      *
      * @param {Array<Object>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
      * @param {Any} validatedData - The (optional) data that was validated.
-     * @param {Object} messages - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
+     * @param {Object<String,String>} messages - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
      * @param {Object} localisationTransform - An optional set of rules that control what information is available when localising validation errors (see above).
      * @return {Array<Object>} - The validation errors, with all message keys replaced with localised strings.
      *
