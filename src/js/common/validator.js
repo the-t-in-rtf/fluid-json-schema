@@ -451,11 +451,11 @@ var fluid  = fluid  || {};
      * If you want to pass a custom message bundle to this function, it should only contain top-level elements, see
      * ./src/js/validation-errors.js in this package for an example.
      *
-     * @param {Array<Object>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
+     * @param {Array<gssValidationError>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
      * @param {Any} validatedData - The (optional) data that was validated.
      * @param {Object<String,String>} messages - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
      * @param {Object} localisationTransform - An optional set of rules that control what information is available when localising validation errors (see above).
-     * @return {Array<Object>} - The validation errors, with all message keys replaced with localised strings.
+     * @return {Array<gssValidationError>} - The validation errors, with all message keys replaced with localised strings.
      *
      */
     gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messages, localisationTransform) {
