@@ -136,13 +136,13 @@ shown here:
             "dataPath": ["requiredField"],
             "schemaPath": ["properties", "requiredField", "required"],
             "rule": { "required": true },
-            "message": "validation-required-field-missing"
+            "message": "gpii.schema.messages.validationErrors.required"
         },
         {
             "dataPath": ["deep", "booleanField"],
             "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
             "rule": { "type": "boolean" },
-            "message": "validation-invalid-field-type"
+            "message": "gpii.schema.messages.validationErrors.type"
         }
     ]
 }
@@ -171,12 +171,12 @@ var error = {
     "dataPath": ["deep", "booleanField"],
     "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
     "rule": { "type": "boolean" },
-    "message": "validation-invalid-field-type"
+    "message": "gpii.schema.messages.validationErrors.type"
 };
 
 // This is simplified for illustration purposes, this would nearly always be delivered as part of a more complex bundle.
 var messages = {
-    "validation-invalid-field-type": "The value supplied should be a(n) %rule.type."
+    "gpii.schema.messages.validationErrors.type": "The value supplied should be a(n) %rule.type."
 };
 
 var message = fluid.stringTemplate(messages[error.message], error); // The value supplied should be a(n) boolean.
