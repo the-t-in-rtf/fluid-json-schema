@@ -1,13 +1,13 @@
 {{#if message}}
     <div class="callout alert">{{message}}</div>
 {{/if}}
-{{#if fieldErrors}}
+{{#if validationResults.errors}}
     <div data-alert class="callout alert fieldErrors" tabindex="0" aria-live="assertive" role="alertdialog">
         <p>The information you provided is incomplete or incorrect.  Please check the following:</p>
 
         <ul>
-            {{#each fieldErrors}}
-                <li>{{message}}</li>
+            {{#each validationResults.errors}}
+                <li>{{dataPath}}: {{messageHelper message}}</li>
             {{/each}}
         </ul>
     </div>

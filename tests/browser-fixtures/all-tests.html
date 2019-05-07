@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>gpii-json-schema browser "all tests" rollup.</title>
+
+        <link rel="stylesheet" href="../../node_modules/infusion/tests/lib/qunit/css/qunit.css" />
+        <script src="../../node_modules/infusion/tests/lib/qunit/js/qunit.js"></script>
+        <link rel="stylesheet" href="../../node_modules/infusion/tests/lib/qunit/addons/composite/qunit-composite.css">
+        <script src="/testem.js"></script>
+        <script src="../../node_modules/infusion/tests/lib/qunit/addons/composite/qunit-composite.js"></script>
+        <script>
+            // We use one path convention for Testem, another when Testem isn't available, i.e. when the tests are hosted in a web server.
+            var rawTestSuitePaths = [
+                "/tests/browser-fixtures/errorBinder-tests.html",
+                "/tests/browser-fixtures/metaschema-tests.html",
+                "/tests/browser-fixtures/validator-tests.html",
+                "/tests/browser-fixtures/schema-validated-modelComponent-tests.html",
+                "/tests/browser-fixtures/schema-validated-component-tests.html",
+                "/tests/browser-fixtures/schema-validated-component-pre-potentia-ii-tests.html"
+            ];
+            var testSuitePaths = typeof Testem !== "undefined" ? rawTestSuitePaths : rawTestSuitePaths.map(function (entry) { return "../../.." + entry; });
+            QUnit.testSuites(testSuitePaths);
+        </script>
+    </head>
+    <body>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+    </body>
+</html>
