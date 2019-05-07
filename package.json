@@ -31,6 +31,7 @@
         "gpii-grunt-lint-all": "1.0.5",
         "gpii-testem": "2.1.10-dev.20190404T122608Z.b51705e.GPII-3457",
         "grunt": "1.0.4",
+        "handlebars": "4.1.0",
         "markdown-it": "8.4.2",
         "mkdirp": "0.5.1",
         "node-jqunit": "1.1.8",
