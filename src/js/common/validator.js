@@ -171,10 +171,15 @@ var fluid  = fluid  || {};
             // We have to validate against a transformed copy of the original rawSchema so that AJV can enforce our
             // required fields, which it would otherwise ignore.
             var rawSchema = gpii.schema.gssToJsonSchema(gssSchema);
-            var validator = ajv.compile(rawSchema);
-            validator(toValidate);
+            try {
+                var validator = ajv.compile(rawSchema);
+                validator(toValidate);
 
-            return gpii.schema.validator.standardiseAjvErrors(gssSchema, validator.errors);
+                return gpii.schema.validator.standardiseAjvErrors(gssSchema, validator.errors);
+            }
+            catch (error) {
+                return { isError: true, message: "Error compiling GSS Schema.", errors: ajv.errors};
+            }
         }
     };
 
@@ -519,7 +524,7 @@ var fluid  = fluid  || {};
             }
 
             // If the GSS segment is an object, filter out our distinct keys such as `required` and `errors`.
-            var filteredSegment = Array.isArray(gssSegment) ? gssSegment : fluid.filterKeys(gssSegment, ["required", "hint", "errors", "enumLabels"], true);
+            var filteredSegment = Array.isArray(gssSegment) ? gssSegment : fluid.filterKeys(gssSegment, ["required", "hint", "errors", "enumLabels", "$schema"], true);
             fluid.each(filteredSegment, function (value, key) {
                 // Preserve the value, making sure to give each nested object a chance to pull up its own list of required fields.
                 if (typeof value === "object") {

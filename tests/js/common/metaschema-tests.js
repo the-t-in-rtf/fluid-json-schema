@@ -96,5 +96,35 @@ var jqUnit = jqUnit || {};
         });
 
         jqUnit.assertFalse("Additional properties not found in the GSS schema should be disallowed.", additionalPropertiesAllowed);
+
+        var nestedSchemasAllowed = ajv.validateSchema({
+            "$schema": "gss-v7-full#",
+            properties: {
+                named: {
+                    "anyOf": [
+                        { $schema: "gss-v7-full#", type: "string" }
+                    ],
+                    "allOf": [
+                        { $schema: "gss-v7-full#", maxLength: 3},
+                        { $schema: "gss-v7-full#", minLength: 1}
+                    ],
+                    "oneOf": [
+                        { $schema: "gss-v7-full#", format: "email" },
+                        { $schema: "gss-v7-full#", format: "uri" }
+                    ]
+                }
+            },
+            additionalProperties: {
+                type: "object",
+                properties: {
+                    settings: {
+                        $schema: "gss-v7-full#",
+                        type: "string"
+                    }
+                }
+            }
+        });
+
+        jqUnit.assertTrue("Nested $schema elements should be handled correctly.", nestedSchemasAllowed);
     });
 })(fluid, Ajv, jqUnit);

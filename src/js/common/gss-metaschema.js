@@ -12,7 +12,7 @@ var fluid  = fluid  || {};
     gpii.schema.metaSchema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "$id": "gss-v7-full#",
-        "title": "Fluid Schema-Lite syntax.",
+        "title": "GPII Schema Syntax.",
         "definitions": {
             "schemaArray": {
                 "type": "array",
@@ -21,7 +21,7 @@ var fluid  = fluid  || {};
             },
             "messageKey": {
                 "type": "string",
-                "pattern": "^[a-zA-Z0-9-_]+"
+                "pattern": "^[a-zA-Z0-9-_\.]+"
             },
             "messageKeyMap": {
                 "type": "object",
