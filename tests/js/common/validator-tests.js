@@ -379,6 +379,55 @@ var jqUnit = jqUnit || {};
                         "message": "custom-generic-error"
                     }]
                 }
+            },
+            schemaInData: {
+                message: "We should be able to validate schemas nested within a block of data.",
+                toValidate: {
+                    name: "my custom data structure",
+                    schema: {
+                        $schema: "gss-v7-full#",
+                        type: "object",
+                        properties: {
+                            colour: {
+                                enum: ["#ff0000", "#0000ff", "#00ff00"],
+                                enumLabels: ["Red", "Blue", "Green"]
+                            }
+                        }
+                    }
+                },
+                schema: {
+                    $schema: "gss-v7-full#",
+                    properties: {
+                        name: {
+                            type: "string",
+                            required: true
+                        },
+                        schema: {
+                            $ref: "gss-v7-full#",
+                            required: true
+                        }
+                    }
+                },
+                expected: {
+                    isValid: true
+                }
+            },
+            nestedDollarSchema: {
+                message: "We should be able to handle nested $schema elements.",
+                schema: {
+                    "$schema": "gss-v7-full#",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$schema": "gss-v7-full#",
+                        "type": "string"
+                    }
+                },
+                toValidate: {
+                    "foo": "bar"
+                },
+                expected: {
+                    isValid: true
+                }
             }
         };
         fluid.each(testDefs, function (testDef) {
