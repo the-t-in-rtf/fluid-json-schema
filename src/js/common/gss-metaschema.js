@@ -21,7 +21,7 @@ var fluid  = fluid  || {};
             },
             "messageKey": {
                 "type": "string",
-                "pattern": "^[a-zA-Z0-9-_\.]*"
+                "pattern": "^[a-zA-Z0-9-_\.]+"
             },
             "messageKeyMap": {
                 "type": "object",
