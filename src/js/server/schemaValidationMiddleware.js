@@ -27,28 +27,35 @@ require("../common/schemaValidatedComponent");
  * validation errors.
  *
  * @param {Object} that - The middleware component itself.
+ * @param {Object|Promise} schema - The GSS schema to validate against, or a promise that will resolve to same.
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
  * @param {Function} next - The function to be executed next in the middleware chain.
  *
  */
-gpii.schema.validationMiddleware.rejectOrForward  = function (that, req, res, next) {
+gpii.schema.validationMiddleware.rejectOrForward  = function (that, schema, req, res, next) {
     var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
 
-    var validationResults = gpii.schema.validator.validate(toValidate, that.options.inputSchema, that.options.ajvOptions);
+    var schemaAsPromise = fluid.isPromise(schema) ? schema : fluid.toPromise(schema);
+    schemaAsPromise.then(
+        function (schema) {
+            var validationResults = gpii.schema.validator.validate(toValidate, schema, that.options.ajvOptions);
 
-    if (validationResults.isError) {
-        next(validationResults);
-    }
-    else if (validationResults.isValid) {
-        next();
-    }
-    else {
-        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, that.model.messages, that.options.localisationTransform);
-        var localisedPayload = fluid.copy(validationResults);
-        localisedPayload.errors = localisedErrors;
-        next(localisedPayload);
-    }
+            if (validationResults.isError) {
+                next(validationResults);
+            }
+            else if (validationResults.isValid) {
+                next();
+            }
+            else {
+                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, that.model.messages, that.options.localisationTransform);
+                var localisedPayload = fluid.copy(validationResults);
+                localisedPayload.errors = localisedErrors;
+                next(localisedPayload);
+            }
+        },
+        next
+    );
 };
 
 /*
@@ -99,7 +106,7 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
     invokers: {
         middleware: {
             funcName: "gpii.schema.validationMiddleware.rejectOrForward",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // request, response, next
+            args:     ["{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
         }
     }
 });
@@ -136,14 +143,15 @@ fluid.registerNamespace("gpii.schema.kettle.middleware");
  * Call the base validation function and handle its output in the way that is expected for `kettle.middleware` grades.
  *
  * @param {Object} that - The `kettle.middleware` component (see below).
+ * @param {Object} schema - The GSS schema to validate against.
  * @param {Object} req  - The Express request object.
  * @return {Promise}    - A `fluid.promise` that is resolved if the request is validated and rejected if the request is
  *                        invalid.
  */
-gpii.schema.kettle.middleware.handle  = function (that, req) {
+gpii.schema.kettle.middleware.handle  = function (that, schema, req) {
     var validationPromise = fluid.promise();
 
-    gpii.schema.validationMiddleware.rejectOrForward(that, req.req, undefined, function (error) {
+    gpii.schema.validationMiddleware.rejectOrForward(that, schema, req.req, undefined, function (error) {
         if (error) {
             validationPromise.reject(fluid.extend({}, error, that.options.errorTemplate));
         }
@@ -165,7 +173,7 @@ fluid.defaults("gpii.schema.kettle.middleware", {
     invokers: {
         handle: {
             funcName: "gpii.schema.kettle.middleware.handle",
-            args: ["{that}", "{arguments}.0"] // request
+            args: ["{that}", "{that}.options.inputSchema", "{arguments}.0"] // schema, request
         }
     }
 });
