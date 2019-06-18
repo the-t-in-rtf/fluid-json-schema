@@ -11,6 +11,8 @@ var fluid  = fluid  || {};
     if (fluid.require) {
         require("./gss-metaschema");
         require("./validation-errors");
+        require("./hashString");
+        require("./orderedStringify");
     }
 
     if (!Ajv) {
@@ -148,21 +150,47 @@ var fluid  = fluid  || {};
 
     /**
      *
-     * Validate material against a "GPII Schema System" schema.
+     * Validate material against a "GPII Schema System" schema using a precompiled AJV "validator".
      *
-     * @param {Any} toValidate - The material to be validated.
+     * @param {Object} that - The validator component.
      * @param {GssSchema} gssSchema - A GSS schema definition.
-     * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
+     * @param {Any} toValidate - The material to be validated.
+     * @param {String} [schemaHash] - An optional unique hash of the schema (used for cache lookups).
      * @return {gssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
-    gpii.schema.validator.validate = function (toValidate, gssSchema, ajvOptions) {
+    gpii.schema.validator.validate = function (that, gssSchema, toValidate, schemaHash) {
+        if (!schemaHash) {
+            schemaHash = gpii.schema.hashString(gpii.schema.stringify(gssSchema));
+        }
+
+        var validator = that.validatorsByHash[schemaHash];
+        if (!validator) {
+            try {
+                validator = gpii.schema.validator.compileSchema(gssSchema, that.options.ajvOptions);
+                that.validatorsByHash[schemaHash] = validator;
+            }
+            catch (compileErrors) {
+                return { isError: true, message: "Error compiling GSS Schema.", errors: compileErrors};
+            }
+        }
+
+        validator(toValidate);
+        return validator.standardiseAjvErrors();
+    };
+
+    /**
+     * @param {GssSchema} gssSchema - A GSS schema definition.
+     * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
+     * @return {Object} - The compiled AJV validator.
+     */
+    gpii.schema.validator.compileSchema = function (gssSchema, ajvOptions) {
         ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
 
         // Validate the GSS schema against the metaschema before proceeding.
         var schemaValidationResults = gpii.schema.validator.validateSchema(gssSchema, ajvOptions);
         if (schemaValidationResults.isError) {
-            return schemaValidationResults;
+            throw schemaValidationResults.errors;
         }
         else {
             var ajv = new Ajv(ajvOptions);
@@ -171,15 +199,11 @@ var fluid  = fluid  || {};
             // We have to validate against a transformed copy of the original rawSchema so that AJV can enforce our
             // required fields, which it would otherwise ignore.
             var rawSchema = gpii.schema.gssToJsonSchema(gssSchema);
-            try {
-                var validator = ajv.compile(rawSchema);
-                validator(toValidate);
-
+            var validator = ajv.compile(rawSchema);
+            validator.standardiseAjvErrors = function () {
                 return gpii.schema.validator.standardiseAjvErrors(gssSchema, validator.errors);
-            }
-            catch (error) {
-                return { isError: true, message: "Error compiling GSS Schema.", errors: ajv.errors};
-            }
+            };
+            return validator;
         }
     };
 
@@ -572,4 +596,24 @@ var fluid  = fluid  || {};
         });
         return requiredChildren;
     };
+
+    // A global component that validates material using the above static functions.  Handles the expensive initial
+    // compilation of the schema.  For performance reasons, this is not itself a schema-validated component.
+    fluid.defaults("gpii.schema.validator", {
+        gradeNames: ["fluid.component", "fluid.resolveRootSingle"],
+        singleRootType: "gpii.schema.validator",
+        members: {
+            validatorsByHash: {
+            }
+        },
+        invokers: {
+            validate: {
+                funcName: "gpii.schema.validator.validate",
+                args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // gssSchema, toValidate, schemaHash
+            }
+        }
+    });
+
+    // The global validator cache should always be available.
+    gpii.schema.validator();
 })(fluid, typeof Ajv !== "undefined" ? Ajv : false);

@@ -16,17 +16,24 @@ var fluid  = fluid  || {};
      *
      * Validate the model against the associated schema (options.modelSchema).
      *
-     * @param {Object} that - The component itself.
+     * @param {Object} globalValidator - The global validation component.
+     * @param {Object} modelValidationComponent - The component itself.
      *
      */
-    gpii.schema.modelComponent.validateModel = function (that) {
-        var validationResults = gpii.schema.validator.validate(that.model, that.options.modelSchema);
+    gpii.schema.modelComponent.validateModel = function (globalValidator, modelValidationComponent) {
+        if (!modelValidationComponent.schemaHash) {
+            modelValidationComponent.schemaHash = gpii.schema.hashString(gpii.schema.stringify(modelValidationComponent.options.modelSchema));
+        }
+        var validationResults = globalValidator.validate(modelValidationComponent.options.modelSchema, modelValidationComponent.model, modelValidationComponent.schemaHash);
         // Flag this change as a result of validation so that we can avoid multiple validation passes per model change.
-        that.applier.change("validationResults", validationResults, "ADD", "validation");
+        modelValidationComponent.applier.change("validationResults", validationResults, "ADD", "validation");
     };
 
     fluid.defaults("gpii.schema.modelComponent", {
         gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
+        members: {
+            schemaHash: false
+        },
         schema: {
             properties: {
                 "model": { "type": "object"},
@@ -76,7 +83,7 @@ var fluid  = fluid  || {};
             "*": {
                 excludeSource: "validation",
                 funcName: "gpii.schema.modelComponent.validateModel",
-                args: ["{that}"]
+                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
         }
     });

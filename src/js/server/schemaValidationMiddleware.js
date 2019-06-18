@@ -26,20 +26,21 @@ require("../common/schemaValidatedComponent");
  * no arguments.  If there are errors, the `next` callback is called with a localised/internationalised copy of the
  * validation errors.
  *
- * @param {Object} that - The middleware component itself.
+ * @param {Object} validatorComponent - The middleware component itself.
+ * @param {Object} schemaMiddlewareComponent - The middleware component itself.
  * @param {Object|Promise} schema - The GSS schema to validate against, or a promise that will resolve to same.
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
  * @param {Function} next - The function to be executed next in the middleware chain.
  *
  */
-gpii.schema.validationMiddleware.rejectOrForward  = function (that, schema, req, res, next) {
-    var toValidate = fluid.model.transformWithRules(req, that.options.rules.requestContentToValidate);
+gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent, schemaMiddlewareComponent, schema, req, res, next) {
+    var toValidate = fluid.model.transformWithRules(req, schemaMiddlewareComponent.options.rules.requestContentToValidate);
 
     var schemaAsPromise = fluid.isPromise(schema) ? schema : fluid.toPromise(schema);
     schemaAsPromise.then(
         function (schema) {
-            var validationResults = gpii.schema.validator.validate(toValidate, schema, that.options.ajvOptions);
+            var validationResults = validatorComponent.validate(schema, toValidate);
 
             if (validationResults.isError) {
                 next(validationResults);
@@ -48,7 +49,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (that, schema, req,
                 next();
             }
             else {
-                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, that.model.messages, that.options.localisationTransform);
+                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, schemaMiddlewareComponent.model.messages, schemaMiddlewareComponent.options.localisationTransform);
                 var localisedPayload = fluid.copy(validationResults);
                 localisedPayload.errors = localisedErrors;
                 next(localisedPayload);
@@ -106,7 +107,7 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
     invokers: {
         middleware: {
             funcName: "gpii.schema.validationMiddleware.rejectOrForward",
-            args:     ["{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
+            args:     ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
         }
     }
 });
@@ -142,18 +143,19 @@ fluid.registerNamespace("gpii.schema.kettle.middleware");
  *
  * Call the base validation function and handle its output in the way that is expected for `kettle.middleware` grades.
  *
- * @param {Object} that - The `kettle.middleware` component (see below).
+ * @param {Object} validatorComponent - The global "validator" component.
+ * @param {Object} kettleMiddlewareComponent - The `kettle.middleware` component (see below).
  * @param {Object} schema - The GSS schema to validate against.
  * @param {Object} req  - The Express request object.
  * @return {Promise}    - A `fluid.promise` that is resolved if the request is validated and rejected if the request is
  *                        invalid.
  */
-gpii.schema.kettle.middleware.handle  = function (that, schema, req) {
+gpii.schema.kettle.middleware.handle = function (validatorComponent, kettleMiddlewareComponent, schema, req) {
     var validationPromise = fluid.promise();
 
-    gpii.schema.validationMiddleware.rejectOrForward(that, schema, req.req, undefined, function (error) {
+    gpii.schema.validationMiddleware.rejectOrForward(validatorComponent, kettleMiddlewareComponent, schema, req.req, undefined, function (error) {
         if (error) {
-            validationPromise.reject(fluid.extend({}, error, that.options.errorTemplate));
+            validationPromise.reject(fluid.extend({}, error, kettleMiddlewareComponent.options.errorTemplate));
         }
         else {
             validationPromise.resolve();
@@ -173,7 +175,7 @@ fluid.defaults("gpii.schema.kettle.middleware", {
     invokers: {
         handle: {
             funcName: "gpii.schema.kettle.middleware.handle",
-            args: ["{that}", "{that}.options.inputSchema", "{arguments}.0"] // schema, request
+            args: ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0"] // schema, request
         }
     }
 });
