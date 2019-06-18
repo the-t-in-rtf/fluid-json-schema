@@ -21,19 +21,13 @@ var fluid  = fluid  || {};
      *
      */
     gpii.schema.modelComponent.validateModel = function (globalValidator, modelValidationComponent) {
-        if (!modelValidationComponent.schemaHash) {
-            modelValidationComponent.schemaHash = gpii.schema.hashString(gpii.schema.stringify(modelValidationComponent.options.modelSchema));
-        }
-        var validationResults = globalValidator.validate(modelValidationComponent.options.modelSchema, modelValidationComponent.model, modelValidationComponent.schemaHash);
+        var validationResults = globalValidator.validate(modelValidationComponent.options.modelSchema, modelValidationComponent.model);
         // Flag this change as a result of validation so that we can avoid multiple validation passes per model change.
         modelValidationComponent.applier.change("validationResults", validationResults, "ADD", "validation");
     };
 
     fluid.defaults("gpii.schema.modelComponent", {
         gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
-        members: {
-            schemaHash: false
-        },
         schema: {
             properties: {
                 "model": { "type": "object"},

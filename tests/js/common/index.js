@@ -1,6 +1,5 @@
 /* eslint-env node */
 "use strict";
-require("./hashString-tests");
 require("./metaschema-tests");
 require("./orderedStringify-tests");
 require("./schema-validated-modelComponent-tests");

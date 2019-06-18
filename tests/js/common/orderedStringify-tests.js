@@ -58,6 +58,6 @@ var jqUnit = jqUnit || {};
         var end = Date.now() - start;
         var avgTime = end / passes;
         fluid.log("Completed " + passes + " stringify passes in " + end + " ms (avg. " + avgTime + " ms per pass).");
-        jqUnit.assertTrue("Stringify should complete in a timely fashion.", end < 2000);
+        jqUnit.assertTrue("Stringify should complete in a timely fashion.", end < 5000);
     });
 })(fluid, jqUnit);

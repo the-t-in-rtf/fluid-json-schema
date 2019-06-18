@@ -11,7 +11,6 @@ var fluid  = fluid  || {};
     if (fluid.require) {
         require("./gss-metaschema");
         require("./validation-errors");
-        require("./hashString");
         require("./orderedStringify");
     }
 
@@ -155,14 +154,11 @@ var fluid  = fluid  || {};
      * @param {Object} that - The validator component.
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Any} toValidate - The material to be validated.
-     * @param {String} [schemaHash] - An optional unique hash of the schema (used for cache lookups).
      * @return {gssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
-    gpii.schema.validator.validate = function (that, gssSchema, toValidate, schemaHash) {
-        if (!schemaHash) {
-            schemaHash = gpii.schema.hashString(gpii.schema.stringify(gssSchema));
-        }
+    gpii.schema.validator.validate = function (that, gssSchema, toValidate) {
+        var schemaHash = gpii.schema.stringify(gssSchema);
 
         var validator = that.validatorsByHash[schemaHash];
         if (!validator) {
