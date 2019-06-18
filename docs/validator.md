@@ -1,18 +1,21 @@
 # Validation
 
-This package provides static functions that can be used to validate JSON data against [a GSS schema](./gss.md).
+## `gpii.schema.validator`
 
-## Validation Functions
+This package provides a global validator that is instantiated when requiring this package from node, or when including
+the validator source from a browser.  Once you have done either, you can access the global validator using an IoC
+reference, as shown in the example at end of this page.
 
-### `gpii.schema.validator.validate(toValidate, gssSchema, [ajvOptions])`
+### Component Invokers
 
+### `{gpii.schema.validator}.validate(toValidate, gssSchema)`
+
+* `{Object} gssSchema`: A GSS schema definition.
 * `{Any} toValidate`: The material to be validated.
-* `{Object} gssSchema`:A GSS schema definition.
-* `{Object} ajvOptions`:Optional arguments to pass to the underlying AJV validator.
 * Returns: An `{Object}` that describes the validation results.  See below for details.
 
-This function validates material against a "GPII Schema System" schema, and returns an object describing the results.
-If there are no validation errors, the return value should look like:
+This function validates material against [a "GPII Schema System" schema](./gss.md), and returns an object describing
+the results. If there are no validation errors, the return value should look like:
 
 ```json
 { "isValid": true }
@@ -52,6 +55,8 @@ and the raw error message will be displayed in a top-level `messages` element, a
   "message": "Invalid GSS Schema."
 }
 ```
+
+## Error Message Internationalisation/Localisation
 
 ### `gpii.schema.validator.localiseErrors(validationErrors, [validatedData], [messages], [localisationTransform])`
 
@@ -112,15 +117,99 @@ following:
 }
 ```
 
-## Defaults
+### Defaults
 
-### `gpii.schema.validator.defaultI18nKeysByRule`
+#### `gpii.schema.validator.defaultI18nKeysByRule`
 
 For each type of error there is a default message key.  This bundle of defaults has a string template for each of these.
 Any message keys that cannot be found in your message bundle will be looked up against this map and the default string
 template will be used instead.
 
-### `gpii.schema.validator.defaultLocalisationTransformRules`
+#### `gpii.schema.validator.defaultLocalisationTransformRules`
 
 By default, the `error` (validation error) and `data` (the value that broke the rule) are exposed.  See above for an
 example of changing this behaviour.
+
+## Example Usage
+
+Here is an example of how you might make use of the global validator in your own component.
+
+```javascript
+/* eslint-env node */
+"use strict";
+var fluid = require("infusion");
+
+fluid.require("%gpii-json-schema");
+var gpii = fluid.registerNamespace("gpii");
+
+var my = fluid.registerNamespace("my");
+
+fluid.registerNamespace("my.validating.component");
+
+my.validating.component.validateInput = function (that, globalValidator, toValidate) {
+    var validationResults = globalValidator.validate(that.options.schema, toValidate);
+    if (validationResults.isValid) {
+        return { isValid: true };
+    }
+    else {
+        return { isValid: false, errors: gpii.schema.validator.localiseErrors(validationResults.errors, toValidate) };
+    }
+};
+
+fluid.defaults("my.validating.component", {
+    gradeNames: ["fluid.component"],
+    schema: {
+        "$schema": "gss-v7-full#",
+        type: "object",
+        properties: {
+            foo: {
+                type: "boolean",
+                required: true
+            }
+        }
+    },
+    invokers: {
+        validateInput: {
+            funcName: "my.validating.component.validateInput",
+            args: ["{that}", "{gpii.schema.validator}", "{arguments}.0"]
+        }
+    }
+});
+
+var myValidatingComponent = my.validating.component();
+
+var validationResults = myValidatingComponent.validateInput({});
+console.log(JSON.stringify(validationResults, null, 2));
+/*
+    {
+      "isValid": false,
+      "errors": [
+        {
+          "message": "This value is required.",
+          "dataPath": [
+            "foo"
+          ],
+          "schemaPath": [
+            "properties",
+            "foo",
+            "required"
+          ],
+          "rule": {
+            "type": "boolean",
+            "required": true
+          }
+        }
+      ]
+    }
+*/
+
+var secondValidationResults = myValidatingComponent.validateInput({ foo: true});
+console.log(JSON.stringify(secondValidationResults, null, 2));
+/*
+    {
+      isValid: true
+    }
+*/
+```
+
+In the above example, the invoker definition includes an IoC reference to the global component in its `args` block.
