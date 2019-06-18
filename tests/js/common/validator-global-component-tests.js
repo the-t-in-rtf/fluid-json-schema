@@ -42,6 +42,11 @@ var jqUnit = jqUnit || {};
         var secondRunMs = Date.now() - beforeSecondRun;
 
         jqUnit.assertTrue("The second run should be faster than the first.", secondRunMs < firstRunMs);
+
+        globalValidator.clearCache();
+        var cachedSchemaCount = Object.keys(globalValidator.validatorsByHash).length;
+
+        jqUnit.assertEquals("The cache should be empty after it is cleared.", 0, cachedSchemaCount);
     };
 
     fluid.defaults("gpii.tests.schema.globalValidator.caseHolder", {

@@ -610,6 +610,10 @@ var fluid  = fluid  || {};
             validate: {
                 funcName: "gpii.schema.validator.validate",
                 args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // gssSchema, toValidate, schemaHash
+            },
+            clearCache: {
+                funcName: "fluid.set",
+                args:     ["{that}", "validatorsByHash", {}] // model, path, newValue
             }
         }
     });

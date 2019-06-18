@@ -56,6 +56,14 @@ and the raw error message will be displayed in a top-level `messages` element, a
 }
 ```
 
+### `{gpii.schema.validator}.clearCache()`
+
+* Returns: Nothing.
+
+As the compilation of a schema is quite expensive, the global validator has an internal cache that stores a compiled
+version of each schema that has been used for validation.  This cache can be cleared by calling the validation
+component's `clearCache` invoker.
+
 ## Error Message Internationalisation/Localisation
 
 ### `gpii.schema.validator.localiseErrors(validationErrors, [validatedData], [messages], [localisationTransform])`
