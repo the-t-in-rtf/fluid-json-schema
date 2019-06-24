@@ -1,4 +1,5 @@
 /* globals require */
+var fluid  = fluid  || {};
 (function (fluid) {
     // TODO: pull this up into Infusion if we need to use this type of object hashing more broadly.
     "use strict";
