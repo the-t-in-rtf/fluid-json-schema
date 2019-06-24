@@ -12,7 +12,7 @@ reference, as shown in the example at end of this page.
 
 * `{Object} gssSchema`: A GSS schema definition.
 * `{Any} toValidate`: The material to be validated.
-* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.hashSchema` (see below).
 * Returns: An `{Object}` that describes the validation results.  See below for details.
 
 This function validates material against [a "GPII Schema System" schema](./gss.md), and returns an object describing
@@ -155,6 +155,19 @@ template will be used instead.
 
 By default, the `error` (validation error) and `data` (the value that broke the rule) are exposed.  See above for an
 example of changing this behaviour.
+
+## `gpii.schema.hashSchema(gssSchema)`
+
+* `{Object} gssSchema`: A GSS schema definition.
+* Returns: A unique `{String}` hash representing the GSS Schema.
+
+Many of the global validation component's invokers accept a "schema hash", which is used to look up the schema in the
+validation component's internal cache.  This static API function is provided to allow you to hash your schema content
+yourself.  If this value is supplied to one of the above invokers, a small amount of time is saved versus calculating
+the hash multiple times from the raw schema.  Each hash typically takes less than 1 millisecond, so the default invokers
+and grades do not store the hashed value.  This function is provided for use cases where an additional 1ms makes a real
+difference in perceived performance, and the process of storing and passing around the schema hash is left up to the
+implementer.
 
 ## Example Usage
 

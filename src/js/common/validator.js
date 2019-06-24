@@ -145,6 +145,16 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
+     * Generate a stable "hash" based on a GSS Schema.  Call this rather than using the underlying function directly.
+     *
+     * @param {GssSchema} toStringify - The material to be "stringified".
+     * @return {String} - A string representing the GSS schema.
+     *
+     */
+    gpii.schema.hashSchema = gpii.schema.stringify;
+
+    /**
+     *
      * Validate material against a "GPII Schema System" schema using a precompiled AJV "validator".
      *
      * @param {Object} that - The validator component.
@@ -155,7 +165,7 @@ var fluid  = fluid  || require("infusion");
      *
      */
     gpii.schema.validator.validate = function (that, gssSchema, toValidate, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
+        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
 
         var validator = that.validatorsByHash[schemaHash];
         if (!validator) {
@@ -182,7 +192,7 @@ var fluid  = fluid  || require("infusion");
      *
      */
     gpii.schema.validator.cacheSchema = function (that, gssSchema, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
+        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
         var validator = gpii.schema.validator.compileSchema(gssSchema, that.options.ajvOptions);
         that.validatorsByHash[schemaHash] = validator;
         return validator;
@@ -198,7 +208,7 @@ var fluid  = fluid  || require("infusion");
      *
      */
     gpii.schema.validator.forgetSchema = function (that, gssSchema, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
+        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
         delete that.validatorsByHash[schemaHash];
     };
 

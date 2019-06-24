@@ -31,7 +31,7 @@ var jqUnit = jqUnit || {};
 
     gpii.tests.schema.globalValidator.checkCache = function (globalValidator) {
         var schema = { type: "string", format: "email" };
-        var schemaHash = gpii.schema.stringify(schema);
+        var schemaHash = gpii.schema.hashSchema(schema);
 
         jqUnit.assertUndefined("There should not be a cache entry for our schema before the first validation run.", globalValidator.validatorsByHash[schemaHash]);
 
