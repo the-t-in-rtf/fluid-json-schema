@@ -25,6 +25,10 @@ var jqUnit = jqUnit || {};
         jqUnit.assertLeftHand(testDef.message, testDef.expected, validationOutput);
     };
 
+    gpii.tests.schema.globalValidator.schemaCount = function (globalValidator) {
+        return Object.keys(globalValidator.validatorsByHash).length;
+    };
+
     gpii.tests.schema.globalValidator.checkCache = function (globalValidator) {
         var schema = { type: "string", format: "email" };
         var schemaHash = gpii.schema.stringify(schema);
@@ -44,9 +48,19 @@ var jqUnit = jqUnit || {};
         jqUnit.assertTrue("The second run should be faster than the first.", secondRunMs < firstRunMs);
 
         globalValidator.clearCache();
-        var cachedSchemaCount = Object.keys(globalValidator.validatorsByHash).length;
+        jqUnit.assertEquals("The cache should be empty after a call to `clearCache`.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
 
-        jqUnit.assertEquals("The cache should be empty after it is cleared.", 0, cachedSchemaCount);
+        globalValidator.cacheSchema(schema);
+        jqUnit.assertEquals("We should be able to cache a schema without a precomputed schemaHash.", 1, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+
+        globalValidator.forgetSchema(schema);
+        jqUnit.assertEquals("We should be able to forget a schema without a precomputed schemaHash.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+
+        globalValidator.cacheSchema(schema, schemaHash);
+        jqUnit.assertEquals("We should be able to cache a schema with a precomputed schemaHash.", 1, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+
+        globalValidator.forgetSchema(schema, schemaHash);
+        jqUnit.assertEquals("We should be able to forget a schema with a precomputed schemaHash.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
     };
 
     fluid.defaults("gpii.tests.schema.globalValidator.caseHolder", {

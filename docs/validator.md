@@ -8,10 +8,11 @@ reference, as shown in the example at end of this page.
 
 ### Component Invokers
 
-### `{gpii.schema.validator}.validate(toValidate, gssSchema)`
+### `{gpii.schema.validator}.validate(toValidate, gssSchema, [schemaHash])`
 
 * `{Object} gssSchema`: A GSS schema definition.
 * `{Any} toValidate`: The material to be validated.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
 * Returns: An `{Object}` that describes the validation results.  See below for details.
 
 This function validates material against [a "GPII Schema System" schema](./gss.md), and returns an object describing
@@ -62,7 +63,24 @@ and the raw error message will be displayed in a top-level `messages` element, a
 
 As the compilation of a schema is quite expensive, the global validator has an internal cache that stores a compiled
 version of each schema that has been used for validation.  This cache can be cleared by calling the validation
-component's `clearCache` invoker.
+component's `clearCache` invoker.  You can also add or remove single schemas from the cache, see below for details.
+
+### `{gpii.schema.validator}.cacheSchema(gssSchema, [schemaHash])`
+
+* `{Object} gssSchema`: A GSS schema definition.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
+* Returns: The validator created by compiling the schema.
+
+If a schema has not already been cached, it is cached the first time it is used by `{gpii.schema.validator}.validate`
+(see above).  You can use this invoker to cache a schema ahead of time.
+
+### `{gpii.schema.validator}.forgetSchema(gssSchema, [schemaHash])`
+
+* `{Object} gssSchema`: A GSS schema definition.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
+* Returns: Nothing.
+
+Remove a single schema from the internal cache.
 
 ## Error Message Internationalisation/Localisation
 

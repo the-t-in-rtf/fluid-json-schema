@@ -154,17 +154,17 @@ var fluid  = fluid  || {};
      * @param {Object} that - The validator component.
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Any} toValidate - The material to be validated.
+     * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      * @return {gssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
-    gpii.schema.validator.validate = function (that, gssSchema, toValidate) {
-        var schemaHash = gpii.schema.stringify(gssSchema);
+    gpii.schema.validator.validate = function (that, gssSchema, toValidate, schemaHash) {
+        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
 
         var validator = that.validatorsByHash[schemaHash];
         if (!validator) {
             try {
-                validator = gpii.schema.validator.compileSchema(gssSchema, that.options.ajvOptions);
-                that.validatorsByHash[schemaHash] = validator;
+                validator = that.cacheSchema(gssSchema, schemaHash);
             }
             catch (compileErrors) {
                 return { isError: true, message: "Error compiling GSS Schema.", errors: compileErrors};
@@ -173,6 +173,37 @@ var fluid  = fluid  || {};
 
         validator(toValidate);
         return validator.standardiseAjvErrors();
+    };
+
+    /**
+     *
+     * Add a single GSS schema to the cache.
+     *
+     * @param {Object} that - The validator component itself.
+     * @param {GssSchema} gssSchema - The original GSS schema.
+     * @param {String} [schemaHash] - An optional precomputed hash of the schema.
+     * @return {Object} - The compiled validator created from the GSS schema.
+     *
+     */
+    gpii.schema.validator.cacheSchema = function (that, gssSchema, schemaHash) {
+        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
+        var validator = gpii.schema.validator.compileSchema(gssSchema, that.options.ajvOptions);
+        that.validatorsByHash[schemaHash] = validator;
+        return validator;
+    };
+
+    /**
+     *
+     * Remove a single previously cached schema from the cache.
+     *
+     * @param {Object} that - The validator component itself.
+     * @param {GssSchema} gssSchema - The original GSS schema.
+     * @param {String} [schemaHash] - An optional precomputed hash of the schema.
+     *
+     */
+    gpii.schema.validator.forgetSchema = function (that, gssSchema, schemaHash) {
+        schemaHash = schemaHash || gpii.schema.stringify(gssSchema);
+        delete that.validatorsByHash[schemaHash];
     };
 
     /**
@@ -606,6 +637,14 @@ var fluid  = fluid  || {};
             validate: {
                 funcName: "gpii.schema.validator.validate",
                 args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // gssSchema, toValidate, schemaHash
+            },
+            cacheSchema: {
+                funcName: "gpii.schema.validator.cacheSchema",
+                args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
+            },
+            forgetSchema: {
+                funcName: "gpii.schema.validator.forgetSchema",
+                args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
             },
             clearCache: {
                 funcName: "fluid.set",
