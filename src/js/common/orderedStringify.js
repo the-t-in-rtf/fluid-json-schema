@@ -1,12 +1,8 @@
 /* globals require */
-var fluid  = fluid  || {};
+var fluid  = fluid  || require("infusion");
 (function (fluid) {
     // TODO: pull this up into Infusion if we need to use this type of object hashing more broadly.
     "use strict";
-
-    if (!fluid.identity) {
-        fluid = require("infusion");
-    }
 
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.schema");
@@ -39,7 +35,7 @@ var fluid  = fluid  || {};
 
     /**
      *
-     * Generates a stringified version of any type of material.
+     * Generates a stringified version of any type of material. Non-API, you should use `gpii.schema.hashSchema`.
      *
      * @param {Any} toStringify - The material to be "stringified".
      * @return {String} - A string representing the the material, suitable for parsing with JSON.parse.

@@ -1,10 +1,7 @@
 /* globals require */
-var fluid  = fluid  || {};
+var fluid  = fluid  || require("infusion");
 (function (fluid) {
     "use strict";
-    if (!fluid.identity) {
-        fluid = require("infusion");
-    }
 
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.schema.messages");
