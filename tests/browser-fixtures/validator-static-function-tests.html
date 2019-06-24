@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Schema-validated Model Component Tests</title>
+        <title>Validator Static Function Tests</title>
 
         <!-- Fluid dependencies -->
         <link rel="stylesheet" media="screen" href="../../node_modules/infusion/tests/lib/qunit/css/qunit.css" />
@@ -18,19 +18,17 @@
         <!-- code under test -->
         <script src="/src/js/common/gss-metaschema.js"></script>
         <script src="/src/js/common/validation-errors.js"></script>
-        <script src="/src/js/common/orderedStringify.js"></script>
         <script src="/src/js/common/validator.js"></script>
-        <script src="/src/js/common/schemaValidatedComponent.js"></script>
-        <script src="/src/js/common/schemaValidatedModelComponent.js"></script>
     </head>
     <body>
-        <h1 id="qunit-header">Schema-validated Model Component Tests</h1>
+        <h1 id="qunit-header">Validator Static Function Tests</h1>
         <h2 id="qunit-banner"></h2>
         <div id="qunit-testrunner-toolbar"></div>
         <h2 id="qunit-userAgent"></h2>
         <ol id="qunit-tests"></ol>
 
         <!-- The tests -->
-        <script src="../js/common/schema-validated-modelComponent-tests.js"></script>
+        <script src="../js/common/validator-tests-ajv-errors-testDefs.js"></script>
+        <script src="../js/common/validator-static-function-tests.js"></script>
     </body>
 </html>

@@ -14,10 +14,12 @@
             var rawTestSuitePaths = [
                 "/tests/browser-fixtures/errorBinder-tests.html",
                 "/tests/browser-fixtures/metaschema-tests.html",
-                "/tests/browser-fixtures/validator-tests.html",
+                "/tests/browser-fixtures/orderedStringify-tests.html",
                 "/tests/browser-fixtures/schema-validated-modelComponent-tests.html",
                 "/tests/browser-fixtures/schema-validated-component-tests.html",
-                "/tests/browser-fixtures/schema-validated-component-pre-potentia-ii-tests.html"
+                "/tests/browser-fixtures/schema-validated-component-pre-potentia-ii-tests.html",
+                "/tests/browser-fixtures/validator-global-component-tests.html",
+                "/tests/browser-fixtures/validator-static-function-tests.html"
             ];
             var testSuitePaths = typeof Testem !== "undefined" ? rawTestSuitePaths : rawTestSuitePaths.map(function (entry) { return "../../.." + entry; });
             QUnit.testSuites(testSuitePaths);

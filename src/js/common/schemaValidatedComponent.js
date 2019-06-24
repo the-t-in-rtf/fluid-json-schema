@@ -1,10 +1,9 @@
 /* globals require */
-var fluid  = fluid  || {};
+var fluid  = fluid  || require("infusion");
 (function (fluid) {
     "use strict";
 
-    if (!fluid.identity) {
-        fluid = require("infusion");
+    if (fluid.require) {
         require("./validator");
     }
 
@@ -12,8 +11,13 @@ var fluid  = fluid  || {};
 
     fluid.registerNamespace("gpii.schema.component");
 
+    /**
+     *
+     * @param {Object} shadowRecord - A "shadow record", which is a version of the component available during the potentia-ii workflow.
+     *
+     */
     gpii.schema.component.validateShadowRecord = function (shadowRecord) {
-        return gpii.schema.component.validateComponent(shadowRecord.that);
+        gpii.schema.component.validateComponent(shadowRecord.that);
     };
 
     /**
@@ -23,16 +27,27 @@ var fluid  = fluid  || {};
      * itself is validated on component creation.  The distinction is handled by a context-aware core grade that mixes
      * in a grade with the correct strategy to use.
      *
+     * We have our own validation code here because the global validator is not available in the context of a
+     * potentia-ii workflow.
+     *
      * @param {Object} componentToValidate - The component to validate.
+     *
      */
     gpii.schema.component.validateComponent = function (componentToValidate) {
         if (fluid.componentHasGrade(componentToValidate, "gpii.schema.component")) {
-            var validationResults = gpii.schema.validator.validate(componentToValidate, componentToValidate.options.schema);
-            if (validationResults.isError) {
-                fluid.fail(validationResults.message);
+            var validator;
+            var isValid = false;
+            try {
+                validator = gpii.schema.validator.compileSchema(componentToValidate.options.schema);
+                isValid = validator(componentToValidate);
             }
-            else if (!validationResults.isValid) {
-                var localisedValidationErrors = gpii.schema.validator.localiseErrors(validationResults.errors);
+            catch (compileErrors) {
+                fluid.fail({ isError: true, message: "Invalid GSS Schema.", errors: compileErrors });
+            }
+
+            if (!isValid) {
+                var standardisedErrors = gpii.schema.validator.standardiseAjvErrors(componentToValidate.options.schema, validator.errors);
+                var localisedValidationErrors = gpii.schema.validator.localiseErrors(standardisedErrors.errors);
                 var errorReport = "";
                 fluid.each(localisedValidationErrors, function (localisedError) {
                     var failurePath = localisedError.dataPath.length ? localisedError.dataPath.join(" -> ") : "(root)";
@@ -58,8 +73,7 @@ var fluid  = fluid  || {};
             local: {
                 validateOptions: {
                     priority: "after:concludeComponentObservation",
-                    funcName: "gpii.schema.component.validateShadowRecord",
-                    args:     ["{that}"]
+                    funcName: "gpii.schema.component.validateShadowRecord"
                 }
             }
         }
