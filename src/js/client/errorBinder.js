@@ -38,7 +38,7 @@
         invokers: {
             renderErrors: {
                 funcName: "gpii.schema.client.errorAwareForm.renderErrors",
-                args:     ["{that}", "{renderer}"]
+                args:     ["{that}", "{renderer}", "{that}.options.templateKeys.inlineError"] // renderer, inlineErrorTemplateKey
             }
         },
         modelListeners: {
@@ -62,8 +62,8 @@
     };
 
     // We need to ensure that both our own markup and the field errors are rendered before we fire `onMarkupRendered`.
-    gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer) {
-        var templateExists = fluid.get(that, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
+    gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer, inlineErrorTemplateKey) {
+        var templateExists = fluid.get(that, ["model", "templates", "pages", inlineErrorTemplateKey]);
         if (templateExists && renderer) {
             // Get rid of any previous validation errors.
             that.locate("fieldError").remove();
@@ -77,7 +77,7 @@
                         var bindingPath = fluid.get(value, "path") || value;
                         fluid.each(that.model.validationResults.errors, function (error) {
                             if (gpii.schema.client.elPathsEqual(error.dataPath, bindingPath)) {
-                                that.renderer.before(fieldElement, that.options.templateKeys.inlineError, error); // element, key, context
+                                that.renderer.before(fieldElement, inlineErrorTemplateKey, error); // element, key, context
                             }
                         });
                     }
