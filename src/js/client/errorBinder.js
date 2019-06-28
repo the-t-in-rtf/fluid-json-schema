@@ -11,7 +11,6 @@
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
-/* globals fluid */
 (function () {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
@@ -38,7 +37,7 @@
         invokers: {
             renderErrors: {
                 funcName: "gpii.schema.client.errorAwareForm.renderErrors",
-                args:     ["{that}", "{renderer}"]
+                args:     ["{that}", "{renderer}"] // renderer
             }
         },
         modelListeners: {
@@ -77,7 +76,7 @@
                         var bindingPath = fluid.get(value, "path") || value;
                         fluid.each(that.model.validationResults.errors, function (error) {
                             if (gpii.schema.client.elPathsEqual(error.dataPath, bindingPath)) {
-                                that.renderer.before(fieldElement, that.options.templateKeys.inlineError, error); // element, key, context
+                                renderer.before(fieldElement, that.options.templateKeys.inlineError, error); // element, key, context
                             }
                         });
                     }

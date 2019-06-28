@@ -74,7 +74,13 @@ var fluid  = fluid  || require("infusion");
         },
         modelListeners: {
             "*": {
-                excludeSource: "validation",
+                excludeSource: ["init", "validation"],
+                funcName: "gpii.schema.modelComponent.validateModel",
+                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+            }
+        },
+        listeners: {
+            "onCreate.validate": {
                 funcName: "gpii.schema.modelComponent.validateModel",
                 args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
