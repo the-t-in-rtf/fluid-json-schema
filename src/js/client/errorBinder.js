@@ -11,7 +11,6 @@
     https://github.com/the-t-in-rtf/gpii-json-schema/blob/master/docs/validator.md
 
  */
-/* globals fluid */
 (function () {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
@@ -38,7 +37,7 @@
         invokers: {
             renderErrors: {
                 funcName: "gpii.schema.client.errorAwareForm.renderErrors",
-                args:     ["{that}", "{renderer}", "{that}.options.templateKeys.inlineError", "{that}.locate"] // renderer, inlineErrorTemplateKey, locator
+                args:     ["{that}", "{renderer}"] // renderer
             }
         },
         modelListeners: {
@@ -62,22 +61,22 @@
     };
 
     // We need to ensure that both our own markup and the field errors are rendered before we fire `onMarkupRendered`.
-    gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer, inlineErrorTemplateKey, locator) {
-        var templateExists = fluid.get(that, ["model", "templates", "pages", inlineErrorTemplateKey]);
-        if (templateExists && renderer && locator) {
+    gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer) {
+        var templateExists = fluid.get(that, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
+        if (templateExists && renderer) {
             // Get rid of any previous validation errors.
-            locator("fieldError").remove();
+            that.locate("fieldError").remove();
 
             if (fluid.get(that, "model.validationResults.isValid") === false) {
                 // Step through the list of bindings and look for anything that matches the current validation errors.
                 fluid.each(that.options.errorBindings, function (value, key) {
                     var selector = fluid.get(value, "selector") || key;
-                    var fieldElement  = locator(selector);
+                    var fieldElement  = that.locate(selector);
                     if (fieldElement) {
                         var bindingPath = fluid.get(value, "path") || value;
                         fluid.each(that.model.validationResults.errors, function (error) {
                             if (gpii.schema.client.elPathsEqual(error.dataPath, bindingPath)) {
-                                renderer.before(fieldElement, inlineErrorTemplateKey, error); // element, key, context
+                                renderer.before(fieldElement, that.options.templateKeys.inlineError, error); // element, key, context
                             }
                         });
                     }
