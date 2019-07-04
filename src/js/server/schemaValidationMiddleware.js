@@ -66,27 +66,8 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
 
  */
 fluid.defaults("gpii.schema.validationMiddleware.base", {
-    gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
+    gradeNames: ["fluid.modelComponent"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
-    schema: {
-        properties: {
-            inputSchema: {
-                $ref: "gss-v7-full#"
-            },
-            localisationTransform: {
-                type: "object",
-                minProperties: 1
-            },
-            rules: {
-                properties: {
-                    requestContentToValidate: {
-                        type: "object",
-                        required: true
-                    }
-                }
-            }
-        }
-    },
     inputSchema: {
         "$schema": "gss-v7-full#"
     },
@@ -128,7 +109,26 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
 
  */
 fluid.defaults("gpii.schema.validationMiddleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.schema.validationMiddleware.base"]
+    gradeNames: ["gpii.schema.component", "gpii.express.middleware", "gpii.schema.validationMiddleware.base"],
+    schema: {
+        properties: {
+            inputSchema: {
+                $ref: "gss-v7-full#"
+            },
+            localisationTransform: {
+                type: "object",
+                minProperties: 1
+            },
+            rules: {
+                properties: {
+                    requestContentToValidate: {
+                        type: "object",
+                        required: true
+                    }
+                }
+            }
+        }
+    }
 });
 
 /*
