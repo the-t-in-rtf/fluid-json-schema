@@ -40,7 +40,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
     var schemaAsPromise = fluid.isPromise(schema) ? schema : fluid.toPromise(schema);
     schemaAsPromise.then(
         function (schema) {
-            var validationResults = validatorComponent.validate(schema, toValidate);
+            var validationResults = validatorComponent.validate(schema, toValidate, schemaMiddlewareComponent.options.schemaHash);
 
             if (validationResults.isError) {
                 next(validationResults);
@@ -58,6 +58,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
         next
     );
 };
+
 
 /*
 
@@ -89,6 +90,7 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
     inputSchema: {
         "$schema": "gss-v7-full#"
     },
+    schemaHash: "@expand:gpii.schema.hashSchema({that}.options.inputSchema})",
     localisationTransform: {
         "": ""
     },
@@ -108,6 +110,12 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
         middleware: {
             funcName: "gpii.schema.validationMiddleware.rejectOrForward",
             args:     ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
+        }
+    },
+    listeners: {
+        "onCreate.cacheSchema": {
+            func: "{gpii.schema.validator}.cacheSchema",
+            args: ["{that}.options.inputSchema"]
         }
     }
 });
