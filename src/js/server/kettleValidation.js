@@ -6,16 +6,15 @@ var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.schema.kettle.validator");
 
 gpii.schema.kettle.validator.validateRequest = function (kettleValidator, globalValidator, requestHandler) {
-    var schemaKey = requestHandler.options.schemaKey || "default";
-    var rulesKey  = requestHandler.options.rulesKey  || "default";
-    var schemaHash = kettleValidator.schemaHashes[schemaKey];
-    var gssSchema = fluid.get(kettleValidator, ["options", "requestSchemas", schemaKey]);
-    var transformationRules = fluid.get(kettleValidator, ["options", "requestContentToValidate", rulesKey]);
+    var validationPromise = fluid.promise();
+
+    var gssSchema = kettleValidator.options.requestSchema;
+    var transformationRules = kettleValidator.options.requestContentToValidate;
     var toValidate = fluid.model.transformWithRules(requestHandler.req, transformationRules);
-    var validationResults = globalValidator.validate(gssSchema, toValidate, schemaHash);
+    var validationResults = globalValidator.validate(gssSchema, toValidate, kettleValidator.options.schemaHash);
 
     if (validationResults.isValid) {
-        requestHandler.handleValidRequest(requestHandler);
+        validationPromise.resolve();
     }
     else {
         var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, kettleValidator.model.messages, kettleValidator.options.localisationTransform);
@@ -23,23 +22,21 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
         localisedPayload.errors = localisedErrors;
 
         var failurePayload = fluid.extend({}, kettleValidator.options.errorTemplate, localisedPayload);
-        requestHandler.events.onError.fire(failurePayload);
+        validationPromise.reject(failurePayload);
     }
+
+    return validationPromise;
 };
 
-gpii.schema.kettle.validator.cacheSchemas = function (kettleValidator, globalValidator) {
-    fluid.each(kettleValidator.options.requestSchemas, function (requestSchema, schemaKey) {
-        var schemaHash = gpii.schema.hashSchema(requestSchema);
-        kettleValidator.schemaHashes[schemaKey] = schemaHash;
-        globalValidator.cacheSchema(requestSchema, schemaHash);
-    });
-};
+// A kettle.middleware grade that can be used in the requestMiddleware stack, as in:
+// https://github.com/fluid-project/kettle/blob/670396acbf4be31be009b2b2dee48373134ea94d/tests/shared/SessionTestDefs.js#L64
+
+// TODO: refactor tests to use single per-payload validation.
+
 
 fluid.defaults("gpii.schema.kettle.validator", {
-    gradeNames: ["fluid.modelComponent"],
-    members: {
-        schemaHashes: {}
-    },
+    gradeNames: ["kettle.middleware", "fluid.modelComponent"],
+    schemaHash: "@expand:gpii.schema.hashSchema({that}.options.requestSchema)",
     model: {
         messages: gpii.schema.messages.validationErrors
     },
@@ -51,57 +48,49 @@ fluid.defaults("gpii.schema.kettle.validator", {
         statusCode: 400,
         message: "Your request was invalid.  See the errors for details."
     },
-    requestSchemas: {
-        default: {
-            "$schema": "gss-v7-full#"
-        }
+    requestSchema: {
+        "$schema": "gss-v7-full#"
     },
     requestContentToValidate: {
-        default: "{that}.options.requestContentToValidate.body",
-        body: {
-            "": "body"
-        },
-        params: {
-            "": "params"
-        },
-        query: {
-            "": "query"
-        }
+        "body":   "body",
+        "params": "params",
+        "query":  "query"
+    },
+    mergePolicy: {
+        "requestSchema": "nomerge",
+        "requestContentToValidate": "nomerge"
     },
     invokers: {
-        validateRequest: {
+        handle: {
             funcName: "gpii.schema.kettle.validator.validateRequest",
-            args: ["{that}", "{gpii.schema.validator}", "{arguments}.0"] // kettleValidator, globalValidator, request
+            args:    ["{that}", "{gpii.schema.validator}", "{arguments}.0"] // kettleValidator, globalValidator, request
         }
     },
     listeners: {
-        "onCreate.cacheSchemas": {
-            funcName: "gpii.schema.kettle.validator.cacheSchemas",
-            args:     ["{that}", "{gpii.schema.validator}"] // globalValidator
+        "onCreate.cacheSchema": {
+            func: "{gpii.schema.validator}.cacheSchema",
+            args: ["{that}.options.requestSchema", "{that}.options.schemaHash"] // gssSchema, schemaHash
         }
     }
 });
 
-fluid.defaults("gpii.schema.kettle.app", {
-    gradeNames: ["kettle.app"],
-    components: {
-        validator: {
-            type: "gpii.schema.kettle.validator"
-        }
+fluid.defaults("gpii.schema.kettle.validator.body", {
+    gradeNames: ["gpii.schema.kettle.validator"],
+    requestContentToValidate: {
+        "": "body"
     }
 });
 
-fluid.defaults("gpii.schema.kettle.request.http", {
-    gradeNames: ["kettle.request.http"],
-    rulesKey: "default",
-    schemaKey: "default",
-    invokers: {
-        handleRequest: {
-            func: "{gpii.schema.kettle.validator}.validateRequest",
-            args: ["{arguments}.0", "{gpii.schema.kettle.request.http}.options.schemaKey", "{gpii.schema.kettle.request.http}.options.rulesKey", "{gpii.schema.kettle.request.http}.handleValidRequest", "{that}"] // request, schemaKey, rulesKey, callback
-        },
-        handleValidRequest: {
-            func: "fluid.notImplemented"
-        }
+fluid.defaults("gpii.schema.kettle.validator.params", {
+    gradeNames: ["gpii.schema.kettle.validator"],
+    requestContentToValidate: {
+        "": "params"
+    }
+});
+
+fluid.defaults("gpii.schema.kettle.validator.query", {
+    gradeNames: ["gpii.schema.kettle.validator"],
+    requestContentToValidate: {
+        "":  "query"
     }
 });
