@@ -40,7 +40,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
     var schemaAsPromise = fluid.isPromise(schema) ? schema : fluid.toPromise(schema);
     schemaAsPromise.then(
         function (schema) {
-            var validationResults = validatorComponent.validate(schema, toValidate);
+            var validationResults = validatorComponent.validate(schema, toValidate, schemaMiddlewareComponent.options.schemaHash);
 
             if (validationResults.isError) {
                 next(validationResults);
@@ -59,36 +59,19 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
     );
 };
 
+
 /*
 
     The base middleware used with both gpii-express and kettle.  Cannot be used on its own.
 
  */
 fluid.defaults("gpii.schema.validationMiddleware.base", {
-    gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
+    gradeNames: ["fluid.modelComponent"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
-    schema: {
-        properties: {
-            inputSchema: {
-                $ref: "gss-v7-full#"
-            },
-            localisationTransform: {
-                type: "object",
-                minProperties: 1
-            },
-            rules: {
-                properties: {
-                    requestContentToValidate: {
-                        type: "object",
-                        required: true
-                    }
-                }
-            }
-        }
-    },
     inputSchema: {
         "$schema": "gss-v7-full#"
     },
+    schemaHash: "@expand:gpii.schema.hashSchema({that}.options.inputSchema})",
     localisationTransform: {
         "": ""
     },
@@ -109,6 +92,12 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
             funcName: "gpii.schema.validationMiddleware.rejectOrForward",
             args:     ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
         }
+    },
+    listeners: {
+        "onCreate.cacheSchema": {
+            func: "{gpii.schema.validator}.cacheSchema",
+            args: ["{that}.options.inputSchema"]
+        }
     }
 });
 
@@ -120,7 +109,26 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
 
  */
 fluid.defaults("gpii.schema.validationMiddleware", {
-    gradeNames: ["gpii.express.middleware", "gpii.schema.validationMiddleware.base"]
+    gradeNames: ["gpii.schema.component", "gpii.express.middleware", "gpii.schema.validationMiddleware.base"],
+    schema: {
+        properties: {
+            inputSchema: {
+                $ref: "gss-v7-full#"
+            },
+            localisationTransform: {
+                type: "object",
+                minProperties: 1
+            },
+            rules: {
+                properties: {
+                    requestContentToValidate: {
+                        type: "object",
+                        required: true
+                    }
+                }
+            }
+        }
+    }
 });
 
 /*
@@ -133,80 +141,6 @@ fluid.defaults("gpii.schema.validationMiddleware.handlesQueryData", {
     rules: {
         requestContentToValidate: {
             "": "query"
-        }
-    }
-});
-
-fluid.registerNamespace("gpii.schema.kettle.middleware");
-
-/**
- *
- * Call the base validation function and handle its output in the way that is expected for `kettle.middleware` grades.
- *
- * @param {Object} validatorComponent - The global "validator" component.
- * @param {Object} kettleMiddlewareComponent - The `kettle.middleware` component (see below).
- * @param {Object} schema - The GSS schema to validate against.
- * @param {Object} req  - The Express request object.
- * @return {Promise}    - A `fluid.promise` that is resolved if the request is validated and rejected if the request is
- *                        invalid.
- */
-gpii.schema.kettle.middleware.handle = function (validatorComponent, kettleMiddlewareComponent, schema, req) {
-    var validationPromise = fluid.promise();
-
-    gpii.schema.validationMiddleware.rejectOrForward(validatorComponent, kettleMiddlewareComponent, schema, req.req, undefined, function (error) {
-        if (error) {
-            validationPromise.reject(fluid.extend({}, error, kettleMiddlewareComponent.options.errorTemplate));
-        }
-        else {
-            validationPromise.resolve();
-        }
-    });
-
-    return validationPromise;
-};
-
-fluid.defaults("gpii.schema.kettle.middleware", {
-    gradeNames: ["kettle.middleware", "fluid.modelComponent"],
-    errorTemplate: {
-        // "Bad Request": https://developer.mozilla.org/nl/docs/Web/HTTP/Status/400
-        statusCode: 400,
-        message: "Your request was invalid.  See the errors for details."
-    },
-    invokers: {
-        handle: {
-            funcName: "gpii.schema.kettle.middleware.handle",
-            args: ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0"] // schema, request
-        }
-    }
-});
-
-fluid.defaults("gpii.schema.kettle.request.http", {
-    gradeNames: ["kettle.request.http", "gpii.schema.validationMiddleware.base"],
-    inputSchema: {
-        "$schema": "gss-v7-full#"
-    },
-    rules: {
-        requestContentToValidate: {
-            "": "body"
-        }
-    },
-    components: {
-        validationMiddleware: {
-            type: "gpii.schema.kettle.middleware",
-            options: {
-                inputSchema: "{gpii.schema.kettle.request.http}.options.inputSchema",
-                rules: "{gpii.schema.kettle.request.http}.options.rules",
-                localisationTransform: "{gpii.schema.kettle.request.http}.options.localisationTransform",
-                model: {
-                    messages: "{gpii.schema.kettle.request.http}.model.messages"
-                }
-            }
-        }
-    },
-    requestMiddleware: {
-        schemaValidation: {
-            middleware: "{that}.validationMiddleware",
-            priority:   "first"
         }
     }
 });

@@ -18,8 +18,7 @@ gpii.test.schema.kettle.handlers.base.reportSuccess = function (request) {
 
 // The base grade, which just wires up a success response if the request content is valid.
 fluid.defaults("gpii.test.schema.kettle.handlers.base", {
-    gradeNames: ["gpii.schema.kettle.request.http"],
-    inputSchema: {},
+    gradeNames: ["kettle.request.http"],
     invokers: {
         handleRequest: {
             funcName: "gpii.test.schema.kettle.handlers.base.reportSuccess"
@@ -27,10 +26,10 @@ fluid.defaults("gpii.test.schema.kettle.handlers.base", {
     }
 });
 
-// Looking for body content and validate that against our schema.
-fluid.defaults("gpii.test.schema.kettle.handlers.gatedBody", {
-    gradeNames: ["gpii.test.schema.kettle.handlers.base"],
-    inputSchema: {
+fluid.defaults("gpii.test.schema.kettle.bodyValidator", {
+    gradeNames: ["gpii.schema.kettle.validator.body"],
+    requestSchema: {
+        "$schema": "gss-v7-full#",
         type: "object",
         properties: {
             hasBodyContent: {
@@ -43,9 +42,20 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedBody", {
     }
 });
 
-fluid.defaults("gpii.test.schema.kettle.handlers.gatedParams", {
+// Looking for body content and validate that against our schema.
+fluid.defaults("gpii.test.schema.kettle.handlers.gatedBody", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
-    inputSchema: {
+    requestMiddleware: {
+        validate: {
+            middleware: "{gpii.test.schema.kettle.app}.bodyValidator"
+        }
+    }
+});
+
+fluid.defaults("gpii.test.schema.kettle.paramsValidator", {
+    gradeNames: ["gpii.schema.kettle.validator.params"],
+    requestSchema: {
+        "$schema": "gss-v7-full#",
         type: "object",
         properties: {
             hasParamContent: {
@@ -55,18 +65,22 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedParams", {
                 enumLabels: ["Good Choice"]
             }
         }
-    },
-    rules: {
-        requestContentToValidate: {
-            "": "params"
+    }
+});
+
+fluid.defaults("gpii.test.schema.kettle.handlers.gatedParams", {
+    gradeNames: ["gpii.test.schema.kettle.handlers.base"],
+    requestMiddleware: {
+        validate: {
+            middleware: "{gpii.test.schema.kettle.app}.paramsValidator"
         }
     }
 });
 
-// We use the `handlesQueryData` mix-in, which should also work with Kettle.
-fluid.defaults("gpii.test.schema.kettle.handlers.gatedQuery", {
-    gradeNames: ["gpii.test.schema.kettle.handlers.base", "gpii.schema.validationMiddleware.handlesQueryData"],
-    inputSchema: {
+fluid.defaults("gpii.test.schema.kettle.queryValidator", {
+    gradeNames: ["gpii.schema.kettle.validator.query"],
+    requestSchema: {
+        "$schema": "gss-v7-full#",
         type: "object",
         properties: {
             hasQueryContent: {
@@ -79,10 +93,20 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedQuery", {
     }
 });
 
-// Test all three in combination.
-fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
+// We use the `handlesQueryData` mix-in, which should also work with Kettle.
+fluid.defaults("gpii.test.schema.kettle.handlers.gatedQuery", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
-    inputSchema: {
+    requestMiddleware: {
+        validate: {
+            middleware: "{gpii.test.schema.kettle.app}.queryValidator"
+        }
+    }
+});
+
+fluid.defaults("gpii.test.schema.kettle.combinedValidator", {
+    gradeNames: ["gpii.schema.kettle.validator"],
+    requestSchema: {
+        "$schema": "gss-v7-full#",
         type: "object",
         properties: {
             params: {
@@ -119,16 +143,35 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
                 }
             }
         }
-    },
-    rules: {
-        requestContentToValidate: {
-            "": ""
+    }
+});
+
+// Test all three in combination.
+fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
+    gradeNames: ["gpii.test.schema.kettle.handlers.base"],
+    requestMiddleware: {
+        validate: {
+            middleware: "{gpii.test.schema.kettle.app}.combinedValidator"
         }
     }
 });
 
 fluid.defaults("gpii.test.schema.kettle.app", {
     gradeNames: ["kettle.app"],
+    components: {
+        bodyValidator: {
+            type: "gpii.test.schema.kettle.bodyValidator"
+        },
+        paramsValidator: {
+            type: "gpii.test.schema.kettle.paramsValidator"
+        },
+        queryValidator: {
+            type: "gpii.test.schema.kettle.queryValidator"
+        },
+        combinedValidator: {
+            type: "gpii.test.schema.kettle.combinedValidator"
+        }
+    },
     requestHandlers: {
         gatedBody: {
             type: "gpii.test.schema.kettle.handlers.gatedBody",
@@ -151,7 +194,7 @@ fluid.defaults("gpii.test.schema.kettle.app", {
     }
 });
 
-fluid.defaults("gpii.test.schema.middleware.kettle.request", {
+fluid.defaults("gpii.test.schema.kettle.request", {
     gradeNames: ["kettle.test.request.http"],
     headers: {
         accept: "application/json"

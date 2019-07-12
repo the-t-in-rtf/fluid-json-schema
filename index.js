@@ -13,3 +13,4 @@ require("./src/js/common/schemaValidatedComponent");
 require("./src/js/common/schemaValidatedModelComponent");
 
 require("./src/js/server/schemaValidationMiddleware");
+require("./src/js/server/kettleValidation");
