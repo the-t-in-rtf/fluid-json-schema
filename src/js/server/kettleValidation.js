@@ -42,9 +42,6 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
 // A kettle.middleware grade that can be used in the requestMiddleware stack, as in:
 // https://github.com/fluid-project/kettle/blob/670396acbf4be31be009b2b2dee48373134ea94d/tests/shared/SessionTestDefs.js#L64
 
-// TODO: refactor tests to use single per-payload validation.
-
-
 fluid.defaults("gpii.schema.kettle.validator", {
     gradeNames: ["kettle.middleware", "fluid.modelComponent"],
     schemaHash: "@expand:gpii.schema.hashSchema({that}.options.requestSchema)",

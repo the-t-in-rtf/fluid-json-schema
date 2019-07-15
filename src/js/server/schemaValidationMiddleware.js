@@ -59,14 +59,15 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
     );
 };
 
-
 /*
 
-    The base middleware used with both gpii-express and kettle.  Cannot be used on its own.
+    The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
+    Express router or middleware function.  Must be combined with either the `requestAware` or `contentAware` grades
+    to function properly.  See the grades below for an example.
 
  */
-fluid.defaults("gpii.schema.validationMiddleware.base", {
-    gradeNames: ["fluid.modelComponent"],
+fluid.defaults("gpii.schema.validationMiddleware", {
+    gradeNames: ["fluid.modelComponent", "gpii.schema.component", "gpii.express.middleware"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
     inputSchema: {
         "$schema": "gss-v7-full#"
@@ -87,29 +88,6 @@ fluid.defaults("gpii.schema.validationMiddleware.base", {
             "": "body"
         }
     },
-    invokers: {
-        middleware: {
-            funcName: "gpii.schema.validationMiddleware.rejectOrForward",
-            args:     ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
-        }
-    },
-    listeners: {
-        "onCreate.cacheSchema": {
-            func: "{gpii.schema.validator}.cacheSchema",
-            args: ["{that}.options.inputSchema"]
-        }
-    }
-});
-
-/*
-
-    The `gpii.express.middleware` that fields invalid responses itself and passes valid ones through to the `next`
-    Express router or middleware function.  Must be combined with either the `requestAware` or `contentAware` grades
-    to function properly.  See the grades below for an example.
-
- */
-fluid.defaults("gpii.schema.validationMiddleware", {
-    gradeNames: ["gpii.schema.component", "gpii.express.middleware", "gpii.schema.validationMiddleware.base"],
     schema: {
         properties: {
             inputSchema: {
@@ -127,6 +105,18 @@ fluid.defaults("gpii.schema.validationMiddleware", {
                     }
                 }
             }
+        }
+    },
+    invokers: {
+        middleware: {
+            funcName: "gpii.schema.validationMiddleware.rejectOrForward",
+            args:     ["{gpii.schema.validator}", "{that}", "{that}.options.inputSchema", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // schema, request, response, next
+        }
+    },
+    listeners: {
+        "onCreate.cacheSchema": {
+            func: "{gpii.schema.validator}.cacheSchema",
+            args: ["{that}.options.inputSchema"]
         }
     }
 });
