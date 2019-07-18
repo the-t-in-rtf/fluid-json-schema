@@ -213,6 +213,18 @@ var fluid  = fluid  || require("infusion");
     };
 
     /**
+     *
+     * Clear all cached validators.
+     *
+     * @param {Object} that - The validator component itself.
+     *
+     */
+    gpii.schema.validator.clearCache = function (that) {
+        delete that.validatorsByHash;
+        that.validatorsByHash = {};
+    };
+
+    /**
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
      * @return {Object} - The compiled AJV validator.
@@ -653,8 +665,8 @@ var fluid  = fluid  || require("infusion");
                 args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
             },
             clearCache: {
-                funcName: "fluid.set",
-                args:     ["{that}", "validatorsByHash", {}] // model, path, newValue
+                funcName: "gpii.schema.validator.clearCache",
+                args:     ["{that}"]
             }
         }
     });
