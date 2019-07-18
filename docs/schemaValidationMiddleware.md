@@ -228,7 +228,7 @@ fluid.defaults("my.kettle.handler", {
     gradeNames: ["kettle.request.http"],
     requestMiddleware: {
         validate: {
-            middleware: "{my.kettle.app}.myValidator"
+            middleware: "{my.kettle.validator}"
         }
     },
     invokers: {
