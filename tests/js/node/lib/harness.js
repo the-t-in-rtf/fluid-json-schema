@@ -99,12 +99,12 @@ fluid.defaults("gpii.test.schema.harness", {
                 templateKey: "partials/validation-error-summary"
             }
         },
-        // This should never be reached
+        // This is hit by validation errors that are not otherwise handled (for example, by rendering the error).
         defaultErrorMiddleware: {
             type: "gpii.express.middleware.error",
             options: {
                 priority:  "last",
-                defaultStatusCode: 400
+                defaultStatusCode: 500
             }
         }
     }

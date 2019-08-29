@@ -52,6 +52,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
                 var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, schemaMiddlewareComponent.model.messages, schemaMiddlewareComponent.options.localisationTransform);
                 var localisedPayload = fluid.copy(validationResults);
                 localisedPayload.errors = localisedErrors;
+                localisedPayload.statusCode = schemaMiddlewareComponent.options.invalidStatusCode;
                 next(localisedPayload);
             }
         },
@@ -69,6 +70,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
 fluid.defaults("gpii.schema.validationMiddleware", {
     gradeNames: ["fluid.modelComponent", "gpii.schema.component", "gpii.express.middleware"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
+    invalidStatusCode: 400,
     inputSchema: {
         "$schema": "gss-v7-full#"
     },
