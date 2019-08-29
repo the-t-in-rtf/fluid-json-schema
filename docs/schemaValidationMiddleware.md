@@ -119,19 +119,23 @@ fluid.defaults("gpii.schema.tests.handler", {
 gpii.express({
     gradeNames:        ["gpii.schema.validationMiddleware.requestAware.router"],
     handlerGrades:     ["gpii.schema.tests.handler"],
-    schemaKey:         "valid.json",
-    schemaDirs:        ["%my-package/src/schemas"],
-    responseSchemaKey: "message.json",
-    responseSchemaUrl: "http://my.site/schemas/",
+    requestSchema: {
+        properties: {
+            key: {
+                type: "string",
+                required: true
+            }
+        }
+    },
     path:              "/gatekeeper",
     port:              3000
 });
 ```
 
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads
-to the schema `valid.json`, which can be found in `%my-package/src/schemas`. If a payload is valid according to the
-schema, the handler defined above would output a canned "success" message.  If the payload is invalid, the underlying
-`gpii.express.middleware` instance steps in and responds with a failure message.
+to the requestSchema. If a payload is valid according to the schema, the handler defined above would output a canned
+"success" message.  If the payload is invalid, the underlying `gpii.express.middleware` instance steps in and responds
+with a failure message.
 
 ## Kettle Components
 
