@@ -26,8 +26,8 @@ require("../common/schemaValidatedComponent");
  * no arguments.  If there are errors, the `next` callback is called with a localised/internationalised copy of the
  * validation errors.
  *
- * @param {Object} validatorComponent - The middleware component itself.
- * @param {Object} schemaMiddlewareComponent - The middleware component itself.
+ * @param {gpii.schema.validator} validatorComponent - The global validator component.
+ * @param {gpii.schema.validationMiddleware} schemaMiddlewareComponent - The middleware component.
  * @param {Object|Promise} schema - The GSS schema to validate against, or a promise that will resolve to same.
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.

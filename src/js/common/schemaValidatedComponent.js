@@ -30,7 +30,7 @@ var fluid  = fluid  || require("infusion");
      * We have our own validation code here because the global validator is not available in the context of a
      * potentia-ii workflow.
      *
-     * @param {Object} componentToValidate - The component to validate.
+     * @param {gpii.schema.component} componentToValidate - The component to validate.
      *
      */
     gpii.schema.component.validateComponent = function (componentToValidate) {

@@ -15,8 +15,8 @@ var fluid  = fluid  || require("infusion");
      *
      * Validate the model against the associated schema (options.modelSchema).
      *
-     * @param {Object} globalValidator - The global validation component.
-     * @param {Object} modelValidationComponent - The component itself.
+     * @param {gpii.schema.validator} globalValidator - The global validation component.
+     * @param {gpii.schema.modelComponent} modelValidationComponent - The component itself.
      *
      */
     gpii.schema.modelComponent.validateModel = function (globalValidator, modelValidationComponent) {

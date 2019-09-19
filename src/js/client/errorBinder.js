@@ -89,7 +89,7 @@
      *
      * A gatekeeper function that only allows form submission if there are no validation errors.
      *
-     * @param {Object} that - The clientSideValidation component itself.
+     * @param {gpii.schema.client.errorAwareForm} that - The clientSideValidation component itself.
      * @param {String} event - The jQuery Event (see http://api.jquery.com/Types/#Event) passed by the DOM element we're bound to.
      */
     gpii.schema.client.errorAwareForm.submitForm = function (that, event) {

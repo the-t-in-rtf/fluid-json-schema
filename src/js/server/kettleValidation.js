@@ -10,9 +10,9 @@ fluid.registerNamespace("gpii.schema.kettle.validator");
  * Validate a request payload according to a GSS Schema.  Fulfills the contract for a `kettle.middleware` `handle`
  * invoker.
  *
- * @param {Object} kettleValidator - A `gpii.schema.kettle.validator` instance that has a schema and rules about which part of the payload should be validated.
- * @param {Object} globalValidator - The global `gpii.schema.validator` instance.
- * @param {Object} requestHandler - The `kettle.request.http` grade that is fielding the actual request.
+ * @param {gpii.schema.kettle.validator} kettleValidator - A `gpii.schema.kettle.validator` instance that has a schema and rules about which part of the payload should be validated.
+ * @param {gpii.schema.validator} globalValidator - The global validator instance.
+ * @param {kettle.request.http} requestHandler - The component that is fielding the actual request.
  * @return {Promise} - A `fluid.promise` that is rejected with a validation error if the payload is invalid or resolved if the payload is valid.
  *
  */

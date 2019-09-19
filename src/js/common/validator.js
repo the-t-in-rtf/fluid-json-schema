@@ -157,7 +157,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Validate material against a "GPII Schema System" schema using a precompiled AJV "validator".
      *
-     * @param {Object} that - The validator component.
+     * @param {gpii.schema.validator} that - The validator component.
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Any} toValidate - The material to be validated.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
@@ -185,7 +185,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Add a single GSS schema to the cache.
      *
-     * @param {Object} that - The validator component itself.
+     * @param {gpii.schema.validator} that - The validator component itself.
      * @param {GssSchema} gssSchema - The original GSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      * @return {Object} - The compiled validator created from the GSS schema.
@@ -202,7 +202,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Remove a single previously cached schema from the cache.
      *
-     * @param {Object} that - The validator component itself.
+     * @param {gpii.schema.validator} that - The validator component itself.
      * @param {GssSchema} gssSchema - The original GSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      *
@@ -216,11 +216,10 @@ var fluid  = fluid  || require("infusion");
      *
      * Clear all cached validators.
      *
-     * @param {Object} that - The validator component itself.
+     * @param {gpii.schema.validator} that - The validator component itself.
      *
      */
     gpii.schema.validator.clearCache = function (that) {
-        delete that.validatorsByHash;
         that.validatorsByHash = {};
     };
 
