@@ -64,7 +64,6 @@
             }
         },
         events: {
-            getSchema: null,
             generateSchema: null,
             incorporateSubcomponentSchemas: null
         },
