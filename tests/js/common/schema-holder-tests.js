@@ -23,22 +23,35 @@ var jqUnit = jqUnit || {};
         }
     });
 
-    // This transform is a crude demonstration of what we might do with the LSR, where we need to store multiple
-    // settings in a generated supportedSettings block.
-    fluid.defaults("gpii.tests.schema.schemaHolder.transforms.mergeChild", {
-        gradeNames: ["fluid.transformFunction"]
-    });
+    fluid.registerNamespace("gpii.tests.schema.schemaHolder.parent");
+    gpii.tests.schema.schemaHolder.parent.incorporateSubcomponentSchemas = function (parentSchemaHolder, schemaToDate) {
+        var outerPromise = fluid.promise();
 
-    fluid.registerNamespace("gpii.tests.schema.schemaHolder.transforms");
-    gpii.tests.schema.schemaHolder.transforms.mergeChild = function (transformSpec, transformer) {
-        if (!transformSpec.toMerge) {
-            fluid.fail("mergeChild transform requires a `toMerge` inputPath.", transformSpec);
-        }
-        var toMerge = transformer.expand(transformSpec.toMerge);
-        // TODO: pass both components rather than just their schemas, so that we can use some aspect of the component
-        //  rather than the "title" property of the schema.
-        var outputPath = fluid.model.composePaths(transformer.outputPrefix, toMerge.title);
-        transformer.applier.change(outputPath, toMerge);
+        var modifiedSchema = fluid.copy(schemaToDate);
+        var schemaModificationPromises = [];
+        var childSchemaHolders = parentSchemaHolder.getChildSchemaHolders();
+        fluid.each(childSchemaHolders, function (childSchemaHolder) {
+            schemaModificationPromises.push(function () {
+                var schemaMungingPromise = fluid.promise();
+                childSchemaHolder.getSchema().then(
+                    function (childSchema) {
+                        fluid.set(modifiedSchema, ["properties", childSchemaHolder.options.name], childSchema);
+                        schemaMungingPromise.resolve();
+                    },
+                    schemaMungingPromise.reject
+                );
+                return schemaMungingPromise;
+            });
+        });
+        var schemaMungingSequence = fluid.promise.sequence(schemaModificationPromises);
+        schemaMungingSequence.then(
+            function () {
+                outerPromise.resolve(modifiedSchema);
+            },
+            outerPromise.reject
+        );
+
+        return outerPromise;
     };
 
     // A schema holder with multiple children.
@@ -50,37 +63,55 @@ var jqUnit = jqUnit || {};
                 parentProperty: {type: "string"}
             }
         },
-        rules: {
-            mergeSubcomponentSchema: {
-                "": "baseSchema",
-                properties: {
-                    "": "baseSchema.properties",
-                    transform: {
-                        type: "gpii.tests.schema.schemaHolder.transforms.mergeChild",
-                        toMerge: "toMerge"
-                    }
-                }
+        invokers: {
+            incorporateSubcomponentSchemas: {
+                "funcName": "gpii.tests.schema.schemaHolder.parent.incorporateSubcomponentSchemas"
             }
         },
         components: {
             oneChild: {
                 type: "gpii.tests.schema.schemaHolder",
                 options: {
-                    schema: {
-                        title: "oldest child"
-                    }
+                    name: "oldest child"
                 }
             },
             anotherChild: {
                 type: "gpii.tests.schema.schemaHolder",
                 options: {
-                    schema: {
-                        title: "youngest child"
-                    }
+                    name: "youngest child"
                 }
             }
         }
     });
+
+    fluid.registerNamespace("gpii.tests.schema.schemaHolder.grandparent");
+    gpii.tests.schema.schemaHolder.grandparent.incorporateSubcomponentSchemas = function (grandparentSchemaHolder, schemaToDate) {
+        var outerPromise = fluid.promise();
+        var modifiedSchema = fluid.copy(schemaToDate);
+        var schemaMungingPromises = [];
+        var childSchemaHolders = grandparentSchemaHolder.getChildSchemaHolders();
+        fluid.each(childSchemaHolders, function (childSchemaHolder) {
+            schemaMungingPromises.push(function () {
+                var schemaMungingPromise = fluid.promise();
+                childSchemaHolder.getSchema().then(
+                    function (childSchema) {
+                        fluid.set(modifiedSchema, ["properties", "child"], childSchema);
+                        schemaMungingPromise.resolve();
+                    },
+                    schemaMungingPromise.reject
+                );
+                return schemaMungingPromise;
+            });
+        });
+        var schemaMungingSequence = fluid.promise.sequence(schemaMungingPromises);
+        schemaMungingSequence.then(
+            function () {
+                outerPromise.resolve(modifiedSchema);
+            },
+            outerPromise.reject
+        );
+        return outerPromise;
+    };
 
     // A schema holder with a single child and multiple grandchildren.
     fluid.defaults("gpii.tests.schema.schemaHolder.grandparent", {
@@ -91,13 +122,10 @@ var jqUnit = jqUnit || {};
                 grandParentProperty: {type: "string"}
             }
         },
-        rules: {
-            mergeSubcomponentSchema: {
-                "": "baseSchema",
-                // We use a simpler approach here as we only expect one child component.
-                properties: {
-                    child: "toMerge"
-                }
+        subComponentGrade: "gpii.schema.schemaHolder",
+        invokers: {
+            incorporateSubcomponentSchemas: {
+                funcName: "gpii.tests.schema.schemaHolder.grandparent.incorporateSubcomponentSchemas"
             }
         },
         components: {
@@ -169,7 +197,6 @@ var jqUnit = jqUnit || {};
                 "oldest child": {
                     "$schema": "gss-v7-full#",
                     additionalProperties: true,
-                    title: "oldest child",
                     type: "object",
                     properties: {
                         childProperty: {type: "string"}
@@ -177,7 +204,6 @@ var jqUnit = jqUnit || {};
                 },
                 "youngest child": {
                     "$schema": "gss-v7-full#",
-                    title: "youngest child",
                     additionalProperties: true,
                     type: "object",
                     properties: {
@@ -208,7 +234,6 @@ var jqUnit = jqUnit || {};
                             "type": "string"
                         },
                         "oldest child": {
-                            "title": "oldest child",
                             "type": "object",
                             "properties": {
                                 "childProperty": {
@@ -219,7 +244,6 @@ var jqUnit = jqUnit || {};
                             "additionalProperties": true
                         },
                         "youngest child": {
-                            "title": "youngest child",
                             "type": "object",
                             "properties": {
                                 "childProperty": {

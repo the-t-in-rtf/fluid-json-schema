@@ -28,28 +28,8 @@
         return schema;
     };
 
-    gpii.schema.schemaHolder.incorporateSubcomponentSchemas = function (that, baseSchema) {
-        var subComponents = fluid.queryIoCSelector(that, "gpii.schema.schemaHolder", true);
-        fluid.each(subComponents, function (subComponent) {
-            // getSchema is asynchronous, so we have to use a "promise chain" to handle this.
-            that.events.incorporateSubcomponentSchemas.addListener(function (baseSchema) {
-                var singleComponentSchemaPromise = fluid.promise();
-                subComponent.getSchema().then(
-                    function (subComponentSchema) {
-                        try {
-                            var mergedSchema = fluid.model.transformWithRules({ baseSchema: baseSchema, toMerge: subComponentSchema }, that.options.rules.mergeSubcomponentSchema);
-                            singleComponentSchemaPromise.resolve(mergedSchema);
-                        }
-                        catch (error) {
-                            singleComponentSchemaPromise.reject(error);
-                        }
-                    },
-                    singleComponentSchemaPromise.reject
-                );
-                return singleComponentSchemaPromise;
-            });
-        });
-        return fluid.promise.fireTransformEvent(that.events.incorporateSubcomponentSchemas, baseSchema);
+    gpii.schema.schemaHolder.incorporateSubcomponentSchemas = function (parentSchemaHolder, originalSchema) {
+        return originalSchema;
     };
 
     fluid.defaults("gpii.schema.schemaHolder", {
@@ -57,15 +37,8 @@
         mergePolicy: {
             "rules.mergeSubcomponentSchema": "nomerge"
         },
-        rules: {
-            // By default, simply ignore any child schemas.
-            mergeSubcomponentSchema: {
-                "": "baseSchema"
-            }
-        },
         events: {
-            generateSchema: null,
-            incorporateSubcomponentSchemas: null
+            generateSchema: null
         },
         members: {
             generatedSchema: false,
@@ -76,6 +49,10 @@
             additionalProperties: true
         },
         invokers: {
+            getChildSchemaHolders: {
+                funcName: "fluid.queryIoCSelector",
+                args: ["{that}", "gpii.schema.schemaHolder", true]
+            },
             getSchema: {
                 funcName: "gpii.schema.schemaHolder.generateIfNeeded",
                 args: ["{that}"]
@@ -83,6 +60,10 @@
             generateSchema: {
                 funcName: "fluid.promise.fireTransformEvent",
                 args: ["{that}.events.generateSchema"]
+            },
+            incorporateSubcomponentSchemas: {
+                funcName: "gpii.schema.schemaHolder.incorporateSubcomponentSchemas",
+                args: ["{that}", "{arguments}.0"] // parentSchemaHolder, schemaToDate
             }
         },
         listeners: {
@@ -93,8 +74,8 @@
             },
             "generateSchema.incorporateComponentSchemas": {
                 priority: "after:getOptions",
-                funcName: "gpii.schema.schemaHolder.incorporateSubcomponentSchemas",
-                args: ["{that}", "{arguments}.0"]
+                func: "{that}.incorporateSubcomponentSchemas",
+                args: ["{arguments}.0"]
             },
             "generateSchema.cacheSchema": {
                 priority: "last",
