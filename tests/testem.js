@@ -27,7 +27,9 @@ var testemComponent = gpii.testem.instrumentation({
         gated: "/gated"
     },
     testemOptions: {
-        skip: "PhantomJS,Safari,IE,Chrome" // Testem now has a "Chrome Headless" launcher built in, so we disable the headed version.
+        // Disable Headless Chrome we can figure out a solution to this issue: https://issues.gpii.net/browse/GPII-4064
+        // Running Testem with the HEADLESS environment variable still works, and still runs headless.
+        skip: "PhantomJS,Safari,IE,Headless Chrome"
     },
     components: {
         express: {
