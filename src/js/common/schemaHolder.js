@@ -55,7 +55,7 @@
             },
             generateSchema: {
                 funcName: "fluid.promise.fireTransformEvent",
-                args: ["{that}.events.onGenerateSchema."]
+                args: ["{that}.events.onGenerateSchema"]
             },
             incorporateSubcomponentSchemas: {
                 funcName: "gpii.schema.schemaHolder.incorporateSubcomponentSchemas",
@@ -63,17 +63,17 @@
             }
         },
         listeners: {
-            "generateSchema.getOptions": {
+            "onGenerateSchema.getOptions": {
                 priority: "first",
                 funcName: "fluid.identity",
                 args: ["{that}.options.schema"]
             },
-            "generateSchema.incorporateComponentSchemas": {
+            "onGenerateSchema.incorporateComponentSchemas": {
                 priority: "after:getOptions",
                 func: "{that}.incorporateSubcomponentSchemas",
                 args: ["{arguments}.0"]
             },
-            "generateSchema.cacheSchema": {
+            "onGenerateSchema.cacheSchema": {
                 priority: "last",
                 funcName: "gpii.schema.schemaHolder.cacheSchema",
                 args: ["{that}", "{arguments}.0"]
