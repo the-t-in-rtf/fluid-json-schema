@@ -34,15 +34,11 @@
 
     fluid.defaults("gpii.schema.schemaHolder", {
         gradeNames: ["fluid.component"],
-        mergePolicy: {
-            "rules.mergeSubcomponentSchema": "nomerge"
-        },
         events: {
-            generateSchema: null
+            onGenerateSchema: null
         },
         members: {
-            generatedSchema: false,
-            subComponentSchemaPromises: []
+            generatedSchema: false
         },
         schema: {
             $schema: "gss-v7-full#",
@@ -59,7 +55,7 @@
             },
             generateSchema: {
                 funcName: "fluid.promise.fireTransformEvent",
-                args: ["{that}.events.generateSchema"]
+                args: ["{that}.events.onGenerateSchema."]
             },
             incorporateSubcomponentSchemas: {
                 funcName: "gpii.schema.schemaHolder.incorporateSubcomponentSchemas",
