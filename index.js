@@ -9,6 +9,7 @@ fluid.module.register("gpii-json-schema", __dirname, require);
 require("./src/js/common/gss-metaschema");
 require("./src/js/common/validator");
 require("./src/js/common/validation-errors");
+require("./src/js/common/schemaHolder");
 require("./src/js/common/schemaValidatedComponent");
 require("./src/js/common/schemaValidatedModelComponent");
 
