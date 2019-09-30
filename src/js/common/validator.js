@@ -6,7 +6,6 @@ var fluid  = fluid  || require("infusion");
 
     if (fluid.require) {
         require("./gss-metaschema");
-        require("./validation-errors");
         require("./orderedStringify");
     }
 
@@ -522,21 +521,20 @@ var fluid  = fluid  || require("infusion");
      * A function to translate/localise validation errors.
      *
      * If you want to pass a custom message bundle to this function, it should only contain top-level elements, see
-     * ./src/js/validation-errors.js in this package for an example.
+     * the ./src/messages/ directly in this package for concrete examples.
      *
      * @param {Array<gssValidationError>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
      * @param {Any} validatedData - The (optional) data that was validated.
-     * @param {Object<String,String>} messages - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
+     * @param {Object<String,String>} messageBundle - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
      * @param {Object} localisationTransform - An optional set of rules that control what information is available when localising validation errors (see above).
      * @return {Array<gssValidationError>} - The validation errors, with all message keys replaced with localised strings.
      *
      */
-    gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messages, localisationTransform) {
-        messages = messages || gpii.schema.messages.validationErrors;
+    gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messageBundle, localisationTransform) {
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
             var messageKey = fluid.get(validationError, "message");
-            var messageTemplate = messageKey && fluid.get(messages, [messageKey]); // We use the segment format because the keys contain dots.
+            var messageTemplate = messageKey && fluid.get(messageBundle, [messageKey]); // We use the segment format because the keys contain dots.
             if (messageTemplate) {
                 var data = validatedData && fluid.get(validatedData, validationError.dataPath);
                 var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);

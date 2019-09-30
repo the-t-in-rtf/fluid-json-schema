@@ -18,7 +18,7 @@
 
     // The base component used to actually display validation errors.
     fluid.defaults("gpii.schema.client.errorBinder", {
-        gradeNames: ["gpii.schema.modelComponent"],
+        gradeNames: ["gpii.schema.modelComponent", "gpii.handlebars.templateAware.serverResourceAware"],
         errorBindings: "{that}.options.bindings",
         selectors: {
             "fieldError": ".fieldError"
@@ -29,21 +29,30 @@
         model: {
             validationResults: {}
         },
-        components: {
-            renderer: {
-                type: "gpii.handlebars.renderer"
-            }
-        },
         invokers: {
             renderErrors: {
                 funcName: "gpii.schema.client.errorAwareForm.renderErrors",
-                args:     ["{that}", "{renderer}"] // renderer
+                args:     ["{that}", "{gpii.handlebars.renderer}"] // renderer
             }
         },
-        modelListeners: {
-            validationResults: {
-                func: "{that}.renderErrors",
-                excludeSource: "init"
+        components: {
+            // We have to wait to render until the renderer is available, but also reload if our templates change.
+            gatedModelWatcher: {
+                type: "fluid.modelComponent",
+                createOnEvent: "{that}.events.onRendererAvailable",
+                options: {
+                    model: {
+                        messages: "{gpii.schema.client.errorBinder}.model.messages",
+                        templates: "{gpii.schema.client.errorBinder}.model.templates",
+                        validationResults: "{gpii.schema.client.errorBinder}.model.validationResults"
+                    },
+                    modelListeners: {
+                        validationResults: {
+                            func: "{gpii.schema.client.errorBinder}.renderErrors",
+                            excludeSource: "init"
+                        }
+                    }
+                }
             }
         }
     });
@@ -62,7 +71,7 @@
 
     // We need to ensure that both our own markup and the field errors are rendered before we fire `onMarkupRendered`.
     gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer) {
-        var templateExists = fluid.get(that, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
+        var templateExists = fluid.get(renderer, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
         if (templateExists && renderer) {
             // Get rid of any previous validation errors.
             that.locate("fieldError").remove();
@@ -122,25 +131,27 @@
             }
         },
         model: {
-            templates: "{renderer}.model.templates",
             message: false,
             validationResults: false
         },
-        modelListeners: {
-            templates: [
-                {
-                    func: "{that}.renderInitialMarkup",
-                    excludeSource: "init"
-                },
-                {
-                    func: "{that}.renderErrors",
-                    excludeSource: "init"
-                }
-            ]
-        },
+
         components: {
-            renderer: {
-                type: "gpii.handlebars.renderer.serverAware"
+            // We have to wait to render until the renderer is available, but also reload if our templates change.
+            gatedModelWatcher: {
+                options: {
+                    modelListeners: {
+                        validationResults: [
+                            {
+                                func: "{gpii.schema.client.errorBinder}.renderInitialMarkup",
+                                excludeSource: "init"
+                            },
+                            {
+                                func: "{gpii.schema.client.errorBinder}.renderErrors",
+                                excludeSource: "init"
+                            }
+                        ]
+                    }
+                }
             },
             success: {
                 options: {
@@ -171,6 +182,10 @@
         listeners: {
             "onCreate.renderMarkup": {
                 funcName: "fluid.identity"
+            },
+            "onResourcesLoaded.log": {
+                funcName: "console.log",
+                args: ["Resources loaded..."]
             }
         }
     });

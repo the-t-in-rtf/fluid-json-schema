@@ -3,6 +3,8 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
+fluid.require("%gpii-handlebars");
+
 fluid.registerNamespace("gpii.schema.kettle.validator");
 
 /**
@@ -28,7 +30,8 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
         validationPromise.resolve();
     }
     else {
-        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, kettleValidator.model.messages, kettleValidator.options.localisationTransform);
+        var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(requestHandler.req, kettleValidator.model.messageBundles, kettleValidator.options.defaultLocale);
+        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, kettleValidator.options.localisationTransform);
         var localisedPayload = fluid.copy(validationResults);
         localisedPayload.errors = localisedErrors;
 
@@ -45,8 +48,12 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
 fluid.defaults("gpii.schema.kettle.validator", {
     gradeNames: ["kettle.middleware", "fluid.modelComponent"],
     schemaHash: "@expand:gpii.schema.hashSchema({that}.options.requestSchema)",
+    defaultLocale: "en_US",
+    messageDirs: {
+        validation: "%gpii-json-schema/src/messages"
+    },
     model: {
-        messages: gpii.schema.messages.validationErrors
+        messageBundles: "@expand:gpii.handlebars.i18n.loadMessageBundles({that}.options.messageDirs)"
     },
     localisationTransform: {
         "": ""

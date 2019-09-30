@@ -23,7 +23,8 @@ var testemComponent = gpii.testem.instrumentation({
         "node_modules": "%gpii-json-schema/node_modules"
     },
     additionalProxies: {
-        hbs:   "/hbs",
+        templates: "/templates",
+        messages: "/messages",
         gated: "/gated"
     },
     testemOptions: {
@@ -56,9 +57,23 @@ var testemComponent = gpii.testem.instrumentation({
                     inline: {
                         type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
                         options: {
-                            path:         "/hbs",
+                            path:         "/templates",
                             priority:     "after:urlencoded",
                             templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates"]
+                        }
+                    },
+                    messageLoader: {
+                        type: "gpii.handlebars.i18n.messageLoader",
+                        options: {
+                            messageDirs: { validation: "%gpii-json-schema/src/messages" }
+                        }
+                    },
+                    messages: {
+                        type: "gpii.handlebars.inlineMessageBundlingMiddleware",
+                        options: {
+                            model: {
+                                messageBundles: "{messageLoader}.model.messageBundles"
+                            }
                         }
                     },
                     handlebars: {

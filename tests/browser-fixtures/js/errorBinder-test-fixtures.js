@@ -1,7 +1,5 @@
-/* global fluid */
 (function (fluid) {
     "use strict";
-    var gpii = fluid.registerNamespace("gpii");
 
     fluid.defaults("gpii.tests.schema.errorBinder", {
         gradeNames: ["gpii.schema.client.errorAwareForm"],
@@ -65,15 +63,6 @@
             }
         },
         model: {
-        },
-        components: {
-            renderer: {
-                options: {
-                    model: {
-                        messages: gpii.schema.messages.validationErrors
-                    }
-                }
-            }
         },
         bindings: {
             // We use both styles of bindings to confirm that they each work with the `errorBinder`.

@@ -10,8 +10,8 @@
         <script src="/testem.js"></script>
         <script src="../../node_modules/infusion/tests/lib/qunit/addons/composite/qunit-composite.js"></script>
         <script>
-            // We use one path convention for Testem, another when Testem isn't available, i.e. when the tests are hosted in a web server.
-            var rawTestSuitePaths = [
+            <!-- Several of these cannot be run without the /messages middleware, i.e. not without Testem. -->
+            var testSuitePaths = [
                 "/tests/browser-fixtures/errorBinder-tests.html",
                 "/tests/browser-fixtures/metaschema-tests.html",
                 "/tests/browser-fixtures/orderedStringify-tests.html",
@@ -21,7 +21,6 @@
                 "/tests/browser-fixtures/validator-global-component-tests.html",
                 "/tests/browser-fixtures/validator-static-function-tests.html"
             ];
-            var testSuitePaths = typeof Testem !== "undefined" ? rawTestSuitePaths : rawTestSuitePaths.map(function (entry) { return "../../.." + entry; });
             QUnit.testSuites(testSuitePaths);
         </script>
     </head>

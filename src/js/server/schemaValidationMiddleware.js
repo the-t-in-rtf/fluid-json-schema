@@ -16,6 +16,8 @@ fluid.registerNamespace("gpii.schema.validationMiddleware");
 require("../common/validator");
 require("../common/schemaValidatedComponent");
 
+fluid.require("%gpii-handlebars");
+
 /**
  *
  * The core of both the gpii-express and kettle validation middleware.  Transforms an incoming request and validates the
@@ -49,7 +51,8 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
                 next();
             }
             else {
-                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, schemaMiddlewareComponent.model.messages, schemaMiddlewareComponent.options.localisationTransform);
+                var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(req, schemaMiddlewareComponent.model.messageBundles, schemaMiddlewareComponent.options.defaultLocale);
+                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, schemaMiddlewareComponent.options.localisationTransform);
                 var localisedPayload = fluid.copy(validationResults);
                 localisedPayload.errors = localisedErrors;
                 localisedPayload.statusCode = schemaMiddlewareComponent.options.invalidStatusCode;
@@ -70,6 +73,7 @@ gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent
 fluid.defaults("gpii.schema.validationMiddleware", {
     gradeNames: ["fluid.modelComponent", "gpii.schema.component", "gpii.express.middleware"],
     namespace:  "validationMiddleware", // A namespace that can be used to order other middleware relative to this component.
+    defaultLocale: "en_US",
     invalidStatusCode: 400,
     inputSchema: {
         "$schema": "gss-v7-full#"
@@ -78,8 +82,11 @@ fluid.defaults("gpii.schema.validationMiddleware", {
     localisationTransform: {
         "": ""
     },
+    messageDirs: {
+        validation: "%gpii-json-schema/src/messages"
+    },
     model: {
-        messages: gpii.schema.messages.validationErrors
+        messageBundles: "@expand:gpii.handlebars.i18n.loadMessageBundles({that}.options.messageDirs)"
     },
     // We prevent merging of individual options, but allow them to be individually replaced.
     mergeOptions: {

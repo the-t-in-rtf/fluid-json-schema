@@ -2,6 +2,7 @@
 var fluid = fluid || {};
 (function (fluid, $, jqUnit) {
     "use strict";
+    fluid.setLogging(true);
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.tests.schema.errorBinder");
 
@@ -42,6 +43,7 @@ var fluid = fluid || {};
                 {
                     name: "Confirm that initial client-side validation errors appear correctly after startup...",
                     sequence: [
+                        // TODO:  Convert to sequence grade.
                         { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
                             event: "{testEnvironment}.events.onFixturesReady",
@@ -247,10 +249,9 @@ var fluid = fluid || {};
                 createOnEvent: "constructFixtures",
                 container: ".errorBinder-viewport",
                 options: {
-                    modelListeners: {
-                        "templates": {
-                            func: "{testEnvironment}.events.onFixturesReady.fire",
-                            excludeSource: "init"
+                    listeners: {
+                        "onRendererAvailable.notifyParent": {
+                            func: "{testEnvironment}.events.onFixturesReady.fire"
                         }
                     }
                 }
