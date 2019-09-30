@@ -48,8 +48,7 @@
                     },
                     modelListeners: {
                         validationResults: {
-                            func: "{gpii.schema.client.errorBinder}.renderErrors",
-                            excludeSource: "init"
+                            func: "{gpii.schema.client.errorBinder}.renderErrors"
                         }
                     }
                 }
@@ -134,25 +133,7 @@
             message: false,
             validationResults: false
         },
-
         components: {
-            // We have to wait to render until the renderer is available, but also reload if our templates change.
-            gatedModelWatcher: {
-                options: {
-                    modelListeners: {
-                        validationResults: [
-                            {
-                                func: "{gpii.schema.client.errorBinder}.renderInitialMarkup",
-                                excludeSource: "init"
-                            },
-                            {
-                                func: "{gpii.schema.client.errorBinder}.renderErrors",
-                                excludeSource: "init"
-                            }
-                        ]
-                    }
-                }
-            },
             success: {
                 options: {
                     model: {
@@ -162,13 +143,28 @@
             },
             error: {
                 options: {
-                    template: "validation-error-summary",
+                    templateKey: "validation-error-summary",
                     model: {
                         message:           "{gpii.schema.client.errorAwareForm}.model.errorMessage",
                         validationResults: "{gpii.schema.client.errorAwareForm}.model.validationResults"
                     },
                     modelListeners: {
                         validationResults: "{that}.renderInitialMarkup"
+                    }
+                }
+            },
+            // Use the "gated model watcher" defined above to ensure that rerender waits for the renderer.
+            gatedModelWatcher: {
+                options: {
+                    modelListeners: {
+                        validationResults: [
+                            {
+                                func: "{gpii.schema.client.errorBinder}.renderInitialMarkup"
+                            },
+                            {
+                                func: "{gpii.schema.client.errorBinder}.renderErrors"
+                            }
+                        ]
                     }
                 }
             }

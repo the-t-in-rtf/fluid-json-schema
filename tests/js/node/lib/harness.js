@@ -14,21 +14,9 @@ fluid.require("%gpii-handlebars");
 require("../../../../");
 require("./middleware-express-fixtures.js");
 
-fluid.defaults("gpii.test.schema.harness", {
-    gradeNames: ["gpii.express"],
-    port: 6194,
-    baseUrl: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
-        }
-    },
-    config:  {
-        express: {
-            "port" : "{that}.options.port",
-            baseUrl: "{that}.options.url"
-        }
-    },
+fluid.defaults("gpii.test.schema.harness.base", {
+    gradeNames: ["fluid.component"],
+    templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates", "%gpii-handlebars/tests/templates/primary"],
     components: {
         json: {
             type: "gpii.express.middleware.bodyparser.json",
@@ -46,7 +34,7 @@ fluid.defaults("gpii.test.schema.harness", {
             type: "gpii.express.hb",
             options: {
                 priority:     "after:urlencoded",
-                templateDirs: ["%gpii-json-schema/tests/templates", "%gpii-json-schema/src/templates"]
+                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
             }
         },
         gated: {
@@ -73,7 +61,7 @@ fluid.defaults("gpii.test.schema.harness", {
         modules: {
             type: "gpii.express.router.static",
             options: {
-                path:    "/modules",
+                path:    "/node_modules",
                 content: "%gpii-json-schema/node_modules"
             }
         },
@@ -87,8 +75,22 @@ fluid.defaults("gpii.test.schema.harness", {
         inline: {
             type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
             options: {
-                path:         "/hbs",
-                templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates"]
+                path:         "/templates",
+                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
+            }
+        },
+        messageLoader: {
+            type: "gpii.handlebars.i18n.messageLoader",
+            options: {
+                messageDirs: { validation: "%gpii-json-schema/src/messages" }
+            }
+        },
+        messages: {
+            type: "gpii.handlebars.inlineMessageBundlingMiddleware",
+            options: {
+                model: {
+                    messageBundles: "{messageLoader}.model.messageBundles"
+                }
             }
         },
         htmlErrorHandler: {
@@ -108,4 +110,21 @@ fluid.defaults("gpii.test.schema.harness", {
             }
         }
     }
+});
+
+fluid.defaults("gpii.test.schema.harness", {
+    gradeNames: ["gpii.express", "gpii.test.schema.harness.base"],
+    port: 6194,
+    baseUrl: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
+        }
+    }
+    //config:  {
+    //    express: {
+    //        "port" : "{that}.options.port",
+    //        baseUrl: "{that}.options.url"
+    //    }
+    //},
 });
