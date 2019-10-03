@@ -30,7 +30,7 @@ fluid.require("%gpii-handlebars");
  *
  * @param {gpii.schema.validator} validatorComponent - The global validator component.
  * @param {gpii.schema.validationMiddleware} schemaMiddlewareComponent - The middleware component.
- * @param {Object|Promise} schema - The GSS schema to validate against, or a promise that will resolve to same.
+ * @param {Object} schema - The GSS schema to validate against.
  * @param {Object} req - The Express request object.
  * @param {Object} res - The Express response object.
  * @param {Function} next - The function to be executed next in the middleware chain.
@@ -39,28 +39,22 @@ fluid.require("%gpii-handlebars");
 gpii.schema.validationMiddleware.rejectOrForward  = function (validatorComponent, schemaMiddlewareComponent, schema, req, res, next) {
     var toValidate = fluid.model.transformWithRules(req, schemaMiddlewareComponent.options.rules.requestContentToValidate);
 
-    var schemaAsPromise = fluid.isPromise(schema) ? schema : fluid.toPromise(schema);
-    schemaAsPromise.then(
-        function (schema) {
-            var validationResults = validatorComponent.validate(schema, toValidate, schemaMiddlewareComponent.options.schemaHash);
+    var validationResults = validatorComponent.validate(schema, toValidate, schemaMiddlewareComponent.options.schemaHash);
 
-            if (validationResults.isError) {
-                next(validationResults);
-            }
-            else if (validationResults.isValid) {
-                next();
-            }
-            else {
-                var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(req, schemaMiddlewareComponent.model.messageBundles, schemaMiddlewareComponent.options.defaultLocale);
-                var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, schemaMiddlewareComponent.options.localisationTransform);
-                var localisedPayload = fluid.copy(validationResults);
-                localisedPayload.errors = localisedErrors;
-                localisedPayload.statusCode = schemaMiddlewareComponent.options.invalidStatusCode;
-                next(localisedPayload);
-            }
-        },
-        next
-    );
+    if (validationResults.isError) {
+        next(validationResults);
+    }
+    else if (validationResults.isValid) {
+        next();
+    }
+    else {
+        var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(req, schemaMiddlewareComponent.model.messageBundles, schemaMiddlewareComponent.options.defaultLocale);
+        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, schemaMiddlewareComponent.options.localisationTransform);
+        var localisedPayload = fluid.copy(validationResults);
+        localisedPayload.errors = localisedErrors;
+        localisedPayload.statusCode = schemaMiddlewareComponent.options.invalidStatusCode;
+        next(localisedPayload);
+    }
 };
 
 /*

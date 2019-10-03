@@ -51,27 +51,6 @@ fluid.defaults("gpii.test.schema.harness.base", {
                 content: "%gpii-json-schema/build"
             }
         },
-        js: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/src",
-                content: "%gpii-json-schema/src"
-            }
-        },
-        modules: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/node_modules",
-                content: "%gpii-json-schema/node_modules"
-            }
-        },
-        content: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/content",
-                content: "%gpii-json-schema/tests/browser-fixtures"
-            }
-        },
         inline: {
             type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
             options: {
@@ -120,11 +99,27 @@ fluid.defaults("gpii.test.schema.harness", {
             funcName: "fluid.stringTemplate",
             args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
         }
-    }
-    //config:  {
-    //    express: {
-    //        "port" : "{that}.options.port",
-    //        baseUrl: "{that}.options.url"
-    //    }
-    //},
-});
+    },
+    components: {
+        js: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/src",
+                content: "%gpii-json-schema/src"
+            }
+        },
+        modules: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/node_modules",
+                content: "%gpii-json-schema/node_modules"
+            }
+        },
+        content: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/content",
+                content: "%gpii-json-schema/tests/browser-fixtures"
+            }
+        }
+    }});

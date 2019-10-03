@@ -6,10 +6,11 @@
 
 */
 /* globals require */
+fluid = fluid || require("infusion");
+
 (function (fluid) {
     "use strict";
-    if (!fluid) {
-        fluid = require("infusion");
+    if (fluid.require) {
         fluid.require("%gpii-json-schema");
     }
 
