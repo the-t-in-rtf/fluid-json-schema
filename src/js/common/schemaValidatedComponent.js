@@ -206,6 +206,10 @@ var fluid  = fluid  || require("infusion");
                                                 "type": "array"
                                             }
                                         }
+                                    },
+                                    // Required to allow IoC references, discuss hardening further.
+                                    {
+                                        type: "string"
                                     }
                                 ]
                             }
