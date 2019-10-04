@@ -159,9 +159,6 @@
                     modelListeners: {
                         validationResults: [
                             {
-                                func: "{gpii.schema.client.errorBinder}.renderInitialMarkup"
-                            },
-                            {
                                 func: "{gpii.schema.client.errorBinder}.renderErrors"
                             }
                         ]
