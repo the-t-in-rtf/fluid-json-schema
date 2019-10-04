@@ -173,8 +173,12 @@
             }
         },
         listeners: {
+            // Break the contract inherited from gpii-handlebars.
             "onCreate.renderMarkup": {
                 funcName: "fluid.identity"
+            },
+            "onRendererAvailable.renderMarkup": {
+                func: "{that}.renderInitialMarkup"
             },
             "onResourcesLoaded.log": {
                 funcName: "console.log",
