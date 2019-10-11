@@ -58,8 +58,8 @@ fluid.defaults("gpii.test.schema.harness.base", {
                 templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
             }
         },
-        messageLoader: {
-            type: "gpii.handlebars.i18n.messageLoader",
+        messageBundleLoader: {
+            type: "gpii.handlebars.i18n.messageBundleLoader",
             options: {
                 messageDirs: { validation: "%gpii-json-schema/src/messages" }
             }
@@ -68,7 +68,7 @@ fluid.defaults("gpii.test.schema.harness.base", {
             type: "gpii.handlebars.inlineMessageBundlingMiddleware",
             options: {
                 model: {
-                    messageBundles: "{messageLoader}.model.messageBundles"
+                    messageBundles: "{messageBundleLoader}.model.messageBundles"
                 }
             }
         },
