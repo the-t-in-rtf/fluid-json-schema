@@ -16,7 +16,11 @@ require("./middleware-express-fixtures.js");
 
 fluid.defaults("gpii.test.schema.harness.base", {
     gradeNames: ["fluid.component"],
-    templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates", "%gpii-handlebars/tests/templates/primary"],
+    templateDirs: {
+        validation: "%gpii-json-schema/src/templates",
+        validationTests: "%gpii-json-schema/tests/templates",
+        handlebarsTests: "%gpii-handlebars/tests/templates/primary"
+    },
     components: {
         json: {
             type: "gpii.express.middleware.bodyparser.json",

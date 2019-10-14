@@ -20,7 +20,7 @@
         "ajv": "6.10.2",
         "gpii-binder": "1.0.6",
         "gpii-express": "1.0.15",
-        "gpii-handlebars": "2.1.0-dev.20191011T135302Z.1fce29e.GPII-4100",
+        "gpii-handlebars": "2.1.0-dev.20191014T131654Z.fd29700.GPII-4100",
         "infusion": "3.0.0-dev.20191009T141140Z.32c9263b4.FLUID-6148",
         "kettle": "1.11.0"
     },

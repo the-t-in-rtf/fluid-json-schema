@@ -27,7 +27,11 @@ var testemComponent = gpii.testem.instrumentation({
         "tests": "%gpii-json-schema/tests",
         "node_modules": "%gpii-json-schema/node_modules"
     },
-    templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates", "%gpii-handlebars/tests/templates/primary"],
+    templateDirs: {
+        validation: "%gpii-json-schema/src/templates",
+        validationTests: "%gpii-json-schema/tests/templates",
+        handlebarsTests: "%gpii-handlebars/tests/templates/primary"
+    },
     additionalProxies: {
         templates: "/templates",
         messages: "/messages",
