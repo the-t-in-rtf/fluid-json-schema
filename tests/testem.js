@@ -37,6 +37,14 @@ var testemComponent = gpii.testem.instrumentation({
         messages: "/messages",
         gated: "/gated"
     },
+    // Force Firefox to run headless as a temporary fix for Firefox issues on Windows:
+    // https://github.com/testem/testem/issues/1377
+    "browserArgs": {
+        "Firefox": [
+            "--no-remote",
+            "--headless"
+        ]
+    },
     testemOptions: {
         // Disable Headless Chrome we can figure out a solution to this issue: https://issues.gpii.net/browse/GPII-4064
         // Running Testem with the HEADLESS environment variable still works, and still runs headless.
