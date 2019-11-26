@@ -3,8 +3,21 @@
 var fluid = require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
+fluid.require("%gpii-handlebars");
+
 fluid.registerNamespace("gpii.schema.kettle.validator");
 
+/**
+ *
+ * Validate a request payload according to a GSS Schema.  Fulfills the contract for a `kettle.middleware` `handle`
+ * invoker.
+ *
+ * @param {gpii.schema.kettle.validator} kettleValidator - A `gpii.schema.kettle.validator` instance that has a schema and rules about which part of the payload should be validated.
+ * @param {gpii.schema.validator} globalValidator - The global validator instance.
+ * @param {kettle.request.http} requestHandler - The component that is fielding the actual request.
+ * @return {Promise} - A `fluid.promise` that is rejected with a validation error if the payload is invalid or resolved if the payload is valid.
+ *
+ */
 gpii.schema.kettle.validator.validateRequest = function (kettleValidator, globalValidator, requestHandler) {
     var validationPromise = fluid.promise();
 
@@ -17,7 +30,8 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
         validationPromise.resolve();
     }
     else {
-        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, kettleValidator.model.messages, kettleValidator.options.localisationTransform);
+        var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(requestHandler.req, kettleValidator.model.messageBundles, kettleValidator.options.defaultLocale);
+        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, kettleValidator.options.localisationTransform);
         var localisedPayload = fluid.copy(validationResults);
         localisedPayload.errors = localisedErrors;
 
@@ -31,14 +45,15 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
 // A kettle.middleware grade that can be used in the requestMiddleware stack, as in:
 // https://github.com/fluid-project/kettle/blob/670396acbf4be31be009b2b2dee48373134ea94d/tests/shared/SessionTestDefs.js#L64
 
-// TODO: refactor tests to use single per-payload validation.
-
-
 fluid.defaults("gpii.schema.kettle.validator", {
     gradeNames: ["kettle.middleware", "fluid.modelComponent"],
     schemaHash: "@expand:gpii.schema.hashSchema({that}.options.requestSchema)",
+    defaultLocale: "en_US",
+    messageDirs: {
+        validation: "%gpii-json-schema/src/messages"
+    },
     model: {
-        messages: gpii.schema.messages.validationErrors
+        messageBundles: "@expand:gpii.handlebars.i18n.loadMessageBundles({that}.options.messageDirs)"
     },
     localisationTransform: {
         "": ""

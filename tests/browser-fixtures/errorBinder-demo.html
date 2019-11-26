@@ -6,19 +6,7 @@
         <script type="text/javascript" src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
 
         <!-- Fluid dependencies -->
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidPromises.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/lib/fastXmlPull/js/fastXmlPull.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/renderer/js/fluidParser.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/renderer/js/fluidRenderer.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/FluidRequests.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
-        <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+        <script type="text/javascript" src="../../node_modules/infusion/dist/infusion-all.js"></script>
         <script type="text/javascript" src="../../node_modules/infusion/src/framework/core/js/MessageResolver.js"></script>
 
         <!-- Bring in Handlebars dependency -->
@@ -37,14 +25,17 @@
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/common/jsonify.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/common/md-common.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/md-client.js"></script>
+        <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/messageHelper.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/common/renderer.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/renderer.js"></script>
+        <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/serverResourceAware.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/templateAware.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/templateFormControl.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/templateManager.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/templateMessage.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/templateRequestAndRender.js"></script>
         <script type="text/javascript" src="../../node_modules/gpii-handlebars/src/js/client/hasRequiredOptions.js"></script>
+
 
         <!-- gpii-binder dependencies -->
         <script type="text/javascript" src="../../node_modules/gpii-binder/src/js/binder.js"></script>
@@ -58,15 +49,14 @@
         <link type="text/css" rel="stylesheet" href="../../node_modules/foundation-sites/dist/css/foundation.css"/>
 
         <!-- Client-side validator dependencies -->
-        <script src="../../src/js/common/gss-metaschema.js"></script>
-        <script src="../../src/js/common/schemaValidatedComponent.js"></script>
-        <script src="../../src/js/common/schemaValidatedModelComponent.js"></script>
-        <script src="../../src/js/common/validation-errors.js"></script>
-        <script src="../../src/js/common/validator.js"></script>
+        <script src="/src/js/common/gss-metaschema.js"></script>
+        <script src="/src/js/common/schemaValidatedComponent.js"></script>
+        <script src="/src/js/common/schemaValidatedModelComponent.js"></script>
+        <script src="/src/js/common/orderedStringify.js"></script>
+        <script src="/src/js/common/validator.js"></script>
 
         <!-- validation-aware grade -->
         <script src="../../src/js/client/errorBinder.js"></script>
-
     </head>
     <body>
         <div class="grid-x grid-x-padding">

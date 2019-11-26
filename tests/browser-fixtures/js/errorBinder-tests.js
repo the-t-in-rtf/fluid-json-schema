@@ -2,13 +2,14 @@
 var fluid = fluid || {};
 (function (fluid, $, jqUnit) {
     "use strict";
+    fluid.setLogging(true);
     var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.tests.schema.errorBinder");
 
     gpii.tests.schema.errorBinder.checkElements = function (elementDefs) {
         fluid.each(elementDefs, function (elementDef) {
             var elements = fluid.makeArray($(elementDef.selector));
-            jqUnit.assertTrue("There should be " + elementDef.expectedElements + " element(s).", elements.length === elementDef.expectedElements);
+            jqUnit.assertEquals("We should find the right number of elements.", elementDef.expectedElements, elements.length);
 
             fluid.each(elements, function (element) {
                 if (elementDef.mustMatch) {
@@ -34,6 +35,48 @@ var fluid = fluid || {};
         $(selector).submit();
     };
 
+
+    fluid.defaults("gpii.tests.schema.errorBinder.startSequenceElement", {
+        gradeNames: ["fluid.test.sequenceElement"],
+        sequence: [
+            { func: "{testEnvironment}.events.constructFixtures.fire" },
+            {
+                event: "{testEnvironment}.events.onFixturesReady",
+                listener: "fluid.identity"
+            },
+            // Crude additional pause to give the component and all sub-components a chance to (re)render.
+            {
+                func: "{testEnvironment}.startPause",
+                args: [150] // timeToPauseInMs
+            },
+            {
+                event: "{testEnvironment}.events.onPauseComplete",
+                listener: "fluid.identity"
+            }
+        ]
+    });
+
+    // If I leave the teardown and reconstruction to createOnEvent, I end up with errors about not being able to call
+    // `removeListener`, so I destroy the component myself here.
+    fluid.defaults("gpii.tests.schema.errorBinder.stopSequenceElement", {
+        gradeNames: ["fluid.test.sequenceElement"],
+        sequence: [{ func: "{testEnvironment}.errorBinder.destroy" }]
+    });
+
+    fluid.defaults("gpii.tests.schema.errorBinder.sequenceGrade", {
+        gradeNames: ["fluid.test.sequence"],
+        sequenceElements: {
+            start: {
+                priority:   "before:sequence",
+                gradeNames: "gpii.tests.schema.errorBinder.startSequenceElement"
+            },
+            stop: {
+                priority:   "after:sequence",
+                gradeNames: "gpii.tests.schema.errorBinder.stopSequenceElement"
+            }
+        }
+    });
+
     fluid.defaults("gpii.tests.schema.errorBinder.caseHolder", {
         gradeNames: ["fluid.test.testCaseHolder"],
         modules: [{
@@ -41,11 +84,10 @@ var fluid = fluid || {};
             tests: [
                 {
                     name: "Confirm that initial client-side validation errors appear correctly after startup...",
+                    sequenceGrade: "gpii.tests.schema.errorBinder.sequenceGrade",
                     sequence: [
-                        { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
-                            event: "{testEnvironment}.events.onFixturesReady",
-                            listener: "gpii.tests.schema.errorBinder.checkElements",
+                            func: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -65,15 +107,20 @@ var fluid = fluid || {};
                 },
                 {
                     name: "Confirm that feedback on a required field is set and unset as needed...",
+                    sequenceGrade: "gpii.tests.schema.errorBinder.sequenceGrade",
                     sequence: [
-                        { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
-                            event: "{testEnvironment}.events.onFixturesReady",
-                            listener: "gpii.tests.schema.errorBinder.changeModelValue",
+                            func: "gpii.tests.schema.errorBinder.changeModelValue",
                             args: ["{testEnvironment}", "errorBinder", "shallowlyRequired", "has a value"] // environment, componentName, valuePath, valueToSet
                         },
                         {
-                            func: "gpii.tests.schema.errorBinder.checkElements",
+                            event: "{testEnvironment}.events.onFixturesReady",
+                            func: "{testEnvironment}.startPause",
+                            args: [1050] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -91,8 +138,14 @@ var fluid = fluid || {};
                             func: "gpii.tests.schema.errorBinder.changeModelValue",
                             args: ["{testEnvironment}", "errorBinder", "shallowlyRequired", null] // environment, componentName, valuePath, valueToSet
                         },
+                        // Crude pause to give various components a chance to rerender.
                         {
-                            func: "gpii.tests.schema.errorBinder.checkElements",
+                            func: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -112,15 +165,20 @@ var fluid = fluid || {};
                 },
                 {
                     name: "Confirm that multiple errors can be set and cleared in real time...",
+                    sequenceGrade: "gpii.tests.schema.errorBinder.sequenceGrade",
                     sequence: [
-                        { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
-                            event: "{testEnvironment}.events.onFixturesReady",
-                            listener: "gpii.tests.schema.errorBinder.changeModelValue",
+                            func: "gpii.tests.schema.errorBinder.changeModelValue",
                             args: ["{testEnvironment}", "errorBinder", "testAllOf", "CAT"] // environment, componentName, valuePath, valueToSet
                         },
+                        // Crude pause to give various components a chance to rerender.
                         {
-                            func: "gpii.tests.schema.errorBinder.checkElements",
+                            func: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -143,8 +201,14 @@ var fluid = fluid || {};
                             func: "gpii.tests.schema.errorBinder.changeModelValue",
                             args: ["{testEnvironment}", "errorBinder", "shallowlyRequired", "There is now text."] // environment, componentName, valuePath, valueToSet
                         },
+                        // Crude pause to give various components a chance to rerender.
                         {
-                            func: "gpii.tests.schema.errorBinder.checkElements",
+                            func: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -162,16 +226,21 @@ var fluid = fluid || {};
                 },
                 {
                     name: "Confirm that form submission is prevented if there are validation errors...",
+                    sequenceGrade: "gpii.tests.schema.errorBinder.sequenceGrade",
                     sequence: [
-                        { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
-                            event: "{testEnvironment}.events.onFixturesReady",
-                            listener: "gpii.tests.schema.errorBinder.submitForm",
+                            func: "gpii.tests.schema.errorBinder.submitForm",
                             args: [".errorBinder-viewport form"] // selector
                         },
                         // If the page were reloaded by a form submit, we would not exist to ever finish this run.
+                        // Crude pause to give various components a chance to rerender.
                         {
-                            func: "gpii.tests.schema.errorBinder.checkElements",
+                            func: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Summary message.
                                 {
@@ -191,20 +260,31 @@ var fluid = fluid || {};
                 },
                 {
                     name: "Confirm that form submission succeeeds if there are no validation errors...",
+                    sequenceGrade: "gpii.tests.schema.errorBinder.sequenceGrade",
                     sequence: [
-                        { func: "{testEnvironment}.events.constructFixtures.fire" },
                         {
-                            event: "{testEnvironment}.events.onFixturesReady",
-                            listener: "gpii.tests.schema.errorBinder.changeModelValue",
+                            func: "gpii.tests.schema.errorBinder.changeModelValue",
                             args: ["{testEnvironment}", "errorBinder", "shallowlyRequired", "has a value"] // environment, componentName, valuePath, valueToSet
                         },
+                        // Crude pause to give various components a chance to rerender.
                         {
-                            func: "gpii.tests.schema.errorBinder.submitForm",
+                            func: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
+                            listener: "gpii.tests.schema.errorBinder.submitForm",
                             args: [".errorBinder-viewport form"] // selector
                         },
                         // If the page were reloaded by a form submit, we would not exist to ever finish this run.
+                        // Crude pause to give various components a chance to rerender.
                         {
                             event: "{testEnvironment}.errorBinder.events.requestReceived",
+                            listener: "{testEnvironment}.startPause",
+                            args: [150] // timeToPauseInMs
+                        },
+                        {
+                            event: "{testEnvironment}.events.onPauseComplete",
                             listener: "gpii.tests.schema.errorBinder.checkElements",
                             args: [[
                                 // Success message
@@ -236,7 +316,14 @@ var fluid = fluid || {};
         markupFixture: ".errorBinder-viewport",
         events: {
             constructFixtures: null,
-            onFixturesReady: null
+            onFixturesReady:   null,
+            onPauseComplete:   null
+        },
+        invokers: {
+            startPause: {
+                funcName: "setTimeout",
+                args: ["{that}.events.onPauseComplete.fire", "{arguments}.0"] // timeToPauseInMs
+            }
         },
         components: {
             caseHolder: {
@@ -247,10 +334,9 @@ var fluid = fluid || {};
                 createOnEvent: "constructFixtures",
                 container: ".errorBinder-viewport",
                 options: {
-                    modelListeners: {
-                        "templates": {
-                            func: "{testEnvironment}.events.onFixturesReady.fire",
-                            excludeSource: "init"
+                    listeners: {
+                        "onRendererAvailable.notifyParent": {
+                            func: "{testEnvironment}.events.onFixturesReady.fire"
                         }
                     }
                 }

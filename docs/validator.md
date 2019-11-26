@@ -218,7 +218,7 @@ fluid.defaults("my.validating.component", {
 var myValidatingComponent = my.validating.component();
 
 var validationResults = myValidatingComponent.validateInput({});
-console.log(JSON.stringify(validationResults, null, 2));
+fluid.log(JSON.stringify(validationResults, null, 2));
 /*
     {
       "isValid": false,
@@ -243,7 +243,7 @@ console.log(JSON.stringify(validationResults, null, 2));
 */
 
 var secondValidationResults = myValidatingComponent.validateInput({ foo: true});
-console.log(JSON.stringify(secondValidationResults, null, 2));
+fluid.log(JSON.stringify(secondValidationResults, null, 2));
 /*
     {
       isValid: true

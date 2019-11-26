@@ -14,20 +14,12 @@ fluid.require("%gpii-handlebars");
 require("../../../../");
 require("./middleware-express-fixtures.js");
 
-fluid.defaults("gpii.test.schema.harness", {
-    gradeNames: ["gpii.express"],
-    port: 6194,
-    baseUrl: {
-        expander: {
-            funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
-        }
-    },
-    config:  {
-        express: {
-            "port" : "{that}.options.port",
-            baseUrl: "{that}.options.url"
-        }
+fluid.defaults("gpii.test.schema.harness.base", {
+    gradeNames: ["fluid.component"],
+    templateDirs: {
+        validation: "%gpii-json-schema/src/templates",
+        validationTests: "%gpii-json-schema/tests/templates",
+        handlebarsTests: "%gpii-handlebars/tests/templates/primary"
     },
     components: {
         json: {
@@ -46,7 +38,7 @@ fluid.defaults("gpii.test.schema.harness", {
             type: "gpii.express.hb",
             options: {
                 priority:     "after:urlencoded",
-                templateDirs: ["%gpii-json-schema/tests/templates", "%gpii-json-schema/src/templates"]
+                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
             }
         },
         gated: {
@@ -63,32 +55,25 @@ fluid.defaults("gpii.test.schema.harness", {
                 content: "%gpii-json-schema/build"
             }
         },
-        js: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/src",
-                content: "%gpii-json-schema/src"
-            }
-        },
-        modules: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/modules",
-                content: "%gpii-json-schema/node_modules"
-            }
-        },
-        content: {
-            type: "gpii.express.router.static",
-            options: {
-                path:    "/content",
-                content: "%gpii-json-schema/tests/browser-fixtures"
-            }
-        },
         inline: {
             type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
             options: {
-                path:         "/hbs",
-                templateDirs: ["%gpii-json-schema/src/templates", "%gpii-json-schema/tests/templates"]
+                path:         "/templates",
+                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
+            }
+        },
+        messageBundleLoader: {
+            type: "gpii.handlebars.i18n.messageBundleLoader",
+            options: {
+                messageDirs: { validation: "%gpii-json-schema/src/messages" }
+            }
+        },
+        messages: {
+            type: "gpii.handlebars.inlineMessageBundlingMiddleware",
+            options: {
+                model: {
+                    messageBundles: "{messageBundleLoader}.model.messageBundles"
+                }
             }
         },
         htmlErrorHandler: {
@@ -99,13 +84,46 @@ fluid.defaults("gpii.test.schema.harness", {
                 templateKey: "partials/validation-error-summary"
             }
         },
-        // This should never be reached
+        // This is hit by validation errors that are not otherwise handled (for example, by rendering the error).
         defaultErrorMiddleware: {
             type: "gpii.express.middleware.error",
             options: {
                 priority:  "last",
-                defaultStatusCode: 400
+                defaultStatusCode: 500
             }
         }
     }
 });
+
+fluid.defaults("gpii.test.schema.harness", {
+    gradeNames: ["gpii.express", "gpii.test.schema.harness.base"],
+    port: 6194,
+    baseUrl: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     ["http://localhost:%port/", { port: "{that}.options.port" }]
+        }
+    },
+    components: {
+        js: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/src",
+                content: "%gpii-json-schema/src"
+            }
+        },
+        modules: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/node_modules",
+                content: "%gpii-json-schema/node_modules"
+            }
+        },
+        content: {
+            type: "gpii.express.router.static",
+            options: {
+                path:    "/content",
+                content: "%gpii-json-schema/tests/browser-fixtures"
+            }
+        }
+    }});

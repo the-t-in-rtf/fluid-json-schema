@@ -47,7 +47,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedBody", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
     requestMiddleware: {
         validate: {
-            middleware: "{gpii.test.schema.kettle.app}.bodyValidator"
+            middleware: "{gpii.test.schema.kettle.bodyValidator}"
         }
     }
 });
@@ -72,7 +72,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedParams", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
     requestMiddleware: {
         validate: {
-            middleware: "{gpii.test.schema.kettle.app}.paramsValidator"
+            middleware: "{gpii.test.schema.kettle.paramsValidator}"
         }
     }
 });
@@ -98,7 +98,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedQuery", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
     requestMiddleware: {
         validate: {
-            middleware: "{gpii.test.schema.kettle.app}.queryValidator"
+            middleware: "{gpii.test.schema.kettle.queryValidator}"
         }
     }
 });
@@ -151,7 +151,7 @@ fluid.defaults("gpii.test.schema.kettle.handlers.gatedCombined", {
     gradeNames: ["gpii.test.schema.kettle.handlers.base"],
     requestMiddleware: {
         validate: {
-            middleware: "{gpii.test.schema.kettle.app}.combinedValidator"
+            middleware: "{gpii.test.schema.kettle.combinedValidator}"
         }
     }
 });

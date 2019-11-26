@@ -6,7 +6,6 @@ var fluid  = fluid  || require("infusion");
 
     if (fluid.require) {
         require("./gss-metaschema");
-        require("./validation-errors");
         require("./orderedStringify");
     }
 
@@ -157,7 +156,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Validate material against a "GPII Schema System" schema using a precompiled AJV "validator".
      *
-     * @param {Object} that - The validator component.
+     * @param {gpii.schema.validator} that - The validator component.
      * @param {GssSchema} gssSchema - A GSS schema definition.
      * @param {Any} toValidate - The material to be validated.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
@@ -185,7 +184,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Add a single GSS schema to the cache.
      *
-     * @param {Object} that - The validator component itself.
+     * @param {gpii.schema.validator} that - The validator component itself.
      * @param {GssSchema} gssSchema - The original GSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      * @return {Object} - The compiled validator created from the GSS schema.
@@ -202,7 +201,7 @@ var fluid  = fluid  || require("infusion");
      *
      * Remove a single previously cached schema from the cache.
      *
-     * @param {Object} that - The validator component itself.
+     * @param {gpii.schema.validator} that - The validator component itself.
      * @param {GssSchema} gssSchema - The original GSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      *
@@ -210,6 +209,17 @@ var fluid  = fluid  || require("infusion");
     gpii.schema.validator.forgetSchema = function (that, gssSchema, schemaHash) {
         schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
         delete that.validatorsByHash[schemaHash];
+    };
+
+    /**
+     *
+     * Clear all cached validators.
+     *
+     * @param {gpii.schema.validator} that - The validator component itself.
+     *
+     */
+    gpii.schema.validator.clearCache = function (that) {
+        that.validatorsByHash = {};
     };
 
     /**
@@ -511,21 +521,20 @@ var fluid  = fluid  || require("infusion");
      * A function to translate/localise validation errors.
      *
      * If you want to pass a custom message bundle to this function, it should only contain top-level elements, see
-     * ./src/js/validation-errors.js in this package for an example.
+     * the ./src/messages/ directly in this package for concrete examples.
      *
      * @param {Array<gssValidationError>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
      * @param {Any} validatedData - The (optional) data that was validated.
-     * @param {Object<String,String>} messages - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
+     * @param {Object<String,String>} messageBundle - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
      * @param {Object} localisationTransform - An optional set of rules that control what information is available when localising validation errors (see above).
      * @return {Array<gssValidationError>} - The validation errors, with all message keys replaced with localised strings.
      *
      */
-    gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messages, localisationTransform) {
-        messages = messages || gpii.schema.messages.validationErrors;
+    gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messageBundle, localisationTransform) {
         localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
             var messageKey = fluid.get(validationError, "message");
-            var messageTemplate = messageKey && fluid.get(messages, [messageKey]); // We use the segment format because the keys contain dots.
+            var messageTemplate = messageKey && fluid.get(messageBundle, [messageKey]); // We use the segment format because the keys contain dots.
             if (messageTemplate) {
                 var data = validatedData && fluid.get(validatedData, validationError.dataPath);
                 var localisationContext = fluid.model.transformWithRules({ data: data, error: validationError}, localisationTransform);
@@ -653,8 +662,8 @@ var fluid  = fluid  || require("infusion");
                 args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
             },
             clearCache: {
-                funcName: "fluid.set",
-                args:     ["{that}", "validatorsByHash", {}] // model, path, newValue
+                funcName: "gpii.schema.validator.clearCache",
+                args:     ["{that}"]
             }
         }
     });

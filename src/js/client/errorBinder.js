@@ -18,7 +18,7 @@
 
     // The base component used to actually display validation errors.
     fluid.defaults("gpii.schema.client.errorBinder", {
-        gradeNames: ["gpii.schema.modelComponent"],
+        gradeNames: ["gpii.schema.modelComponent", "gpii.handlebars.templateAware.serverResourceAware"],
         errorBindings: "{that}.options.bindings",
         selectors: {
             "fieldError": ".fieldError"
@@ -29,21 +29,29 @@
         model: {
             validationResults: {}
         },
-        components: {
-            renderer: {
-                type: "gpii.handlebars.renderer"
-            }
-        },
         invokers: {
             renderErrors: {
                 funcName: "gpii.schema.client.errorAwareForm.renderErrors",
-                args:     ["{that}", "{renderer}"] // renderer
+                args:     ["{that}", "{gpii.handlebars.renderer}"] // renderer
             }
         },
-        modelListeners: {
-            validationResults: {
-                func: "{that}.renderErrors",
-                excludeSource: "init"
+        components: {
+            // We have to wait to render until the renderer is available, but also reload if our templates change.
+            gatedModelWatcher: {
+                type: "fluid.modelComponent",
+                createOnEvent: "{that}.events.onRendererAvailable",
+                options: {
+                    model: {
+                        messages: "{gpii.schema.client.errorBinder}.model.messages",
+                        templates: "{gpii.schema.client.errorBinder}.model.templates",
+                        validationResults: "{gpii.schema.client.errorBinder}.model.validationResults"
+                    },
+                    modelListeners: {
+                        validationResults: {
+                            func: "{gpii.schema.client.errorBinder}.renderErrors"
+                        }
+                    }
+                }
             }
         }
     });
@@ -62,7 +70,7 @@
 
     // We need to ensure that both our own markup and the field errors are rendered before we fire `onMarkupRendered`.
     gpii.schema.client.errorAwareForm.renderErrors = function (that, renderer) {
-        var templateExists = fluid.get(that, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
+        var templateExists = fluid.get(renderer, ["model", "templates", "pages", that.options.templateKeys.inlineError]);
         if (templateExists && renderer) {
             // Get rid of any previous validation errors.
             that.locate("fieldError").remove();
@@ -89,7 +97,7 @@
      *
      * A gatekeeper function that only allows form submission if there are no validation errors.
      *
-     * @param {Object} that - The clientSideValidation component itself.
+     * @param {gpii.schema.client.errorAwareForm} that - The clientSideValidation component itself.
      * @param {String} event - The jQuery Event (see http://api.jquery.com/Types/#Event) passed by the DOM element we're bound to.
      */
     gpii.schema.client.errorAwareForm.submitForm = function (that, event) {
@@ -122,26 +130,10 @@
             }
         },
         model: {
-            templates: "{renderer}.model.templates",
             message: false,
             validationResults: false
         },
-        modelListeners: {
-            templates: [
-                {
-                    func: "{that}.renderInitialMarkup",
-                    excludeSource: "init"
-                },
-                {
-                    func: "{that}.renderErrors",
-                    excludeSource: "init"
-                }
-            ]
-        },
         components: {
-            renderer: {
-                type: "gpii.handlebars.renderer.serverAware"
-            },
             success: {
                 options: {
                     model: {
@@ -151,13 +143,25 @@
             },
             error: {
                 options: {
-                    template: "validation-error-summary",
+                    templateKey: "validation-error-summary",
                     model: {
                         message:           "{gpii.schema.client.errorAwareForm}.model.errorMessage",
                         validationResults: "{gpii.schema.client.errorAwareForm}.model.validationResults"
                     },
                     modelListeners: {
                         validationResults: "{that}.renderInitialMarkup"
+                    }
+                }
+            },
+            // Use the "gated model watcher" defined above to ensure that rerender waits for the renderer.
+            gatedModelWatcher: {
+                options: {
+                    modelListeners: {
+                        validationResults: [
+                            {
+                                func: "{gpii.schema.client.errorBinder}.renderErrors"
+                            }
+                        ]
                     }
                 }
             }
@@ -169,8 +173,16 @@
             }
         },
         listeners: {
+            // Break the contract inherited from gpii-handlebars.
             "onCreate.renderMarkup": {
                 funcName: "fluid.identity"
+            },
+            "onRendererAvailable.renderMarkup": {
+                func: "{that}.renderInitialMarkup"
+            },
+            "onResourcesLoaded.log": {
+                funcName: "console.log",
+                args: ["Resources loaded..."]
             }
         }
     });

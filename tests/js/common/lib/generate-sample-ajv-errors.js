@@ -126,4 +126,5 @@ fluid.each(gpii.tests.validator.ajvErrors, function (testDef, key) {
     filteredErrorDefs[key] = fluid.filterKeys(testDef, ["input", "schema"], true);
 });
 
-console.log(JSON.stringify(fluid.merge({}, filteredErrorDefs, combinedResults), null, 2));
+fluid.setLogging(true);
+fluid.log(JSON.stringify(fluid.merge({}, filteredErrorDefs, combinedResults), null, 2));
