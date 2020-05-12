@@ -14,16 +14,37 @@ var jqUnit = jqUnit || {};
 
     var gpii = fluid.registerNamespace("gpii");
 
+    fluid.defaults("gpii.tests.schema.modelComponent", {
+        gradeNames: ["gpii.schema.modelComponent"],
+        members: {
+            validationPasses: 0
+        },
+        listeners: {
+            "onCreate.validate": {
+                funcName: "gpii.tests.schema.modelComponent.trackedModelValidation",
+                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+            }
+        }
+    });
+
+    gpii.tests.schema.modelComponent.trackedModelValidation = function (globalValidator, validatedModelComponent) {
+        validatedModelComponent.validationPasses++;
+        gpii.schema.modelComponent.validateModel(globalValidator, validatedModelComponent);
+    };
+
     jqUnit.module("Schema validated model component tests.");
 
     jqUnit.test("Testing the base grade.", function () {
-        var component = gpii.schema.modelComponent();
+        var component = gpii.tests.schema.modelComponent();
         jqUnit.assert("We should have been able to instantiate an instance of the base gpii.schema.component grade successfully.");
+
+        jqUnit.assertEquals("There should have been a single validation pass on component startup.", 1, component.validationPasses);
+
         jqUnit.assertLeftHand("The initial model should be valid.", { isValid: true }, component.model.validationResults);
     });
 
     fluid.defaults("gpii.tests.schemaValidatedModelComponent.basicValidation",{
-        gradeNames: ["gpii.schema.modelComponent"],
+        gradeNames: ["gpii.tests.schema.modelComponent"],
         modelSchema: {
             properties: {
                 validModelVariableIsValid: {
@@ -41,12 +62,12 @@ var jqUnit = jqUnit || {};
         var component = gpii.tests.schemaValidatedModelComponent.basicValidation();
         jqUnit.assert("We should have been able to instantiate an instance of our grade successfully.");
 
-        // This may be need to be removed to avoid timing problems, the next test is a more meaningful test of initial vs. subsequent validation.
-        jqUnit.assertLeftHand("The initial model should be valid.", { isValid: true }, component.model.validationResults);
+        jqUnit.assertEquals("There should have been a single validation pass on component startup.", 1, component.validationPasses);
 
         component.applier.modelChanged.addListener({ path: "validationResults"}, function (validationResults) {
             jqUnit.start();
             jqUnit.assertLeftHand("The updated model should be invalid.", { isValid: false }, validationResults);
+            jqUnit.assertEquals("There should have been a second validation pass on a model change.", 2, component.validationPasses);
         });
 
         jqUnit.stop();
@@ -62,6 +83,7 @@ var jqUnit = jqUnit || {};
             jqUnit.start();
             jqUnit.assertLeftHand("The old model should be invalid.", { isValid: false }, oldValidationResults);
             jqUnit.assertLeftHand("The new model should be valid.",   { isValid: true  }, newValidationResults);
+            jqUnit.assertEquals("There should have been a second validation pass on a model change.", 2, component.validationPasses);
         });
 
         jqUnit.stop();

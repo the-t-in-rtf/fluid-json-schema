@@ -10,6 +10,7 @@ var jqUnit = jqUnit || {};
         fluid = require("infusion");
         jqUnit = require("node-jqunit");
         require("../../../src/js/common/schemaValidatedComponent");
+        require("./lib/check-potentia-grades");
     }
     var gpii = fluid.registerNamespace("gpii");
 
@@ -38,8 +39,7 @@ var jqUnit = jqUnit || {};
         var component = gpii.tests.schema.valid({ newBoolean: true });
         jqUnit.assert("We should have been able to instantiate our custom component with valid options.");
 
-        jqUnit.assertTrue("The resulting component should have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.potentiaII"));
-        jqUnit.assertFalse("The resulting component should not have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.legacy"));
+        gpii.test.schema.checkContextGrades(component, jqUnit);
     });
 
     jqUnit.test("Testing invalid component options.", function () {
