@@ -19,8 +19,16 @@ var jqUnit = jqUnit || {};
         members: {
             validationPasses: 0
         },
+        modelListeners: {
+            "*": {
+                namespace: "validateModel",
+                excludeSource: ["init", "validation"],
+                funcName: "gpii.tests.schema.modelComponent.trackedModelValidation",
+                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+            }
+        },
         listeners: {
-            "onCreate.validate": {
+            "onCreate.validateModel": {
                 funcName: "gpii.tests.schema.modelComponent.trackedModelValidation",
                 args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }

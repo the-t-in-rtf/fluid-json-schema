@@ -6,11 +6,11 @@ var fluid  = fluid  || {};
     "use strict";
     if (!fluid.identity) {
         fluid = require("infusion");
+        fluid.require("%gpii-json-schema");
     }
 
     var gpii = fluid.registerNamespace("gpii");
 
-    require("../../../../");
     fluid.registerNamespace("gpii.test.schema");
 
     /**
