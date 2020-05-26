@@ -17,27 +17,27 @@
     "author": "Tony Atkins <tony@raisingthefloor.org>",
     "license": "BSD-3-Clause",
     "dependencies": {
-        "ajv": "6.10.2",
-        "gpii-binder": "1.0.6",
+        "ajv": "6.12.2",
+        "gpii-binder": "1.1.0",
         "gpii-express": "1.0.15",
-        "gpii-handlebars": "2.1.0-dev.20191014T141924Z.45a74ef.GPII-4100",
-        "infusion": "3.0.0-dev.20191009T141140Z.32c9263b4.FLUID-6148",
-        "kettle": "1.11.0"
+        "gpii-handlebars": "2.1.1",
+        "infusion": "3.0.0-dev.20200525T143422Z.f7f6aab.FLUID-6148",
+        "kettle": "1.12.0"
     },
     "devDependencies": {
-        "eslint": "6.5.1",
+        "eslint": "7.1.0",
         "eslint-config-fluid": "1.4.0",
-        "foundation-sites": "6.4.1",
-        "gpii-grunt-lint-all": "1.0.5",
-        "gpii-testem": "2.1.11-dev.20191003T113129Z.477bcc0.GPII-4156",
-        "grunt": "1.0.4",
-        "handlebars": "4.4.3",
-        "markdown-it": "10.0.0",
-        "mkdirp": "0.5.1",
+        "foundation-sites": "6.6.3",
+        "gpii-grunt-lint-all": "1.0.7",
+        "gpii-testem": "2.1.12",
+        "grunt": "1.1.0",
+        "handlebars": "4.7.6",
+        "markdown-it": "11.0.0",
+        "mkdirp": "1.0.4",
         "node-jqunit": "1.1.8",
-        "nyc": "14.1.1",
-        "request": "2.88.0",
-        "rimraf": "3.0.0",
-        "testem": "2.17.0"
+        "nyc": "15.0.1",
+        "request": "2.88.2",
+        "rimraf": "3.0.2",
+        "testem": "3.1.0"
     }
 }
