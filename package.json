@@ -21,7 +21,7 @@
         "gpii-binder": "1.1.0",
         "gpii-express": "1.0.15",
         "gpii-handlebars": "2.1.0",
-        "infusion": "3.0.0-dev.20200326T173810Z.24ddb2718",
+        "infusion": "3.0.0-dev.20200525T143422Z.f7f6aab.FLUID-6148",
         "kettle": "1.12.0"
     },
     "devDependencies": {
