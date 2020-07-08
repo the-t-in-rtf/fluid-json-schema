@@ -12,10 +12,8 @@ var jqUnit = jqUnit || {};
         require("../../../src/js/common/schemaValidatedModelComponent");
     }
 
-    var gpii = fluid.registerNamespace("gpii");
-
-    fluid.defaults("gpii.tests.schema.modelComponent", {
-        gradeNames: ["gpii.schema.modelComponent"],
+    fluid.defaults("fluid.tests.schema.modelComponent", {
+        gradeNames: ["fluid.schema.modelComponent"],
         members: {
             validationPasses: 0
         },
@@ -23,36 +21,36 @@ var jqUnit = jqUnit || {};
             "*": {
                 namespace: "validateModel",
                 excludeSource: ["init", "validation"],
-                funcName: "gpii.tests.schema.modelComponent.trackedModelValidation",
-                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+                funcName: "fluid.tests.schema.modelComponent.trackedModelValidation",
+                args: ["{fluid.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
         },
         listeners: {
             "onCreate.validateModel": {
-                funcName: "gpii.tests.schema.modelComponent.trackedModelValidation",
-                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+                funcName: "fluid.tests.schema.modelComponent.trackedModelValidation",
+                args: ["{fluid.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
         }
     });
 
-    gpii.tests.schema.modelComponent.trackedModelValidation = function (globalValidator, validatedModelComponent) {
+    fluid.tests.schema.modelComponent.trackedModelValidation = function (globalValidator, validatedModelComponent) {
         validatedModelComponent.validationPasses++;
-        gpii.schema.modelComponent.validateModel(globalValidator, validatedModelComponent);
+        fluid.schema.modelComponent.validateModel(globalValidator, validatedModelComponent);
     };
 
     jqUnit.module("Schema validated model component tests.");
 
     jqUnit.test("Testing the base grade.", function () {
-        var component = gpii.tests.schema.modelComponent();
-        jqUnit.assert("We should have been able to instantiate an instance of the base gpii.schema.component grade successfully.");
+        var component = fluid.tests.schema.modelComponent();
+        jqUnit.assert("We should have been able to instantiate an instance of the base fluid.schema.component grade successfully.");
 
         jqUnit.assertEquals("There should have been a single validation pass on component startup.", 1, component.validationPasses);
 
         jqUnit.assertLeftHand("The initial model should be valid.", { isValid: true }, component.model.validationResults);
     });
 
-    fluid.defaults("gpii.tests.schemaValidatedModelComponent.basicValidation",{
-        gradeNames: ["gpii.tests.schema.modelComponent"],
+    fluid.defaults("fluid.tests.schemaValidatedModelComponent.basicValidation",{
+        gradeNames: ["fluid.tests.schema.modelComponent"],
         modelSchema: {
             properties: {
                 validModelVariableIsValid: {
@@ -67,7 +65,7 @@ var jqUnit = jqUnit || {};
     });
 
     jqUnit.test("Test model validation (valid -> invalid).", function () {
-        var component = gpii.tests.schemaValidatedModelComponent.basicValidation();
+        var component = fluid.tests.schemaValidatedModelComponent.basicValidation();
         jqUnit.assert("We should have been able to instantiate an instance of our grade successfully.");
 
         jqUnit.assertEquals("There should have been a single validation pass on component startup.", 1, component.validationPasses);
@@ -83,7 +81,7 @@ var jqUnit = jqUnit || {};
     });
 
     jqUnit.test("Test model validation (invalid -> valid).", function () {
-        var component = gpii.tests.schemaValidatedModelComponent.basicValidation({ model: { validModelVariableIsValid: false }});
+        var component = fluid.tests.schemaValidatedModelComponent.basicValidation({ model: { validModelVariableIsValid: false }});
 
         jqUnit.assert("We should have been able to instantiate an instance of our grade successfully.");
 

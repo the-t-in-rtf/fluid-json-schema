@@ -6,7 +6,6 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
 var Ajv = require("ajv");
 var ajv = new Ajv({ allErrors: true });
@@ -122,7 +121,7 @@ fluid.each(defs, function (def, key) {
 });
 
 var filteredErrorDefs = {};
-fluid.each(gpii.tests.validator.ajvErrors, function (testDef, key) {
+fluid.each(fluid.tests.validator.ajvErrors, function (testDef, key) {
     filteredErrorDefs[key] = fluid.filterKeys(testDef, ["input", "schema"], true);
 });
 

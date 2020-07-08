@@ -7,32 +7,30 @@ var fluid  = fluid  || require("infusion");
         require("./schemaValidatedComponent");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
-
-    fluid.registerNamespace("gpii.schema.modelComponent");
+    fluid.registerNamespace("fluid.schema.modelComponent");
 
     /**
      *
      * Validate the model against the associated schema (options.modelSchema).
      *
-     * @param {gpii.schema.validator} globalValidator - The global validation component.
-     * @param {gpii.schema.modelComponent} modelValidationComponent - The component itself.
+     * @param {fluid.schema.validator} globalValidator - The global validation component.
+     * @param {fluid.schema.modelComponent} modelValidationComponent - The component itself.
      *
      */
-    gpii.schema.modelComponent.validateModel = function (globalValidator, modelValidationComponent) {
+    fluid.schema.modelComponent.validateModel = function (globalValidator, modelValidationComponent) {
         var validationResults = globalValidator.validate(modelValidationComponent.options.modelSchema, modelValidationComponent.model);
         // Flag this change as a result of validation so that we can avoid multiple validation passes per model change.
         modelValidationComponent.applier.change("validationResults", validationResults, "ADD", "validation");
     };
 
-    fluid.defaults("gpii.schema.modelComponent", {
-        gradeNames: ["gpii.schema.component", "fluid.modelComponent"],
+    fluid.defaults("fluid.schema.modelComponent", {
+        gradeNames: ["fluid.schema.component", "fluid.modelComponent"],
         schema: {
             properties: {
                 "model": { "type": "object"},
                 options: {
                     properties: {
-                        modelSchema: { $ref: "gss-v7-full#"},
+                        modelSchema: { $ref: "fss-v7-full#"},
                         // This format is what the options look like once they've been merged, and not necessarily what they look like when entered.
                         "modelListeners": {
                             "additionalProperties": {
@@ -64,7 +62,7 @@ var fluid  = fluid  || require("infusion");
             }
         },
         modelSchema: {
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             properties: {
                 validationResults: { required: true }
             }
@@ -76,14 +74,14 @@ var fluid  = fluid  || require("infusion");
             "*": {
                 namespace: "validateModel",
                 excludeSource: ["init", "validation"],
-                funcName: "gpii.schema.modelComponent.validateModel",
-                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+                funcName: "fluid.schema.modelComponent.validateModel",
+                args: ["{fluid.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
         },
         listeners: {
             "onCreate.validateModel": {
-                funcName: "gpii.schema.modelComponent.validateModel",
-                args: ["{gpii.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
+                funcName: "fluid.schema.modelComponent.validateModel",
+                args: ["{fluid.schema.validator}", "{that}"] // globalValidator, validatedModelComponent
             }
         }
     });

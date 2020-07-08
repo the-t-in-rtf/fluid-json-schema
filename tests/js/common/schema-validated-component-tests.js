@@ -12,10 +12,9 @@ var jqUnit = jqUnit || {};
         require("../../../src/js/common/schemaValidatedComponent");
         require("./lib/check-potentia-grades");
     }
-    var gpii = fluid.registerNamespace("gpii");
 
-    fluid.defaults("gpii.tests.schema.valid", {
-        gradeNames: ["gpii.schema.component"],
+    fluid.defaults("fluid.tests.schema.valid", {
+        gradeNames: ["fluid.schema.component"],
         schema: {
             properties: {
                 options: {
@@ -29,27 +28,27 @@ var jqUnit = jqUnit || {};
 
     jqUnit.module("Schema validated component tests.");
 
-    jqUnit.test("Testing the base gpii.schema.component grade.", function () {
-        gpii.schema.component();
-        jqUnit.assert("We should have been able to instantiate an instance of the base gpii.schema.component grade successfully.");
+    jqUnit.test("Testing the base fluid.schema.component grade.", function () {
+        fluid.schema.component();
+        jqUnit.assert("We should have been able to instantiate an instance of the base fluid.schema.component grade successfully.");
     });
 
 
     jqUnit.test("Testing valid component options.", function () {
-        var component = gpii.tests.schema.valid({ newBoolean: true });
+        var component = fluid.tests.schema.valid({ newBoolean: true });
         jqUnit.assert("We should have been able to instantiate our custom component with valid options.");
 
-        gpii.test.schema.checkContextGrades(component, jqUnit);
+        fluid.test.schema.checkContextGrades(component, jqUnit);
     });
 
     jqUnit.test("Testing invalid component options.", function () {
         jqUnit.expectFrameworkDiagnostic("An invalid component should fail to start up.", function () {
-            gpii.tests.schema.valid({ newBoolean: "not valid" });
+            fluid.tests.schema.valid({ newBoolean: "not valid" });
         }, ["schema"]);
     });
 
-    fluid.defaults("gpii.tests.schema.required", {
-        gradeNames: ["gpii.schema.component"],
+    fluid.defaults("fluid.tests.schema.required", {
+        gradeNames: ["fluid.schema.component"],
         schema: {
             properties: {
                 options: {
@@ -63,18 +62,18 @@ var jqUnit = jqUnit || {};
 
     jqUnit.test("Testing required fields.", function () {
         jqUnit.expectFrameworkDiagnostic("A component that is missing a required field should fail to start up.", function () {
-            gpii.tests.schema.required();
+            fluid.tests.schema.required();
         }, ["requiredField"]);
     });
 
-    fluid.defaults("gpii.tests.schema.invalidSchema", {
-        gradeNames: ["gpii.schema.component"],
+    fluid.defaults("fluid.tests.schema.invalidSchema", {
+        gradeNames: ["fluid.schema.component"],
         schema: "A string is completely inappropriate here."
     });
 
-    jqUnit.test("Testing invalid GSS schema definitions.", function () {
+    jqUnit.test("Testing invalid FSS schema definitions.", function () {
         jqUnit.expectFrameworkDiagnostic("A component with an invalid schema should fail to start up.", function () {
-            gpii.tests.schema.invalidSchema();
-        }, ["Invalid GSS Schema"]);
+            fluid.tests.schema.invalidSchema();
+        }, ["Invalid FSS Schema"]);
     });
 })(fluid, Ajv, jqUnit);

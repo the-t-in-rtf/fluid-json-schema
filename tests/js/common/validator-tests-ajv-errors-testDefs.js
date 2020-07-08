@@ -7,12 +7,11 @@ var fluid = fluid || {};
     if (!fluid.identity) {
         fluid = require("infusion");
     }
-    var gpii  = fluid.registerNamespace("gpii");
 
-    fluid.registerNamespace("gpii.tests.validator");
+    fluid.registerNamespace("fluid.tests.validator");
 
     // Sample AJV errors, can be regenerated for newer versions of AJV using ./lib/generate-sample-ajv-errors.js
-    gpii.tests.validator.ajvErrors = {
+    fluid.tests.validator.ajvErrors = {
         "contains": {
             "input": [
                 {
@@ -43,7 +42,7 @@ var fluid = fluid || {};
                             "type": "string"
                         }
                     },
-                    "message": "gpii.schema.messages.validationErrors.contains"
+                    "message": "fluid.schema.messages.validationErrors.contains"
                 }]
             }
         },
@@ -59,7 +58,7 @@ var fluid = fluid || {};
                         "depsCount": 1,
                         "deps": "bar"
                     },
-                    "message": "gpii.schema.messages.validationErrors.dependencies"
+                    "message": "fluid.schema.messages.validationErrors.dependencies"
                 }
             ],
             "schema": {
@@ -103,7 +102,7 @@ var fluid = fluid || {};
                                 ]
                             }
                         },
-                        "message": "gpii.schema.messages.validationErrors.dependencies"
+                        "message": "fluid.schema.messages.validationErrors.dependencies"
                     }
                 ]
             }
@@ -153,7 +152,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "boolean"
                         },
-                        "message": "gpii.schema.messages.validationErrors.type"
+                        "message": "fluid.schema.messages.validationErrors.type"
                     },
                     {
                         "dataPath": [],
@@ -171,7 +170,7 @@ var fluid = fluid || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "gpii.schema.messages.validationErrors.else"
+                        "message": "fluid.schema.messages.validationErrors.else"
                     }
                 ]
             }
@@ -209,7 +208,7 @@ var fluid = fluid || {};
                                 "yes"
                             ]
                         },
-                        "message": "gpii.schema.messages.validationErrors.enum"
+                        "message": "fluid.schema.messages.validationErrors.enum"
                     }
                 ]
             }
@@ -243,7 +242,7 @@ var fluid = fluid || {};
                         "rule": {
                             "exclusiveMaximum": 10
                         },
-                        "message": "gpii.schema.messages.validationErrors.exclusiveMaximum"
+                        "message": "fluid.schema.messages.validationErrors.exclusiveMaximum"
                     }
                 ]
             }
@@ -277,7 +276,7 @@ var fluid = fluid || {};
                         "rule": {
                             "exclusiveMinimum": 2
                         },
-                        "message": "gpii.schema.messages.validationErrors.exclusiveMinimum"
+                        "message": "fluid.schema.messages.validationErrors.exclusiveMinimum"
                     }
                 ]
             }
@@ -311,7 +310,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "format": "email"
                         },
-                        "message": "gpii.schema.messages.validationErrors.format"
+                        "message": "fluid.schema.messages.validationErrors.format"
                     }
                 ]
             }
@@ -345,7 +344,7 @@ var fluid = fluid || {};
                             "type": "array",
                             "maxItems": 1
                         },
-                        "message": "gpii.schema.messages.validationErrors.maxItems"
+                        "message": "fluid.schema.messages.validationErrors.maxItems"
                     }
                 ]
             }
@@ -379,7 +378,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "maxLength": 2
                         },
-                        "message": "gpii.schema.messages.validationErrors.maxLength"
+                        "message": "fluid.schema.messages.validationErrors.maxLength"
                     }
                 ]
             }
@@ -411,7 +410,7 @@ var fluid = fluid || {};
                         "rule": {
                             "maxProperties": 1
                         },
-                        "message": "gpii.schema.messages.validationErrors.maxProperties"
+                        "message": "fluid.schema.messages.validationErrors.maxProperties"
                     }
                 ]
             }
@@ -447,7 +446,7 @@ var fluid = fluid || {};
                             "type": "number",
                             "maximum": 3
                         },
-                        "message": "gpii.schema.messages.validationErrors.maximum"
+                        "message": "fluid.schema.messages.validationErrors.maximum"
                     }
                 ]
             }
@@ -481,7 +480,7 @@ var fluid = fluid || {};
                             "type": "array",
                             "minItems": 1
                         },
-                        "message": "gpii.schema.messages.validationErrors.minItems"
+                        "message": "fluid.schema.messages.validationErrors.minItems"
                     }
                 ]
             }
@@ -513,7 +512,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minLength": 2
                         },
-                        "message": "gpii.schema.messages.validationErrors.minLength"
+                        "message": "fluid.schema.messages.validationErrors.minLength"
                     }
                 ]
             }
@@ -545,7 +544,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minProperties": 1
                         },
-                        "message": "gpii.schema.messages.validationErrors.minProperties"
+                        "message": "fluid.schema.messages.validationErrors.minProperties"
                     }
                 ]
             }
@@ -579,7 +578,7 @@ var fluid = fluid || {};
                         "rule": {
                             "minimum": 5
                         },
-                        "message": "gpii.schema.messages.validationErrors.minimum"
+                        "message": "fluid.schema.messages.validationErrors.minimum"
                     }
                 ]
             }
@@ -611,7 +610,7 @@ var fluid = fluid || {};
                         "rule": {
                             "multipleOf": 2
                         },
-                        "message": "gpii.schema.messages.validationErrors.multipleOf"
+                        "message": "fluid.schema.messages.validationErrors.multipleOf"
                     }
                 ]
             }
@@ -645,7 +644,7 @@ var fluid = fluid || {};
                                 "type": "number"
                             }
                         },
-                        "message": "gpii.schema.messages.validationErrors.not"
+                        "message": "fluid.schema.messages.validationErrors.not"
                     }
                 ]
             }
@@ -692,7 +691,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "string"
                         },
-                        "message": "gpii.schema.messages.validationErrors.type"
+                        "message": "fluid.schema.messages.validationErrors.type"
                     },
                     {
                         "dataPath": [],
@@ -706,7 +705,7 @@ var fluid = fluid || {};
                                 }
                             ]
                         },
-                        "message": "gpii.schema.messages.validationErrors.oneOf"
+                        "message": "fluid.schema.messages.validationErrors.oneOf"
                     }
                 ]
             }
@@ -740,7 +739,7 @@ var fluid = fluid || {};
                             "type": "string",
                             "pattern": "a+"
                         },
-                        "message": "gpii.schema.messages.validationErrors.pattern"
+                        "message": "fluid.schema.messages.validationErrors.pattern"
                     }
                 ]
             }
@@ -786,7 +785,7 @@ var fluid = fluid || {};
                         "rule": {
                             "pattern": "z.+"
                         },
-                        "message": "gpii.schema.messages.validationErrors.pattern"
+                        "message": "fluid.schema.messages.validationErrors.pattern"
                     },
                     {
                         "dataPath": [],
@@ -799,7 +798,7 @@ var fluid = fluid || {};
                                 "pattern": "z.+"
                             }
                         },
-                        "message": "gpii.schema.messages.validationErrors.propertyNames"
+                        "message": "fluid.schema.messages.validationErrors.propertyNames"
                     }
                 ]
             }
@@ -838,7 +837,7 @@ var fluid = fluid || {};
                         "rule": {
                             "required": true
                         },
-                        "message": "gpii.schema.messages.validationErrors.required"
+                        "message": "fluid.schema.messages.validationErrors.required"
                     }
                 ]
             }
@@ -888,7 +887,7 @@ var fluid = fluid || {};
                         "rule": {
                             "maxLength": 1
                         },
-                        "message": "gpii.schema.messages.validationErrors.maxLength"
+                        "message": "fluid.schema.messages.validationErrors.maxLength"
                     },
                     {
                         "dataPath": [],
@@ -906,7 +905,7 @@ var fluid = fluid || {};
                                 "type": "boolean"
                             }
                         },
-                        "message": "gpii.schema.messages.validationErrors.then"
+                        "message": "fluid.schema.messages.validationErrors.then"
                     }
                 ]
             }
@@ -938,7 +937,7 @@ var fluid = fluid || {};
                         "rule": {
                             "type": "string"
                         },
-                        "message": "gpii.schema.messages.validationErrors.type"
+                        "message": "fluid.schema.messages.validationErrors.type"
                     }
                 ]
             }
@@ -971,7 +970,7 @@ var fluid = fluid || {};
                         "rule": {
                             "uniqueItems": true
                         },
-                        "message": "gpii.schema.messages.validationErrors.uniqueItems"
+                        "message": "fluid.schema.messages.validationErrors.uniqueItems"
                     }
                 ]
             }

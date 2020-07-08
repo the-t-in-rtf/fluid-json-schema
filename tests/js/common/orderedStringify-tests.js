@@ -12,11 +12,9 @@ var jqUnit = jqUnit || {};
         require("./lib/test-payloads");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
-
     jqUnit.module("Testing \"ordered stringify\" functions.");
 
-    jqUnit.test("Testing `gpii.schema.stringify` with various types of data.", function () {
+    jqUnit.test("Testing `fluid.schema.stringify` with various types of data.", function () {
         var testDefs = {
             rootNonObjects: {
                 message: "We should be able to handle root non-objects:",
@@ -37,7 +35,7 @@ var jqUnit = jqUnit || {};
 
         fluid.each(testDefs, function (testDef) {
             fluid.each(testDef.inputs, function (input, key) {
-                var output = gpii.schema.stringify(input);
+                var output = fluid.schema.stringify(input);
                 try {
                     var parsedOutput = JSON.parse(output);
                     jqUnit.assertDeepEq(testDef.message + " (" + key + ")", input, parsedOutput);
@@ -49,11 +47,11 @@ var jqUnit = jqUnit || {};
         });
     });
 
-    jqUnit.test("Speed tests for `gpii.schema.stringify`.", function () {
+    jqUnit.test("Speed tests for `fluid.schema.stringify`.", function () {
         var start = Date.now();
         var passes = 5000;
         for (var a = 0; a < passes; a++) {
-            gpii.schema.stringify(gpii.test.schema.payloads.deepAndBroad);
+            fluid.schema.stringify(fluid.test.schema.payloads.deepAndBroad);
         }
         var end = Date.now() - start;
         var avgTime = end / passes;

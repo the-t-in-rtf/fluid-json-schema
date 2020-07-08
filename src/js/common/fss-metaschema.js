@@ -4,12 +4,11 @@ var fluid  = fluid  || require("infusion");
 (function (fluid) {
     "use strict";
 
-    var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.schema");
-    gpii.schema.metaSchema = {
+    fluid.registerNamespace("fluid.schema");
+    fluid.schema.metaSchema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
-        "$id": "gss-v7-full#",
-        "title": "GPII Schema Syntax.",
+        "$id": "fss-v7-full#",
+        "title": "Fluid Schema Syntax.",
         "definitions": {
             "schemaArray": {
                 "type": "array",
@@ -33,9 +32,9 @@ var fluid  = fluid  || require("infusion");
         },
         "properties": {
             "$id": { "$ref": "http://json-schema.org/draft-07/schema#/properties/$id" },
-            "$schema": { enum: ["gss-v7-full#"], enumLabels: ["GSS Schema Version 7"]},
+            "$schema": { enum: ["fss-v7-full#"], enumLabels: ["FSS Schema Version 7"]},
             // We allow the use of $ref, but tightly constrain it to only allow reuse of the metaschema itself, for example, for the modelSchema option.
-            "$ref": { enum: ["gss-v7-full#"], enumLabels: ["GSS Schema Version 7"]},
+            "$ref": { enum: ["fss-v7-full#"], enumLabels: ["FSS Schema Version 7"]},
             "$comment": { "$ref": "http://json-schema.org/draft-07/schema#/properties/$comment" },
             "title": { "$ref": "http://json-schema.org/draft-07/schema#/properties/title" },
             "description": { "$ref": "http://json-schema.org/draft-07/schema#/properties/description" },

@@ -6,14 +6,14 @@ Although it cannot confirm whether data supplied by an end user is accurate or m
 component](validator.md) provided by this package can at least verify whether the supplied data is "valid", i.e. that it
 matches the rules outlined in a particular JSON Schema.
 
-This package provides validation middleware that can be used with either gpii-express or kettle.  These validation
+This package provides validation middleware that can be used with either fluid-express or kettle.  These validation
 middleware components can be used to validate incoming requests, and to automatically reject invalid payloads with a
 detailed error.  This allows your server-side components to at least assume they will only receive JSON data that is
 valid according to a schema.  The validation middleware is a "gatekeeper" that doesn't need to know anything about how
 you intend to use the data.  You only need to describe the "contract", i.e. what is valid, and let the "gatekeeper"
 filter out incoming requests that are not valid according to your JSON Schema.
 
-See below for usage examples for both kettle and gpii-express.
+See below for usage examples for both kettle and fluid-express.
 
 ## Displaying validation messages onscreen
 
@@ -22,10 +22,10 @@ messages produced by the validator with on-screen elements.  See that component'
 
 ## Express Components
 
-### `gpii.schema.validationMiddleware`
+### `fluid.schema.validationMiddleware`
 
-The base grade for validation middleware used with gpii-express.  Supports all the options above, plus the options for
-[`gpii.express.middleware`](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#gpiiexpressmiddleware).
+The base grade for validation middleware used with fluid-express.  Supports all the options above, plus the options for
+[`fluid.express.middleware`](https://github.com/fluid-project/fluid-express/blob/master/docs/middleware.md#fluidexpressmiddleware).
 The incoming request is first transformed using `fluid.model.transformWithRules`
 and`options.rules.requestContentToValidate`. The results are validated against `options.schemaKey`.
 
@@ -45,7 +45,7 @@ The following component configuration options are supported:
 | Option                           | Type     | Description |
 | -------------------------------- | -------- | ----------- |
 | `errorTemplate`                  | `Object` | If there are validation errors, this object will be merged with the raw error to set the kettle-specific options like `message` and `statusCode`. |
-| `inputSchema`                    | `Object` | The [GSS](gss.md) schema to use in validating incoming request data. |
+| `inputSchema`                    | `Object` | The [FSS](fss.md) schema to use in validating incoming request data. |
 | `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
 
 The default `rules.requestContentToValidate` in the express middleware grade can be represented as follows:
@@ -57,34 +57,34 @@ requestContentToValidate: {
 ```
 
 This transformation exposes only the body of the request as a top-level object to be validated.  For another example,
-see `gpii.schema.validationMiddleware.handlesQueryData` below.
+see `fluid.schema.validationMiddleware.handlesQueryData` below.
 
 #### Invokers
 
 ##### `{middleware}.middleware(request, response, next)`
 
-* `request`: An object representing the individual user's request.  See [the `gpii-express`
-  documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-request-object) for
+* `request`: An object representing the individual user's request.  See [the `fluid-express`
+  documentation](https://github.com/fluid-project/fluid-express/blob/master/docs/express.md#the-express-request-object) for
   details.
 * `response`: The response object, which can be used to send information to the requesting user.  See [the
-  `gpii-express`
-  documentation](https://github.com/GPII/gpii-express/blob/master/docs/express.md#the-express-response-object) for
-  details.
-* `next`: The next Express middleware or router function in the chain.  See [the `gpii-express` documentation for
-  details](https://github.com/GPII/gpii-express/blob/master/docs/middleware.md#what-is-middleware).
+  `fluid-express`
+  documentation](https://github.com/fluid-project/fluid-express/blob/master/docs/express.md#the-express-response-object)
+  for details.
+* `next`: The next Express middleware or router function in the chain.  See [the `fluid-express` documentation for
+  details](https://github.com/fluid-project/fluid-express/blob/master/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
-This invoker fulfills the standard contract for a `gpii.express.middleware` component.  It examines the `request`
+This invoker fulfills the standard contract for a `fluid.express.middleware` component.  It examines the `request`
 content and interrupts the conversation if the JSON data supplied as part of `request` is not valid according to the
 JSON Schema `options.schemaKey` found at `options.schemaPath`.  If the content is valid, execute the supplied `next`
 function and let some other downstream piece of middleware continue the conversation.
 
-This function is expected to be called by Express (or by an instance of `gpii.express`).
+This function is expected to be called by Express (or by an instance of `fluid.express`).
 
-### `gpii.schema.validationMiddleware.handlesQueryData`
+### `fluid.schema.validationMiddleware.handlesQueryData`
 
-A mix-in grade that configures a grade that derives from `gpii.schema.validationMiddleware.base` (so, either the
-gpii-express or kettle variants above) to validate query data. Sets `rules.requestContentToValidate` to the following:
+A mix-in grade that configures a grade that derives from `fluid.schema.validationMiddleware.base` (so, either the
+fluid-express or kettle variants above) to validate query data. Sets `rules.requestContentToValidate` to the following:
 
 ```snippet
 requestContentToValidate: {
@@ -92,22 +92,21 @@ requestContentToValidate: {
 }
 ```
 
-### gpii-express example
+### fluid-express example
 
-The `gpii.schema.validationMiddleware` grade is intended to be used with a `gpii.express` or `gpii.express.router`
-instance.  The `gpii.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting
+The `fluid.schema.validationMiddleware` grade is intended to be used with a `fluid.express` or `fluid.express.router`
+instance.  The `fluid.schema.validationMiddleware.requestAware.router` wrapper is provided as a convenient starting
 point.  With that router, you can created "gated" REST endpoints that only pass through valid payloads to the underlying
 handlers, as shown here:
 
 ```javascript
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
-require("gpii-express");
-require("gpii-json-schema");
+require("fluid-express");
+require("fluid-json-schema");
 
-fluid.defaults("gpii.schema.tests.handler", {
-    gradeNames: ["gpii.express.handler"],
+fluid.defaults("fluid.schema.tests.handler", {
+    gradeNames: ["fluid.express.handler"],
     invokers: {
         handleRequest: {
             funcName: "{that}.sendResponse",
@@ -116,9 +115,9 @@ fluid.defaults("gpii.schema.tests.handler", {
     }
 });
 
-gpii.express({
-    gradeNames:    ["gpii.schema.validationMiddleware.requestAware.router"],
-    handlerGrades: ["gpii.schema.tests.handler"],
+fluid.express({
+    gradeNames:    ["fluid.schema.validationMiddleware.requestAware.router"],
+    handlerGrades: ["fluid.schema.tests.handler"],
     inputSchema: {
         properties: {
             key: {
@@ -134,12 +133,12 @@ gpii.express({
 
 If you were to launch this example, you would have a REST endpoint `/gatekeeper` that compares all POST request payloads
 to the requestSchema. If a payload is valid according to the schema, the handler defined above would output a canned
-"success" message.  If the payload is invalid, the underlying `gpii.express.middleware` instance steps in and responds
+"success" message.  If the payload is invalid, the underlying `fluid.express.middleware` instance steps in and responds
 with a failure message.
 
 ## Kettle Components
 
-### `gpii.schema.kettle.validator`
+### `fluid.schema.kettle.validator`
 
 An extension of the `kettle.middleware` grade that is intended to be hosted as a child of your
 [`kettle.app`]((https://github.com/fluid-project/kettle/blob/master/docs/RequestHandlersAndApps.md)) grade, and to be
@@ -153,7 +152,7 @@ The following component configuration options are supported:
 | Option                           | Type     | Description |
 | -------------------------------- | -------- | ----------- |
 | `errorTemplate`                  | `Object` | If there are validation errors, this object will be merged with the raw error to set the kettle-specific options like `message` and `statusCode`. |
-| `inputSchema`                    | `Object` | The [GSS](gss.md) schema to use in validating incoming request data. |
+| `inputSchema`                    | `Object` | The [FSS](fss.md) schema to use in validating incoming request data. |
 | `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
 
 The default `rules.requestContentToValidate` in the express middleware grade can be represented as follows:
@@ -172,7 +171,7 @@ where only the query, parameters, or body are validated.  See below.
 
 #### Invokers
 
-##### `{gpii.schema.kettle.validator}.handle(requestComponent)`
+##### `{fluid.schema.kettle.validator}.handle(requestComponent)`
 
 * `requestComponent`: The `kettle.request.http` instance fielding the actual request.
 * Returns: A [`fluid.promise`](https://docs.fluidproject.org/infusion/development/PromisesAPI.html) that will be
@@ -181,17 +180,17 @@ where only the query, parameters, or body are validated.  See below.
 This invoker satisfies the basic contract for a `kettle.middleware` grade.  It validates a payload and returns a promise
 that is resolved if processing should continue or rejected if an invalid payload is detected.
 
-### `gpii.schema.kettle.validator.body`
+### `fluid.schema.kettle.validator.body`
 
 A convenience validator grade that exposes the request body as a top-level object, so that you can write simpler
 schemas to validate your payloads.
 
-### `gpii.schema.kettle.validator.params`
+### `fluid.schema.kettle.validator.params`
 
 A convenience validator grade that exposes only the URL parameters as a top-level object, so that you can write simpler
 schemas to validate your payloads.
 
-### `gpii.schema.kettle.validator.query`
+### `fluid.schema.kettle.validator.query`
 
 A convenience validator grade that exposes only the query string parameters as a top-level object, so that you can write
 simpler schemas to validate your payloads.
@@ -202,7 +201,7 @@ simpler schemas to validate your payloads.
 var fluid = require("infusion");
 
 fluid.require("kettle");
-fluid.require("gpii-json-schema");
+fluid.require("fluid-json-schema");
 
 var my = fluid.registerNamespace("my");
 
@@ -213,7 +212,7 @@ my.kettle.handler.reportSuccess = function (request) {
 };
 
 fluid.defaults("my.kettle.validator", {
-    gradeNames: ["gpii.schema.kettle.validator.body"],
+    gradeNames: ["fluid.schema.kettle.validator.body"],
     inputSchema: {
         type: "object",
         properties: {
@@ -266,8 +265,8 @@ payload that does not contain a `hasBodyContent` element that is specifically se
 that contains that element with the correct value would be passed to the underlying handler stub, and result in a
 "payload accepted" message.
 
-Note that we use the `gpii.schema.kettle.validator.body` grade to keep our schema simple.  If we were to use the base
-`gpii.schema.kettle.validator` grade, our schema might look like:
+Note that we use the `fluid.schema.kettle.validator.body` grade to keep our schema simple.  If we were to use the base
+`fluid.schema.kettle.validator` grade, our schema might look like:
 
 ```json5
 {

@@ -4,11 +4,10 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
 var jqUnit = require("node-jqunit");
 
-require("gpii-handlebars");
+require("fluid-handlebars");
 
 var kettle = require("kettle");
 kettle.loadTestingSupport();
@@ -16,13 +15,13 @@ kettle.loadTestingSupport();
 require("../../../../");
 require("./harness");
 
-fluid.registerNamespace("gpii.test.schema");
-gpii.test.schema.checkHtmlResponse = function (message, expected, body) {
+fluid.registerNamespace("fluid.test.schema");
+fluid.test.schema.checkHtmlResponse = function (message, expected, body) {
     jqUnit.assertTrue(message, body.indexOf(expected) !== -1);
 };
 
 // The "base" testEnvironment for use with either express or kettle.
-fluid.defaults("gpii.test.schema.testEnvironment.base", {
+fluid.defaults("fluid.test.schema.testEnvironment.base", {
     gradeNames: ["fluid.test.testEnvironment"],
     port:   7777,
     baseUrl: {
@@ -39,8 +38,8 @@ fluid.defaults("gpii.test.schema.testEnvironment.base", {
     }
 });
 
-fluid.defaults("gpii.test.schema.testEnvironment.express", {
-    gradeNames: ["gpii.test.schema.testEnvironment.base"],
+fluid.defaults("fluid.test.schema.testEnvironment.express", {
+    gradeNames: ["fluid.test.schema.testEnvironment.base"],
     events: {
         onHarnessReady: null,
         onFixturesConstructed: {
@@ -52,7 +51,7 @@ fluid.defaults("gpii.test.schema.testEnvironment.express", {
     components: {
         express: {
             createOnEvent: "constructFixtures",
-            type: "gpii.test.schema.harness",
+            type: "fluid.test.schema.harness",
             options: {
                 port: "{testEnvironment}.options.port",
                 baseUrl: "{testEnvironment}.options.baseUrl",
@@ -66,9 +65,9 @@ fluid.defaults("gpii.test.schema.testEnvironment.express", {
     }
 });
 
-// TODO: Discuss where this material might live (ideally not gpii-express, although it replaces the pattern used there).
+// TODO: Discuss where this material might live (ideally not fluid-express, although it replaces the pattern used there).
 // TODO: Also consolidate the copy in universal depending.
-fluid.defaults("gpii.test.schema.startSequence", {
+fluid.defaults("fluid.test.schema.startSequence", {
     gradeNames: "fluid.test.sequenceElement",
     sequence: [
         { // This sequence point is required because of a QUnit bug - it defers the start of sequence by 13ms "to avoid any current callbacks" in its words
@@ -81,19 +80,19 @@ fluid.defaults("gpii.test.schema.startSequence", {
     ]
 });
 
-fluid.defaults("gpii.test.schema.standardSequenceGrade", {
+fluid.defaults("fluid.test.schema.standardSequenceGrade", {
     gradeNames: ["fluid.test.sequence"],
     sequenceElements: {
         startServer: {
-            gradeNames: "gpii.test.schema.startSequence",
+            gradeNames: "fluid.test.schema.startSequence",
             priority: "before:sequence"
         }
     }
 });
 
-fluid.registerNamespace("gpii.test.schema.caseHolder");
+fluid.registerNamespace("fluid.test.schema.caseHolder");
 
-// TODO: Reconcile this with the duplicated material in gpii-couchdb-test-harness.
+// TODO: Reconcile this with the duplicated material in fluid-couchdb-test-harness.
 /**
  *
  * Tag any tests without their own `sequenceGrade` with our default grade name.  Any grades with their own value for
@@ -106,7 +105,7 @@ fluid.registerNamespace("gpii.test.schema.caseHolder");
  * @return {Object} - The expanded test definitions.
  *
  */
-gpii.test.schema.caseHolder.expandModules = function (rawModules, sequenceGrade) {
+fluid.test.schema.caseHolder.expandModules = function (rawModules, sequenceGrade) {
     var expandedModules = fluid.copy(rawModules);
 
     for (var a = 0; a < expandedModules.length; a++) {
@@ -122,22 +121,22 @@ gpii.test.schema.caseHolder.expandModules = function (rawModules, sequenceGrade)
     return expandedModules;
 };
 
-// TODO: Reconcile this with the duplicated material in gpii-couchdb-test-harness.
+// TODO: Reconcile this with the duplicated material in fluid-couchdb-test-harness.
 // A caseHolder that includes the above sequence Grade to automatically start services.
-fluid.defaults("gpii.test.schema.caseHolder", {
+fluid.defaults("fluid.test.schema.caseHolder", {
     gradeNames: ["fluid.test.testCaseHolder"],
-    sequenceGrade: "gpii.test.schema.standardSequenceGrade",
+    sequenceGrade: "fluid.test.schema.standardSequenceGrade",
     mergePolicy: {
         rawModules: "noexpand, nomerge"
     },
     moduleSource: {
-        funcName: "gpii.test.schema.caseHolder.expandModules",
+        funcName: "fluid.test.schema.caseHolder.expandModules",
         args:    ["{that}.options.rawModules", "{that}.options.sequenceGrade"]
     }
 });
 
 // A wrapper for `kettle.request.http` designed for use with the above `testEnvironment`.
-fluid.defaults("gpii.test.schema.request", {
+fluid.defaults("fluid.test.schema.request", {
     gradeNames: ["kettle.test.request.http"],
     port: "{testEnvironment}.options.port",
     path: {

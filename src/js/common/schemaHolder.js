@@ -11,29 +11,27 @@ fluid = fluid || require("infusion");
 (function (fluid) {
     "use strict";
     if (fluid.require) {
-        fluid.require("%gpii-json-schema");
+        fluid.require("%fluid-json-schema");
     }
 
-    var gpii = fluid.registerNamespace("gpii");
+    fluid.registerNamespace("fluid.schema.schemaHolder");
 
-    fluid.registerNamespace("gpii.schema.schemaHolder");
-
-    gpii.schema.schemaHolder.generateIfNeeded = function (that) {
+    fluid.schema.schemaHolder.generateIfNeeded = function (that) {
         return that.generatedSchema ? fluid.toPromise(that.generatedSchema) : that.generateSchema();
     };
 
     // We cannot simply use fluid.set here because it does not return the set value, and would strip the value from the
     // promise chain.
-    gpii.schema.schemaHolder.cacheSchema = function (that, schema) {
+    fluid.schema.schemaHolder.cacheSchema = function (that, schema) {
         that.generatedSchema = schema;
         return schema;
     };
 
-    gpii.schema.schemaHolder.incorporateSubcomponentSchemas = function (parentSchemaHolder, originalSchema) {
+    fluid.schema.schemaHolder.incorporateSubcomponentSchemas = function (parentSchemaHolder, originalSchema) {
         return originalSchema;
     };
 
-    fluid.defaults("gpii.schema.schemaHolder", {
+    fluid.defaults("fluid.schema.schemaHolder", {
         gradeNames: ["fluid.component"],
         events: {
             onGenerateSchema: null
@@ -42,16 +40,16 @@ fluid = fluid || require("infusion");
             generatedSchema: false
         },
         schema: {
-            $schema: "gss-v7-full#",
+            $schema: "fss-v7-full#",
             additionalProperties: true
         },
         invokers: {
             getChildSchemaHolders: {
                 funcName: "fluid.queryIoCSelector",
-                args: ["{that}", "gpii.schema.schemaHolder", true]
+                args: ["{that}", "fluid.schema.schemaHolder", true]
             },
             getSchema: {
-                funcName: "gpii.schema.schemaHolder.generateIfNeeded",
+                funcName: "fluid.schema.schemaHolder.generateIfNeeded",
                 args: ["{that}"]
             },
             generateSchema: {
@@ -59,7 +57,7 @@ fluid = fluid || require("infusion");
                 args: ["{that}.events.onGenerateSchema"]
             },
             incorporateSubcomponentSchemas: {
-                funcName: "gpii.schema.schemaHolder.incorporateSubcomponentSchemas",
+                funcName: "fluid.schema.schemaHolder.incorporateSubcomponentSchemas",
                 args: ["{that}", "{arguments}.0"] // parentSchemaHolder, schemaToDate
             }
         },
@@ -76,7 +74,7 @@ fluid = fluid || require("infusion");
             },
             "onGenerateSchema.cacheSchema": {
                 priority: "last",
-                funcName: "gpii.schema.schemaHolder.cacheSchema",
+                funcName: "fluid.schema.schemaHolder.cacheSchema",
                 args: ["{that}", "{arguments}.0"]
             }
         }

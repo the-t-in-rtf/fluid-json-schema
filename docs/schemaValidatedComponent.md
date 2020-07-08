@@ -1,4 +1,4 @@
-# `gpii.schema.component`
+# `fluid.schema.component`
 
 A "schema validated component" is one whose structure (including all options) is validated against a specified schema as
 part of its creation lifecycle.  Validation occurs immediately after options merging and expansion, but before the
@@ -9,7 +9,7 @@ called with the error.
 
 | Option   | Type     | Description |
 | -------- | -------- | ----------- |
-| `schema` | `Object` | One or more rules defined using [GSS](./gss.md). The merged `schema` option will be used to validate the component on startup. |
+| `schema` | `Object` | One or more rules defined using [FSS](fss.md). The merged `schema` option will be used to validate the component on startup. |
 
 ### The `schema` option
 
@@ -33,7 +33,7 @@ Let's start with the most basic use case, defining additional options that are a
 
 ```javascript
 fluid.defaults("my.email.baseGrade", {
-    gradeName: ["gpii.schema.component"],
+    gradeName: ["fluid.schema.component"],
     schema: {
         "description": "Simple email schema.",
         "properties": {
@@ -78,7 +78,7 @@ fluid.defaults("my.email.internalOnly", {
 ```
 
 Note that the `type` and `format` from the base grade are inherited and do not need to be defined again.  The effective
-merged schema (for purposes of illustration, not including material inherited from `gpii.schema.component`) now looks
+merged schema (for purposes of illustration, not including material inherited from `fluid.schema.component`) now looks
 something like:
 
 ```json
@@ -106,7 +106,7 @@ Say for example you have defined a component that includes a number expressed as
 
 ```javascript
 fluid.defaults("my.irrevocable.restriction", {
-    gradeNames: ["gpii.schema.component"],
+    gradeNames: ["fluid.schema.component"],
     schema: {
         properties: {
             options: {
@@ -129,7 +129,7 @@ lack problematic material and to extend those in your implementation grades, as 
 
 ```javascript
 fluid.defaults("my.safe.baseGrade", {
-    gradeNames: ["gpii.schema.component"],
+    gradeNames: ["fluid.schema.component"],
     schema: {
         properties: {
             options: {

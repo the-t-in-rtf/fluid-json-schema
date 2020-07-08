@@ -2,9 +2,8 @@
 // properties) and "broad" (lots of properties at one or more levels).
 (function (fluid) {
     "use strict";
-    var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.test.schema.payloads");
-    gpii.test.schema.payloads.deepAndBroad = {
+    fluid.registerNamespace("fluid.test.schema.payloads");
+    fluid.test.schema.payloads.deepAndBroad = {
         "type": "object",
         "properties": {
             // "deep" branch

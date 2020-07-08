@@ -7,17 +7,15 @@ var fluid  = fluid  || require("infusion");
         require("./validator");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
-
-    fluid.registerNamespace("gpii.schema.component");
+    fluid.registerNamespace("fluid.schema.component");
 
     /**
      *
      * @param {Object} shadowRecord - A "shadow record", which is a version of the component available during the potentia-ii workflow.
      *
      */
-    gpii.schema.component.validateShadowRecord = function (shadowRecord) {
-        gpii.schema.component.validateComponent(shadowRecord.that);
+    fluid.schema.component.validateShadowRecord = function (shadowRecord) {
+        fluid.schema.component.validateComponent(shadowRecord.that);
     };
 
     /**
@@ -30,24 +28,24 @@ var fluid  = fluid  || require("infusion");
      * We have our own validation code here because the global validator is not available in the context of a
      * potentia-ii workflow.
      *
-     * @param {gpii.schema.component} componentToValidate - The component to validate.
+     * @param {fluid.schema.component} componentToValidate - The component to validate.
      *
      */
-    gpii.schema.component.validateComponent = function (componentToValidate) {
-        if (fluid.componentHasGrade(componentToValidate, "gpii.schema.component")) {
+    fluid.schema.component.validateComponent = function (componentToValidate) {
+        if (fluid.componentHasGrade(componentToValidate, "fluid.schema.component")) {
             var validator;
             var isValid = false;
             try {
-                validator = gpii.schema.validator.compileSchema(componentToValidate.options.schema);
+                validator = fluid.schema.validator.compileSchema(componentToValidate.options.schema);
                 isValid = validator(componentToValidate);
             }
             catch (compileErrors) {
-                fluid.fail({ isError: true, message: "Invalid GSS Schema.", errors: compileErrors });
+                fluid.fail({ isError: true, message: "Invalid FSS Schema.", errors: compileErrors });
             }
 
             if (!isValid) {
-                var standardisedErrors = gpii.schema.validator.standardiseAjvErrors(componentToValidate.options.schema, validator.errors);
-                var localisedValidationErrors = gpii.schema.validator.localiseErrors(standardisedErrors.errors);
+                var standardisedErrors = fluid.schema.validator.standardiseAjvErrors(componentToValidate.options.schema, validator.errors);
+                var localisedValidationErrors = fluid.schema.validator.localiseErrors(standardisedErrors.errors);
                 var errorReport = "";
                 fluid.each(localisedValidationErrors, function (localisedError) {
                     var failurePath = localisedError.dataPath.length ? localisedError.dataPath.join(" -> ") : "(root)";
@@ -58,42 +56,42 @@ var fluid  = fluid  || require("infusion");
         }
     };
 
-    gpii.schema.component.hasRegisterPotentia = function () {
+    fluid.schema.component.hasRegisterPotentia = function () {
         return fluid.registerPotentia ? true : false;
     };
 
     fluid.contextAware.makeChecks({
-        "fluid.hasRegisterPotentia": "gpii.schema.component.hasRegisterPotentia"
+        "fluid.hasRegisterPotentia": "fluid.schema.component.hasRegisterPotentia"
     });
 
     // Validate the component as part of its startup "workflow".
-    fluid.defaults("gpii.schema.component.potentiaII", {
+    fluid.defaults("fluid.schema.component.potentiaII", {
         gradeNames: ["fluid.component"],
         workflows: {
             local: {
                 validateOptions: {
                     priority: "after:concludeComponentObservation",
-                    funcName: "gpii.schema.component.validateShadowRecord"
+                    funcName: "fluid.schema.component.validateShadowRecord"
                 }
             }
         }
     });
 
     // For components that don't have a workflow, validate on the `onCreate` event.
-    fluid.defaults("gpii.schema.component.legacy", {
+    fluid.defaults("fluid.schema.component.legacy", {
         gradeNames: ["fluid.component"],
         listeners: {
             "onCreate.validate": {
-                funcName: "gpii.schema.component.validateComponent",
+                funcName: "fluid.schema.component.validateComponent",
                 args:     ["{that}"]
             }
         }
     });
 
-    fluid.defaults("gpii.schema.component", {
+    fluid.defaults("fluid.schema.component", {
         gradeNames: ["fluid.component", "fluid.contextAware"],
         schema: {
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             "definitions": {
                 "singleListenerDefinition": {
                     "anyOf": [
@@ -255,10 +253,10 @@ var fluid  = fluid  || require("infusion");
                         "listeners": {
                             "additionalProperties": {
                                 "oneOf": [
-                                    "{gpii.schema.component}.options.schema.definitions.singleListenerDefinition",
+                                    "{fluid.schema.component}.options.schema.definitions.singleListenerDefinition",
                                     {
                                         "type": "array",
-                                        "items": "{gpii.schema.component}.options.schema.definitions.singleListenerDefinition"
+                                        "items": "{fluid.schema.component}.options.schema.definitions.singleListenerDefinition"
                                     }
                                 ]
                             }
@@ -271,7 +269,7 @@ var fluid  = fluid  || require("infusion");
                                 }
                             }
                         },
-                        "schema": { "$ref": "gss-v7-full#"},
+                        "schema": { "$ref": "fss-v7-full#"},
                         "selectors": {
                             "type": "object",
                             "additionalProperties": { "type": "string" }
@@ -304,12 +302,12 @@ var fluid  = fluid  || require("infusion");
                 checks: {
                     hasRegisterPotentia: {
                         contextValue: "{fluid.hasRegisterPotentia}",
-                        gradeNames: "gpii.schema.component.potentiaII"
+                        gradeNames: "fluid.schema.component.potentiaII"
                     },
                     legacy: {
                         contextValue: "{fluid.hasRegisterPotentia}",
                         equals: false,
-                        gradeNames: "gpii.schema.component.legacy"
+                        gradeNames: "fluid.schema.component.legacy"
                     }
                 }
             }

@@ -1,43 +1,43 @@
-# GPII Schema System
+# Fluid Schema System
 
 ## Introduction
 
 [JSON](http://json.org) is a way of representing a subset of Javascript objects in a way that can be serialised for
-storage and transmission.  It is used extensively within the GPII, for example, most API requests involve a JSON payload
-for both the request and response.
+storage and transmission.  Among other things, it is useful in enforcing API contracts by verifying user input against
+a schema.
 
 JSON itself only introduces rudimentary practical constraints on what can be entered.  We need a way of constraining
 what can be entered, of describing what is allowed (and not allowed) in a JSON payload.
 
-The emerging [JSON Schema draft standard](http://json-schema.org) provides a reasonable starting point.  The GPII Schema
-System (GSS) is based on the underlying JSON Schema language, and:
+The emerging [JSON Schema draft standard](http://json-schema.org) provides a reasonable starting point.  The Fluid Schema
+System (FSS) is based on the underlying JSON Schema language, and:
 
 1. Allows us to validate configuration options and user input.
-2. Better integrates with Fluid components as used extensively throughout the GPII.
-3. Adds UI hints that can be used when generating user interfaces based on a GSS schema, as is done within the PPT.
+2. Better integrates with Fluid components as used extensively throughout the fluid.
+3. Adds UI hints that can be used when generating user interfaces based on an FSS schema, as is done within the PPT.
 4. Adds the ability to customise validation error messages.
 5. Allows internationalisation of both UI hints and validation error messages.
 
-The GSS consists of:
+The FSS consists of:
 
-1. A GSS "metaschema", which describes in JSON Schema format the rules that can be used to define a GSS Schema (see
+1. An FSS "metaschema", which describes in JSON Schema format the rules that can be used to define an FSS Schema (see
    below).
-2. A validator which can validate arbitrary JSON payloads against a GSS schema.
-3. Base Fluid component grades that validate component options against a GSS schema on startup.
-4. Base Fluid component grades that validate model changes against a GSS schema in real time.
+2. A validator which can validate arbitrary JSON payloads against an FSS schema.
+3. Base Fluid component grades that validate component options against an FSS schema on startup.
+4. Base Fluid component grades that validate model changes against an FSS schema in real time.
 
-## GSS Schemas
+## FSS Schemas
 
 For a good background on the underlying language, check out [this guide from the Space Telescope Science Institute](https://spacetelescope.github.io/understanding-json-schema/)
 
-GSS Schemas are very similar to JSON Schemas, but not entirely identical.  Notably:
+FSS Schemas are very similar to JSON Schemas, but not entirely identical.  Notably:
 
 1. The `required` attribute is a property of the element which is required, rather than a property of the object that
    contains the required element.
-2. The `$ref` attribute used to create advanced JSON Schemas is not supported within a GSS Schema.
-3. GSS Schemas add an `enumLabels` element, which is used to provide labels for `enum` fields.
-4. GSS Schemas add an `errors` element, which can be use to customise validation errors.
-5. GSS Schemas add a `hint` element, which can be used to provide instructions when generating UIs based on a GSS
+2. The `$ref` attribute used to create advanced JSON Schemas is not supported within an FSS Schema.
+3. FSS Schemas add an `enumLabels` element, which is used to provide labels for `enum` fields.
+4. FSS Schemas add an `errors` element, which can be use to customise validation errors.
+5. FSS Schemas add a `hint` element, which can be used to provide instructions when generating UIs based on an FSS
    Schema.
 
 ### The `required` field.
@@ -63,7 +63,7 @@ Let's assume we have the following message bundle:
 }
 ```
 
-We can make use of the above message keys in a GSS Schema that looks like:
+We can make use of the above message keys in an FSS Schema that looks like:
 
 ```json
 {
@@ -110,7 +110,7 @@ default messages for each type of rule which are used instead of the raw output 
 below).
 
 The `enumLabels` element is specifically designed to allow internationalising the text displayed for things like radio
-groups or drop-down lists.  Using the above message bundle and GSS Schema, we might generate a drop-down list to input a
+groups or drop-down lists.  Using the above message bundle and FSS Schema, we might generate a drop-down list to input a
 `badgeColor` that looks something like:
 
 ```html
@@ -136,13 +136,13 @@ shown here:
             "dataPath": ["requiredField"],
             "schemaPath": ["properties", "requiredField", "required"],
             "rule": { "required": true },
-            "message": "gpii.schema.messages.validationErrors.required"
+            "message": "fluid.schema.messages.validationErrors.required"
         },
         {
             "dataPath": ["deep", "booleanField"],
             "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
             "rule": { "type": "boolean" },
-            "message": "gpii.schema.messages.validationErrors.type"
+            "message": "fluid.schema.messages.validationErrors.type"
         }
     ]
 }
@@ -171,12 +171,12 @@ var error = {
     "dataPath": ["deep", "booleanField"],
     "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
     "rule": { "type": "boolean" },
-    "message": "gpii.schema.messages.validationErrors.type"
+    "message": "fluid.schema.messages.validationErrors.type"
 };
 
 // This is simplified for illustration purposes, this would nearly always be delivered as part of a more complex bundle.
 var messages = {
-    "gpii.schema.messages.validationErrors.type": "The value supplied should be a(n) %rule.type."
+    "fluid.schema.messages.validationErrors.type": "The value supplied should be a(n) %rule.type."
 };
 
 var message = fluid.stringTemplate(messages[error.message], error); // The value supplied should be a(n) boolean.
@@ -192,7 +192,7 @@ This package provides two "schema-validated" component grades.
 2. A "schema-validated model" component, where changes to the model are validated against a specified schema.  For more
    information, see the [schema-validated model component documentation](schemaValidatedModelComponent.md).
 
-## Reusing material within a GSS schema.
+## Reusing material within an FSS schema.
 
 The underlying JSON Schema draft standard provides a `$ref` operator that allow material to be reused, as shown here:
 
@@ -223,11 +223,11 @@ that can be used instead, namely:
 2. [options distribution](https://docs.fluidproject.org/infusion/development/IoCSS.html)
 3. [IoC references](https://docs.fluidproject.org/infusion/development/IoCReferences.html)
 
-The above example might be represented in GSS as follows:
+The above example might be represented in FSS as follows:
 
 ```javascript
 fluid.defaults("my.email.grade", {
-    gradeName: ["gpii.schema.component"],
+    gradeName: ["fluid.schema.component"],
     schema: {
         "description": "Simple email schema.",
         "definitions": {
@@ -265,4 +265,4 @@ that is validated according to the same schema, as shown here:
 }
 ```
 
-This type of recursive structure is not currently supported in GSS.
+This type of recursive structure is not currently supported in FSS.

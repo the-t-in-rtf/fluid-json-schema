@@ -11,27 +11,26 @@ var jqUnit = jqUnit || {};
         require("../../../src/js/common/validator");
     }
 
-    var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.tests.schema.globalValidator");
+    fluid.registerNamespace("fluid.tests.schema.globalValidator");
 
-    gpii.tests.schema.globalValidator.runTestDefs = function (globalValidator, testDefs) {
+    fluid.tests.schema.globalValidator.runTestDefs = function (globalValidator, testDefs) {
         fluid.each(testDefs, function (testDef) {
-            gpii.tests.schema.globalValidator.runTestDef(globalValidator, testDef);
+            fluid.tests.schema.globalValidator.runTestDef(globalValidator, testDef);
         });
     };
 
-    gpii.tests.schema.globalValidator.runTestDef = function (globalValidator, testDef) {
+    fluid.tests.schema.globalValidator.runTestDef = function (globalValidator, testDef) {
         var validationOutput = globalValidator.validate(testDef.schema, testDef.toValidate);
         jqUnit.assertLeftHand(testDef.message, testDef.expected, validationOutput);
     };
 
-    gpii.tests.schema.globalValidator.schemaCount = function (globalValidator) {
+    fluid.tests.schema.globalValidator.schemaCount = function (globalValidator) {
         return Object.keys(globalValidator.validatorsByHash).length;
     };
 
-    gpii.tests.schema.globalValidator.checkCache = function (globalValidator) {
+    fluid.tests.schema.globalValidator.checkCache = function (globalValidator) {
         var schema = { type: "string", format: "email" };
-        var schemaHash = gpii.schema.hashSchema(schema);
+        var schemaHash = fluid.schema.hashSchema(schema);
 
         jqUnit.assertUndefined("There should not be a cache entry for our schema before the first validation run.", globalValidator.validatorsByHash[schemaHash]);
 
@@ -48,52 +47,52 @@ var jqUnit = jqUnit || {};
         jqUnit.assertTrue("The second run should be faster than the first.", secondRunMs < firstRunMs);
 
         globalValidator.clearCache();
-        jqUnit.assertEquals("The cache should be empty after a call to `clearCache`.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+        jqUnit.assertEquals("The cache should be empty after a call to `clearCache`.", 0, fluid.tests.schema.globalValidator.schemaCount(globalValidator));
 
         globalValidator.cacheSchema(schema);
-        jqUnit.assertEquals("We should be able to cache a schema without a precomputed schemaHash.", 1, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+        jqUnit.assertEquals("We should be able to cache a schema without a precomputed schemaHash.", 1, fluid.tests.schema.globalValidator.schemaCount(globalValidator));
 
         globalValidator.forgetSchema(schema);
-        jqUnit.assertEquals("We should be able to forget a schema without a precomputed schemaHash.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+        jqUnit.assertEquals("We should be able to forget a schema without a precomputed schemaHash.", 0, fluid.tests.schema.globalValidator.schemaCount(globalValidator));
 
         globalValidator.cacheSchema(schema, schemaHash);
-        jqUnit.assertEquals("We should be able to cache a schema with a precomputed schemaHash.", 1, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+        jqUnit.assertEquals("We should be able to cache a schema with a precomputed schemaHash.", 1, fluid.tests.schema.globalValidator.schemaCount(globalValidator));
 
         globalValidator.forgetSchema(schema, schemaHash);
-        jqUnit.assertEquals("We should be able to forget a schema with a precomputed schemaHash.", 0, gpii.tests.schema.globalValidator.schemaCount(globalValidator));
+        jqUnit.assertEquals("We should be able to forget a schema with a precomputed schemaHash.", 0, fluid.tests.schema.globalValidator.schemaCount(globalValidator));
     };
 
-    fluid.defaults("gpii.tests.schema.globalValidator.caseHolder", {
+    fluid.defaults("fluid.tests.schema.globalValidator.caseHolder", {
         gradeNames: ["fluid.test.testCaseHolder"],
         testDefs: {
             invalidData: {
                 message: "We should be able to handle data that is invalid according to the schema",
                 toValidate: "not a number",
-                schema: { "$schema": "gss-v7-full#", type: "number" },
+                schema: { "$schema": "fss-v7-full#", type: "number" },
                 expected: { isValid: false }
             },
             validData: {
                 message: "We should be able to handle data that is valid according to the schema",
                 toValidate: 1,
-                schema: { "$schema": "gss-v7-full#", type: "number" },
+                schema: { "$schema": "fss-v7-full#", type: "number" },
                 expected: { isValid: true }
             },
             shallowRequired: {
                 message: "We should be able to handle a top-level required field.",
                 toValidate: {},
-                schema: { "$schema": "gss-v7-full#", properties: { top: { required: true }} },
+                schema: { "$schema": "fss-v7-full#", properties: { top: { required: true }} },
                 expected: { isValid: false }
             },
             deepRequired: {
                 message: "We should be able to handle a deep required field.",
                 toValidate: { foo: {} },
-                schema: { "$schema": "gss-v7-full#", properties: { foo: { properties: { bar: { required: true }}}}},
+                schema: { "$schema": "fss-v7-full#", properties: { foo: { properties: { bar: { required: true }}}}},
                 expected: { isValid: false }
             },
-            emptyGss: {
-                message: "We should be able to handle an empty GSS schema.",
+            emptyFss: {
+                message: "We should be able to handle an empty FSS schema.",
                 toValidate: "foo",
-                schema: { "$schema": "gss-v7-full#" },
+                schema: { "$schema": "fss-v7-full#" },
                 expected: { isValid: true}
             },
             emptyJsonSchema: {
@@ -105,19 +104,19 @@ var jqUnit = jqUnit || {};
             multipleOf: {
                 message: "We should be able to sanely handle 'multipleOf' with a fraction value",
                 toValidate: 0.6,
-                schema: { "$schema": "gss-v7-full#", type: "number", multipleOf: 0.1 },
+                schema: { "$schema": "fss-v7-full#", type: "number", multipleOf: 0.1 },
                 expected: { isValid: true }
             },
             invalidSchema: {
-                message: "We should be able to handle an invalid GSS Schema.",
+                message: "We should be able to handle an invalid FSS Schema.",
                 toValidate: 1,
-                schema: { "$schema": "gss-v7-full#", type: "nonsense" },
+                schema: { "$schema": "fss-v7-full#", type: "nonsense" },
                 expected: { isError: true }
             },
             shortError: {
                 message: "We should be able to provide an error message key for a field using 'short' notation.",
                 toValidate: 1,
-                schema: { "$schema": "gss-v7-full#", type: "boolean", errors: "custom-short-error" },
+                schema: { "$schema": "fss-v7-full#", type: "boolean", errors: "custom-short-error" },
                 expected: {
                     isValid: false,
                     errors: [{
@@ -126,7 +125,7 @@ var jqUnit = jqUnit || {};
                             "type"
                         ],
                         "rule": {
-                            "$schema": "gss-v7-full#",
+                            "$schema": "fss-v7-full#",
                             "type": "boolean",
                             "errors": "custom-short-error"
                         },
@@ -136,7 +135,7 @@ var jqUnit = jqUnit || {};
             longErrorRule: {
                 message: "We should be able to provide an error message key for a specific rule.",
                 toValidate: 1,
-                schema: { "$schema": "gss-v7-full#", type: "boolean", errors: { "type": "custom-error"} },
+                schema: { "$schema": "fss-v7-full#", type: "boolean", errors: { "type": "custom-error"} },
                 expected: {
                     isValid: false,
                     errors: [{
@@ -145,7 +144,7 @@ var jqUnit = jqUnit || {};
                             "type"
                         ],
                         "rule": {
-                            "$schema": "gss-v7-full#",
+                            "$schema": "fss-v7-full#",
                             "type": "boolean",
                             "errors": {
                                 "type": "custom-error"
@@ -158,7 +157,7 @@ var jqUnit = jqUnit || {};
             longErrorFailover: {
                 message: "We should be able to provide an error message key for a field using 'long' notation.",
                 toValidate: 1,
-                schema: {"$schema": "gss-v7-full#", type: "boolean", errors: {"": "custom-generic-error"}},
+                schema: {"$schema": "fss-v7-full#", type: "boolean", errors: {"": "custom-generic-error"}},
                 expected: {
                     isValid: false, errors: [{
                         "dataPath": [],
@@ -166,7 +165,7 @@ var jqUnit = jqUnit || {};
                             "type"
                         ],
                         "rule": {
-                            "$schema": "gss-v7-full#",
+                            "$schema": "fss-v7-full#",
                             "type": "boolean",
                             "errors": {
                                 "": "custom-generic-error"
@@ -181,7 +180,7 @@ var jqUnit = jqUnit || {};
                 toValidate: {
                     name: "my custom data structure",
                     schema: {
-                        $schema: "gss-v7-full#",
+                        $schema: "fss-v7-full#",
                         type: "object",
                         properties: {
                             colour: {
@@ -192,14 +191,14 @@ var jqUnit = jqUnit || {};
                     }
                 },
                 schema: {
-                    $schema: "gss-v7-full#",
+                    $schema: "fss-v7-full#",
                     properties: {
                         name: {
                             type: "string",
                             required: true
                         },
                         schema: {
-                            $ref: "gss-v7-full#",
+                            $ref: "fss-v7-full#",
                             required: true
                         }
                     }
@@ -211,10 +210,10 @@ var jqUnit = jqUnit || {};
             nestedDollarSchema: {
                 message: "We should be able to handle nested $schema elements.",
                 schema: {
-                    "$schema": "gss-v7-full#",
+                    "$schema": "fss-v7-full#",
                     "type": "object",
                     "additionalProperties": {
-                        "$schema": "gss-v7-full#",
+                        "$schema": "fss-v7-full#",
                         "type": "string"
                     }
                 },
@@ -232,29 +231,29 @@ var jqUnit = jqUnit || {};
                 {
                     name: "Global validator component validation tests.",
                     sequence: [{
-                        funcName: "gpii.tests.schema.globalValidator.runTestDefs",
-                        args: ["{gpii.schema.validator}", "{that}.options.testDefs"] // globalValidator, testDefs
+                        funcName: "fluid.tests.schema.globalValidator.runTestDefs",
+                        args: ["{fluid.schema.validator}", "{that}.options.testDefs"] // globalValidator, testDefs
                     }]
                 },
                 {
                     name: "Global validator component cache tests.",
                     sequence: [{
-                        funcName: "gpii.tests.schema.globalValidator.checkCache",
-                        args: ["{gpii.schema.validator}"] // globalValidator
+                        funcName: "fluid.tests.schema.globalValidator.checkCache",
+                        args: ["{fluid.schema.validator}"] // globalValidator
                     }]
                 }
             ]
         }]
     });
 
-    fluid.defaults("gpii.tests.schema.globalValidator.testEnvironment", {
+    fluid.defaults("fluid.tests.schema.globalValidator.testEnvironment", {
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
             caseHolder: {
-                type: "gpii.tests.schema.globalValidator.caseHolder"
+                type: "fluid.tests.schema.globalValidator.caseHolder"
             }
         }
     });
 
-    fluid.test.runTests("gpii.tests.schema.globalValidator.testEnvironment");
+    fluid.test.runTests("fluid.tests.schema.globalValidator.testEnvironment");
 })(fluid, jqUnit);

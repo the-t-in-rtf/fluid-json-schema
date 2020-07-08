@@ -5,7 +5,7 @@ var fluid  = fluid  || require("infusion");
     "use strict";
 
     if (fluid.require) {
-        require("./gss-metaschema");
+        require("./fss-metaschema");
         require("./orderedStringify");
     }
 
@@ -13,40 +13,38 @@ var fluid  = fluid  || require("infusion");
         Ajv = require("ajv");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
+    fluid.registerNamespace("fluid.schema.validator");
 
-    fluid.registerNamespace("gpii.schema.validator");
-
-    gpii.schema.validator.defaultI18nKeysByRule = {
-        "": "gpii.schema.messages.validationErrors.generalFailure",
-        "anyOf": "gpii.schema.messages.validationErrors.anyOf",
-        "contains": "gpii.schema.messages.validationErrors.contains",
-        "dependencies": "gpii.schema.messages.validationErrors.dependencies",
-        "else": "gpii.schema.messages.validationErrors.else",
-        "enum": "gpii.schema.messages.validationErrors.enum",
-        "exclusiveMaximum": "gpii.schema.messages.validationErrors.exclusiveMaximum",
-        "exclusiveMinimum": "gpii.schema.messages.validationErrors.exclusiveMinimum",
-        "format": "gpii.schema.messages.validationErrors.format",
-        "maxItems": "gpii.schema.messages.validationErrors.maxItems",
-        "maxLength": "gpii.schema.messages.validationErrors.maxLength",
-        "maxProperties": "gpii.schema.messages.validationErrors.maxProperties",
-        "maximum": "gpii.schema.messages.validationErrors.maximum",
-        "minItems": "gpii.schema.messages.validationErrors.minItems",
-        "minLength": "gpii.schema.messages.validationErrors.minLength",
-        "minProperties": "gpii.schema.messages.validationErrors.minProperties",
-        "minimum": "gpii.schema.messages.validationErrors.minimum",
-        "multipleOf": "gpii.schema.messages.validationErrors.multipleOf",
-        "not": "gpii.schema.messages.validationErrors.not",
-        "oneOf": "gpii.schema.messages.validationErrors.oneOf",
-        "pattern": "gpii.schema.messages.validationErrors.pattern",
-        "propertyNames": "gpii.schema.messages.validationErrors.propertyNames",
-        "required": "gpii.schema.messages.validationErrors.required",
-        "then": "gpii.schema.messages.validationErrors.then",
-        "type": "gpii.schema.messages.validationErrors.type",
-        "uniqueItems": "gpii.schema.messages.validationErrors.uniqueItems"
+    fluid.schema.validator.defaultI18nKeysByRule = {
+        "": "fluid.schema.messages.validationErrors.generalFailure",
+        "anyOf": "fluid.schema.messages.validationErrors.anyOf",
+        "contains": "fluid.schema.messages.validationErrors.contains",
+        "dependencies": "fluid.schema.messages.validationErrors.dependencies",
+        "else": "fluid.schema.messages.validationErrors.else",
+        "enum": "fluid.schema.messages.validationErrors.enum",
+        "exclusiveMaximum": "fluid.schema.messages.validationErrors.exclusiveMaximum",
+        "exclusiveMinimum": "fluid.schema.messages.validationErrors.exclusiveMinimum",
+        "format": "fluid.schema.messages.validationErrors.format",
+        "maxItems": "fluid.schema.messages.validationErrors.maxItems",
+        "maxLength": "fluid.schema.messages.validationErrors.maxLength",
+        "maxProperties": "fluid.schema.messages.validationErrors.maxProperties",
+        "maximum": "fluid.schema.messages.validationErrors.maximum",
+        "minItems": "fluid.schema.messages.validationErrors.minItems",
+        "minLength": "fluid.schema.messages.validationErrors.minLength",
+        "minProperties": "fluid.schema.messages.validationErrors.minProperties",
+        "minimum": "fluid.schema.messages.validationErrors.minimum",
+        "multipleOf": "fluid.schema.messages.validationErrors.multipleOf",
+        "not": "fluid.schema.messages.validationErrors.not",
+        "oneOf": "fluid.schema.messages.validationErrors.oneOf",
+        "pattern": "fluid.schema.messages.validationErrors.pattern",
+        "propertyNames": "fluid.schema.messages.validationErrors.propertyNames",
+        "required": "fluid.schema.messages.validationErrors.required",
+        "then": "fluid.schema.messages.validationErrors.then",
+        "type": "fluid.schema.messages.validationErrors.type",
+        "uniqueItems": "fluid.schema.messages.validationErrors.uniqueItems"
     };
 
-    gpii.schema.validator.defaultAjvOptions = {
+    fluid.schema.validator.defaultAjvOptions = {
         // Generate a complete list of errors rather than stopping on the first failure.
         allErrors: true,
 
@@ -76,34 +74,34 @@ var fluid  = fluid  || require("infusion");
      * @typedef ajvErrors
      * @property {Array<ajvError>} [errors] - The errors returned during the validation run.
      *
-     * @typedef GssSchema
-     * @property {String} [$id] - The ID for this schema (not typically used in GSS schemas, but allowed).
-     * @property {String} [$schema] - The URI where the "metaschema" (version of the GSS language) can be found.
-     * @property {String} [$ref] - Replace material at this point with external material at the given URL.  The only allowed value for this in GSS is the GSS schema itself.
+     * @typedef FssSchema
+     * @property {String} [$id] - The ID for this schema (not typically used in FSS schemas, but allowed).
+     * @property {String} [$schema] - The URI where the "metaschema" (version of the FSS language) can be found.
+     * @property {String} [$ref] - Replace material at this point with external material at the given URL.  The only allowed value for this in FSS is the FSS schema itself.
      * @property {String} [$comment] - A comment, presumably about this level of the schema.
      * @property {String} [title] - A title for the material represented by this part of the schema.
      * @property {String} [description] - A description of the material represented by this part of the schema.
      * @property {Boolean} [required] - Whether or not a value is required at this point in the schema.
      * @property {Any} [default] - The default value for the material represented by this part of the schema.
-     * @property {GssSchema} [if] - A sub-schema that will be used to conditionally check content.  Must be used in combination with `then` or `else`.
-     * @property {GssSchema} [then] - If the material is valid according to the `if` sub-schema, it must also follow these rules.
-     * @property {GssSchema} [else] - If the material is invalid according to the `if` sub-schema, it must follow these rules.
-     * @property {Array<GssSchema>} [allOf] - The material must match all of the supplied sub-schemas.
-     * @property {Array<GssSchema>} [anyOf] - The material must match one or more of the supplied sub-schemas.
-     * @property {Array<GssSchema>} [oneOf] - The material must match exactly one of the supplied sub-schemas.
-     * @property {GssSchema} [not] - The material must not match the supplied sub-schema.
+     * @property {FssSchema} [if] - A sub-schema that will be used to conditionally check content.  Must be used in combination with `then` or `else`.
+     * @property {FssSchema} [then] - If the material is valid according to the `if` sub-schema, it must also follow these rules.
+     * @property {FssSchema} [else] - If the material is invalid according to the `if` sub-schema, it must follow these rules.
+     * @property {Array<FssSchema>} [allOf] - The material must match all of the supplied sub-schemas.
+     * @property {Array<FssSchema>} [anyOf] - The material must match one or more of the supplied sub-schemas.
+     * @property {Array<FssSchema>} [oneOf] - The material must match exactly one of the supplied sub-schemas.
+     * @property {FssSchema} [not] - The material must not match the supplied sub-schema.
      * @property {String} [hint] - A UI "hint" for a user entering the value.  Typically a  message key rather than a literal value.
      * @property {Object<String,String>} [errors] - Replacements for the default error messages, keyed by the failing "keyword", or "" for all failures.  The value is a string template.
-     * @property {Object.<String,GssSchema>} [definitions] - An object containing reusable pieces of schema material.  Not usable outside of the metaschema itself.
+     * @property {Object.<String,FssSchema>} [definitions] - An object containing reusable pieces of schema material.  Not usable outside of the metaschema itself.
      * @property {Boolean} [readOnly] - Whether or not this part of the schema is "read only".
      * @property {Array} [examples] - One or more examples of allowed values.
      * @property {Any} [const] - A literal value that the value must exactly match.
      * @property {Array} [enum] - An array of literal allowed values.
      * @property {Array<String>} [enumLabels] - An array of string labels to describe the `enum` values in a UI.
      * @property {String} [type] - The type of material described by this part of the schema.  Must be one of "number", "integer", "string", "array", or "object".
-     * @property {GssSchema|Boolean} [additionalItems] - (For array types), if `items` is defined as an array of schemas, `additionalItems` will cover any additional entries.
-     * @property {GssSchema} [contains] - (For array types), at least one item must match the supplied sub-schema.
-     * @property {GssSchema|Array<GssSchema>} [items] - (For array types), either a literal schema for all items, or an array of schemas, in the order of the array items that are expected.
+     * @property {FssSchema|Boolean} [additionalItems] - (For array types), if `items` is defined as an array of schemas, `additionalItems` will cover any additional entries.
+     * @property {FssSchema} [contains] - (For array types), at least one item must match the supplied sub-schema.
+     * @property {FssSchema|Array<FssSchema>} [items] - (For array types), either a literal schema for all items, or an array of schemas, in the order of the array items that are expected.
      * @property {Number} [maxItems] - (For array types), the maximum number of items allowed.
      * @property {Number} [minItems] - (For array types), the minimum number of items allowed.
      * @property {Boolean} [uniqueItems] - (For array types), whether or not all items must be unique.
@@ -112,13 +110,13 @@ var fluid  = fluid  || require("infusion");
      * @property {Number} [maximum] - (For numeric types), the maximum allowed value.
      * @property {Number} [minimum] - (For numeric types), the minimum allowed value.
      * @property {Number} [multipleOf] - (For numeric types), a number that the value must be a multiple of.
-     * @property {GssSchema|Boolean}  [additionalProperties] - (For object types), a GSS schema describing rules that any properties not explicitly described in `properties` must follow.  If set to `false`, additional properties are disallowed.
+     * @property {FssSchema|Boolean}  [additionalProperties] - (For object types), an FSS schema describing rules that any properties not explicitly described in `properties` must follow.  If set to `false`, additional properties are disallowed.
      * @property {Object.<String,Array<String>>} [dependencies] - (For object types), an object whose keys are properties.  Each value represents field names that must also be present if the named field is found.
      * @property {Number} [maxProperties] - (For object types), the maximum number of properties allowed.
      * @property {Number} [minProperties] - (For object types), the minimum number of properties required.
      * @property {Object.<RegExp>} [patternProperties] - (For object types), an object keyed by regular expression.  If a property's name matches the regexp, it must match the associated schema.
-     * @property {Object.<String,GssSchema>} [properties] - (For object types), the rules governing explicitly named properties.
-     * @property {GssSchema} [propertyNames] - (For object types), a sub-schema describing the rules the property names must follow.
+     * @property {Object.<String,FssSchema>} [properties] - (For object types), the rules governing explicitly named properties.
+     * @property {FssSchema} [propertyNames] - (For object types), a sub-schema describing the rules the property names must follow.
      * @property {Number} [maxLength] - (For string types), the maximum allowed length.
      * @property {Number} [minLength] - (For string types), the minimum required length.
      * @property {String} [format] - (For string types), a known format such as "email", "URI", or "date".
@@ -130,49 +128,49 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * @typedef gssValidationError
+     * @typedef fssValidationError
      * @property {Array<String>} dataPath - The path to the failure within the validated material.
-     * @property {Array<String>} schemaPath - The path to the broken rule within the GSS schema.
-     * @property {GssSchema} rule - The specific "rule" that was broken, which is itself a GSS schema.
+     * @property {Array<String>} schemaPath - The path to the broken rule within the FSS schema.
+     * @property {FssSchema} rule - The specific "rule" that was broken, which is itself an FSS schema.
      * @property {String} message - An error message (or message key to be resolved to a localised/translated error message).
      *
-     * @typedef gssValidationResults
+     * @typedef fssValidationResults
      * @property {Boolean} isValid - `true` if the payload was valid according to the schema, `false` otherwise.
-     * @property {Array<gssValidationError>} [errors] - If the payload was invalid, the details of the validation error(s).
+     * @property {Array<fssValidationError>} [errors] - If the payload was invalid, the details of the validation error(s).
      *
      */
 
     /**
      *
-     * Generate a stable "hash" based on a GSS Schema.  Call this rather than using the underlying function directly.
+     * Generate a stable "hash" based on an FSS Schema.  Call this rather than using the underlying function directly.
      *
-     * @param {GssSchema} toStringify - The material to be "stringified".
-     * @return {String} - A string representing the GSS schema.
+     * @param {FssSchema} toStringify - The material to be "stringified".
+     * @return {String} - A string representing the FSS schema.
      *
      */
-    gpii.schema.hashSchema = gpii.schema.stringify;
+    fluid.schema.hashSchema = fluid.schema.stringify;
 
     /**
      *
-     * Validate material against a "GPII Schema System" schema using a precompiled AJV "validator".
+     * Validate material against a "Fluid Schema System" schema using a precompiled AJV "validator".
      *
-     * @param {gpii.schema.validator} that - The validator component.
-     * @param {GssSchema} gssSchema - A GSS schema definition.
+     * @param {fluid.schema.validator} that - The validator component.
+     * @param {FssSchema} fssSchema - An FSS schema definition.
      * @param {Any} toValidate - The material to be validated.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
-     * @return {gssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
+     * @return {fssValidationError} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
-    gpii.schema.validator.validate = function (that, gssSchema, toValidate, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
+    fluid.schema.validator.validate = function (that, fssSchema, toValidate, schemaHash) {
+        schemaHash = schemaHash || fluid.schema.hashSchema(fssSchema);
 
         var validator = that.validatorsByHash[schemaHash];
         if (!validator) {
             try {
-                validator = that.cacheSchema(gssSchema, schemaHash);
+                validator = that.cacheSchema(fssSchema, schemaHash);
             }
             catch (compileErrors) {
-                return { isError: true, message: "Error compiling GSS Schema.", errors: compileErrors};
+                return { isError: true, message: "Error compiling FSS Schema.", errors: compileErrors};
             }
         }
 
@@ -182,17 +180,17 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Add a single GSS schema to the cache.
+     * Add a single FSS schema to the cache.
      *
-     * @param {gpii.schema.validator} that - The validator component itself.
-     * @param {GssSchema} gssSchema - The original GSS schema.
+     * @param {fluid.schema.validator} that - The validator component itself.
+     * @param {FssSchema} fssSchema - The original FSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
-     * @return {Object} - The compiled validator created from the GSS schema.
+     * @return {Object} - The compiled validator created from the FSS schema.
      *
      */
-    gpii.schema.validator.cacheSchema = function (that, gssSchema, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
-        var validator = gpii.schema.validator.compileSchema(gssSchema, that.options.ajvOptions);
+    fluid.schema.validator.cacheSchema = function (that, fssSchema, schemaHash) {
+        schemaHash = schemaHash || fluid.schema.hashSchema(fssSchema);
+        var validator = fluid.schema.validator.compileSchema(fssSchema, that.options.ajvOptions);
         that.validatorsByHash[schemaHash] = validator;
         return validator;
     };
@@ -201,13 +199,13 @@ var fluid  = fluid  || require("infusion");
      *
      * Remove a single previously cached schema from the cache.
      *
-     * @param {gpii.schema.validator} that - The validator component itself.
-     * @param {GssSchema} gssSchema - The original GSS schema.
+     * @param {fluid.schema.validator} that - The validator component itself.
+     * @param {FssSchema} fssSchema - The original FSS schema.
      * @param {String} [schemaHash] - An optional precomputed hash of the schema.
      *
      */
-    gpii.schema.validator.forgetSchema = function (that, gssSchema, schemaHash) {
-        schemaHash = schemaHash || gpii.schema.hashSchema(gssSchema);
+    fluid.schema.validator.forgetSchema = function (that, fssSchema, schemaHash) {
+        schemaHash = schemaHash || fluid.schema.hashSchema(fssSchema);
         delete that.validatorsByHash[schemaHash];
     };
 
@@ -215,36 +213,36 @@ var fluid  = fluid  || require("infusion");
      *
      * Clear all cached validators.
      *
-     * @param {gpii.schema.validator} that - The validator component itself.
+     * @param {fluid.schema.validator} that - The validator component itself.
      *
      */
-    gpii.schema.validator.clearCache = function (that) {
+    fluid.schema.validator.clearCache = function (that) {
         that.validatorsByHash = {};
     };
 
     /**
-     * @param {GssSchema} gssSchema - A GSS schema definition.
+     * @param {FssSchema} fssSchema - A FSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
      * @return {Object} - The compiled AJV validator.
      */
-    gpii.schema.validator.compileSchema = function (gssSchema, ajvOptions) {
-        ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
+    fluid.schema.validator.compileSchema = function (fssSchema, ajvOptions) {
+        ajvOptions = ajvOptions || fluid.schema.validator.defaultAjvOptions;
 
-        // Validate the GSS schema against the metaschema before proceeding.
-        var schemaValidationResults = gpii.schema.validator.validateSchema(gssSchema, ajvOptions);
+        // Validate the FSS schema against the metaschema before proceeding.
+        var schemaValidationResults = fluid.schema.validator.validateSchema(fssSchema, ajvOptions);
         if (schemaValidationResults.isError) {
             throw schemaValidationResults.errors;
         }
         else {
             var ajv = new Ajv(ajvOptions);
-            ajv.addMetaSchema(gpii.schema.metaSchema);
+            ajv.addMetaSchema(fluid.schema.metaSchema);
 
             // We have to validate against a transformed copy of the original rawSchema so that AJV can enforce our
             // required fields, which it would otherwise ignore.
-            var rawSchema = gpii.schema.gssToJsonSchema(gssSchema);
+            var rawSchema = fluid.schema.fssToJsonSchema(fssSchema);
             var validator = ajv.compile(rawSchema);
             validator.standardiseAjvErrors = function () {
-                return gpii.schema.validator.standardiseAjvErrors(gssSchema, validator.errors);
+                return fluid.schema.validator.standardiseAjvErrors(fssSchema, validator.errors);
             };
             return validator;
         }
@@ -261,25 +259,25 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Validate a "GPII Schema System" schema.
+     * Validate a "Fluid Schema System" schema.
      *
-     * @param {GssSchema} gssSchema - A GSS schema definition.
+     * @param {FssSchema} fssSchema - A FSS schema definition.
      * @param {Object} ajvOptions - Optional arguments to pass to the underlying AJV validator.
      * @return {schemaValidationResult} - An object that describes the results of validation.  The `isValid` property will be `true` if the data is valid, or `false` otherwise.  The `isError` property will be set to `true` if there are validation errors.
      *
      */
-    gpii.schema.validator.validateSchema = function (gssSchema, ajvOptions) {
-        ajvOptions = ajvOptions || gpii.schema.validator.defaultAjvOptions;
+    fluid.schema.validator.validateSchema = function (fssSchema, ajvOptions) {
+        ajvOptions = ajvOptions || fluid.schema.validator.defaultAjvOptions;
         var ajv = new Ajv(ajvOptions);
-        ajv.addMetaSchema(gpii.schema.metaSchema);
+        ajv.addMetaSchema(fluid.schema.metaSchema);
 
-        // Validate the GSS schema against the metaschema before proceeding.
-        var gssSchemaValid = ajv.validateSchema(gssSchema);
-        if (gssSchemaValid) {
+        // Validate the FSS schema against the metaschema before proceeding.
+        var fssSchemaValid = ajv.validateSchema(fssSchema);
+        if (fssSchemaValid) {
             return {};
         }
         else {
-            return { isError: true, message: "Invalid GSS Schema.", errors: ajv.errors};
+            return { isError: true, message: "Invalid FSS Schema.", errors: ajv.errors};
         }
     };
 
@@ -295,7 +293,7 @@ var fluid  = fluid  || require("infusion");
      * @return {Boolean} - True if the item is of non-zero length, false otherwise.
      *
      */
-    gpii.schema.removeEmptyItems = function (item) { return (typeof item === "string" && item.length) || Number.isInteger(item); };
+    fluid.schema.removeEmptyItems = function (item) { return (typeof item === "string" && item.length) || Number.isInteger(item); };
 
     /**
      *
@@ -310,7 +308,7 @@ var fluid  = fluid  || require("infusion");
      * @return {Array.<String>} - An array of EL path segments representing the path to the invalid or missing material.
      *
      */
-    gpii.schema.validator.extractElDataPathSegmentsFromError = function (rawError) {
+    fluid.schema.validator.extractElDataPathSegmentsFromError = function (rawError) {
         // We have to use this approach so that we can correctly break up dataPath values that contain escaped dots and apostrophes, i.e. `normal.['dotted.field'].alsoNormal`.
         var rawPathSegments = rawError.dataPath.match(/(([^\[\.]+)|\['([^\]]+)'\])/g) || [];
         var ajvPathSegments = fluid.transform(rawPathSegments, function (pathSegment) {
@@ -319,7 +317,7 @@ var fluid  = fluid  || require("infusion");
         });
 
         if (rawError.keyword === "required") {
-            ajvPathSegments.push(gpii.schema.validator.trimLeadingDot(rawError.params.missingProperty));
+            ajvPathSegments.push(fluid.schema.validator.trimLeadingDot(rawError.params.missingProperty));
         }
 
         return ajvPathSegments;
@@ -328,7 +326,7 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Standardise the path to the failing rule within a GSS schema based on a raw AJV validation error.
+     * Standardise the path to the failing rule within an FSS schema based on a raw AJV validation error.
      *
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
@@ -337,15 +335,15 @@ var fluid  = fluid  || require("infusion");
      * @return {Array.<String>} - An array of EL path segments that point to the failing rule in the schema.
      *
      */
-    gpii.schema.validator.extractElSchemaPathSegmentsFromError = function (ajvError) {
-        var rawSegments = gpii.schema.validator.jsonPointerToElPath(ajvError.schemaPath);
+    fluid.schema.validator.extractElSchemaPathSegmentsFromError = function (ajvError) {
+        var rawSegments = fluid.schema.validator.jsonPointerToElPath(ajvError.schemaPath);
         var segmentsToContainingElement = rawSegments.slice(0,-1);
         if (ajvError.keyword === "required") {
-            var segmentsToRequiredRule = segmentsToContainingElement.concat(["properties", gpii.schema.validator.trimLeadingDot(ajvError.params.missingProperty), "required"]);
+            var segmentsToRequiredRule = segmentsToContainingElement.concat(["properties", fluid.schema.validator.trimLeadingDot(ajvError.params.missingProperty), "required"]);
             return segmentsToRequiredRule;
         }
         else if (ajvError.keyword === "if") {
-            var segmentsToFailingIfBranch = segmentsToContainingElement.concat([gpii.schema.validator.trimLeadingDot(ajvError.params.failingKeyword)]);
+            var segmentsToFailingIfBranch = segmentsToContainingElement.concat([fluid.schema.validator.trimLeadingDot(ajvError.params.failingKeyword)]);
             return segmentsToFailingIfBranch;
         }
 
@@ -365,7 +363,7 @@ var fluid  = fluid  || require("infusion");
      * @return {String} - The string, with a leading dot removed.
      *
      */
-    gpii.schema.validator.trimLeadingDot = function (rawSegment) {
+    fluid.schema.validator.trimLeadingDot = function (rawSegment) {
         return typeof rawSegment === "string" && rawSegment.indexOf(".") === 0 ? rawSegment.substring(1) : rawSegment;
     };
 
@@ -378,9 +376,9 @@ var fluid  = fluid  || require("infusion");
      * @return {Array<String>} - An array of strings representing the path to the same location as EL path segments.
      *
      */
-    gpii.schema.validator.jsonPointerToElPath = function (jsonPointer) {
+    fluid.schema.validator.jsonPointerToElPath = function (jsonPointer) {
         // Discard the leading portion of the URL content if it's found.
-        var rawSegments = jsonPointer.substring(jsonPointer.indexOf("#") + 1).split("/").filter(gpii.schema.removeEmptyItems);
+        var rawSegments = jsonPointer.substring(jsonPointer.indexOf("#") + 1).split("/").filter(fluid.schema.removeEmptyItems);
         // Handle slash escaping, 'this~1that` => `this/that` and tilde escaping, `topsy~0turvy` => `topsy~turvy`
         var unescapedSegments = fluid.transform(rawSegments, function (segment) {
             return segment.replace("~1", "/").replace("~0", "~");
@@ -390,7 +388,7 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Examine an EL path to a failing rule within a GSS schema, looking for help in presenting a cleaner error
+     * Examine an EL path to a failing rule within an FSS schema, looking for help in presenting a cleaner error
      * message.  Error definitions look like:
      *
      * {
@@ -411,17 +409,17 @@ var fluid  = fluid  || require("infusion");
      * which is not guaranteed to remain available.
      *
      * @param {Array<String>} rulePath - An array of EL path segments.
-     * @param {GssSchema} gssSchema - A GSS schema.
+     * @param {FssSchema} fssSchema - A FSS schema.
      * @param {String} defaultMessage - The default message to use if no information is found in the schema.
      * @return {String} - A message key for the given error, or the unaltered default message if no message key is found.
      *
      */
-    gpii.schema.validator.errorHintForRule = function (rulePath, gssSchema, defaultMessage) {
-        defaultMessage = defaultMessage || gpii.schema.validator.defaultI18nKeysByRule.generalFailure;
+    fluid.schema.validator.errorHintForRule = function (rulePath, fssSchema, defaultMessage) {
+        defaultMessage = defaultMessage || fluid.schema.validator.defaultI18nKeysByRule.generalFailure;
         var enclosingDefinitionSegments = rulePath.slice(0, -1);
         var finalRuleSegment = rulePath[rulePath.length - 1];
 
-        var errorsDef = fluid.get(gssSchema, enclosingDefinitionSegments.concat("errors"));
+        var errorsDef = fluid.get(fssSchema, enclosingDefinitionSegments.concat("errors"));
         // "short" notation.
         if (typeof errorsDef === "string") {
             return errorsDef;
@@ -440,7 +438,7 @@ var fluid  = fluid  || require("infusion");
 
         // If we haven't found any information to help provide an error message key, look for a global default for the
         // rule type.  If none is found, return the underlying message from AJV.
-        return gpii.schema.validator.defaultI18nKeysByRule[finalRuleSegment] || defaultMessage;
+        return fluid.schema.validator.defaultI18nKeysByRule[finalRuleSegment] || defaultMessage;
     };
 
     /**
@@ -470,33 +468,33 @@ var fluid  = fluid  || require("infusion");
      *  ]
      * }
      *
-     * Note that as in the examples above, the GSS metaschema defines "error hints" that result in message keys
+     * Note that as in the examples above, the FSS metaschema defines "error hints" that result in message keys
      * being returned.
      *
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {GssSchema} gssSchema - A GSS schema.
+     * @param {FssSchema} fssSchema - A FSS schema.
      * @param {ajvErrors|Boolean} ajvErrors - The raw errors returned by AJV, if there are any, or `false` if there are no validation Errors.
-     * @return {gssValidationResults} - An object detailing the validation results (see above).
+     * @return {fssValidationResults} - An object detailing the validation results (see above).
      *
      */
-    gpii.schema.validator.standardiseAjvErrors = function (gssSchema, ajvErrors) {
+    fluid.schema.validator.standardiseAjvErrors = function (fssSchema, ajvErrors) {
         if (ajvErrors) {
             var transformedErrors = fluid.transform(ajvErrors, function (ajvError) {
                 var error         = {};
 
-                error.dataPath = gpii.schema.validator.extractElDataPathSegmentsFromError(ajvError);
+                error.dataPath = fluid.schema.validator.extractElDataPathSegmentsFromError(ajvError);
 
-                var schemaPath = gpii.schema.validator.extractElSchemaPathSegmentsFromError(ajvError);
+                var schemaPath = fluid.schema.validator.extractElSchemaPathSegmentsFromError(ajvError);
                 error.schemaPath = schemaPath;
 
                 // Backtrack from the full path one step so that we get a bit more context, i.e. `{ "type": "string" }` instead of `string`.
                 var fullRulePath = schemaPath.slice(0, -1);
-                error.rule = fluid.get(gssSchema, fullRulePath);
+                error.rule = fluid.get(fssSchema, fullRulePath);
 
                 // Use any error hints found for the failing path in the schema, failing over to the AJV message.
-                error.message = gpii.schema.validator.errorHintForRule(schemaPath, gssSchema, ajvError.message);
+                error.message = fluid.schema.validator.errorHintForRule(schemaPath, fssSchema, ajvError.message);
 
                 return error;
             });
@@ -510,8 +508,8 @@ var fluid  = fluid  || require("infusion");
         }
     };
 
-    fluid.registerNamespace("gpii.schema.validator");
-    gpii.schema.validator.defaultLocalisationTransformRules = {
+    fluid.registerNamespace("fluid.schema.validator");
+    fluid.schema.validator.defaultLocalisationTransformRules = {
         "data": "data",
         "error": "error"
     };
@@ -523,15 +521,15 @@ var fluid  = fluid  || require("infusion");
      * If you want to pass a custom message bundle to this function, it should only contain top-level elements, see
      * the ./src/messages/ directly in this package for concrete examples.
      *
-     * @param {Array<gssValidationError>} validationErrors - An array of validation errors, see `gpii.schema.validator.standardiseAjvErrors` for details.
+     * @param {Array<fssValidationError>} validationErrors - An array of validation errors, see `fluid.schema.validator.standardiseAjvErrors` for details.
      * @param {Any} validatedData - The (optional) data that was validated.
      * @param {Object<String,String>} messageBundle - An (optional) map of message templates (see above).  Defaults to the message bundle provided by this package.
      * @param {Object} localisationTransform - An optional set of rules that control what information is available when localising validation errors (see above).
-     * @return {Array<gssValidationError>} - The validation errors, with all message keys replaced with localised strings.
+     * @return {Array<fssValidationError>} - The validation errors, with all message keys replaced with localised strings.
      *
      */
-    gpii.schema.validator.localiseErrors = function (validationErrors, validatedData, messageBundle, localisationTransform) {
-        localisationTransform = localisationTransform || gpii.schema.validator.defaultLocalisationTransformRules;
+    fluid.schema.validator.localiseErrors = function (validationErrors, validatedData, messageBundle, localisationTransform) {
+        localisationTransform = localisationTransform || fluid.schema.validator.defaultLocalisationTransformRules;
         var localisedErrors = fluid.transform(validationErrors, function (validationError) {
             var messageKey = fluid.get(validationError, "message");
             var messageTemplate = messageKey && fluid.get(messageBundle, [messageKey]); // We use the segment format because the keys contain dots.
@@ -550,17 +548,17 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Convert a GSS schema to a standard JSON Schema.
+     * Convert an FSS schema to a standard JSON Schema.
      *
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {GssSchema} originalGss - The GSS schema.
+     * @param {FssSchema} originalFss - The FSS schema.
      * @return {Object} - The equivalent JSON Schema rules.
      *
      */
-    gpii.schema.gssToJsonSchema = function (originalGss) {
-        var transformedSchema = gpii.schema.gssSegmentToJsonSchemaSegment(originalGss);
+    fluid.schema.fssToJsonSchema = function (originalFss) {
+        var transformedSchema = fluid.schema.fssSegmentToJsonSchemaSegment(originalFss);
         // Obviously this needs to be more flexibly defined.
         transformedSchema.$schema = "http://json-schema.org/draft-07/schema#";
         return transformedSchema;
@@ -568,38 +566,38 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Convert part of a GSS schema to its JSON Schema equivalent.  See `gpii.schema.gssToJsonSchema`.
+     * Convert part of an FSS schema to its JSON Schema equivalent.  See `fluid.schema.fssToJsonSchema`.
      *
      * NOTE: This function is a non-API function, i.e. one that assists public functions in performing their work, but
      * which is not guaranteed to remain available.
      *
-     * @param {GssSchema} gssSegment - A sub-segment of a GSS schema.
+     * @param {FssSchema} fssSegment - A sub-segment of an FSS schema.
      * @return {Object} - The same rules represented as a JSON Schema segment
      *
      */
-    gpii.schema.gssSegmentToJsonSchemaSegment = function (gssSegment) {
-        if (typeof gssSegment === "object" && gssSegment !== null) {
-            var schemaSegment = Array.isArray(gssSegment) ? [] : {};
+    fluid.schema.fssSegmentToJsonSchemaSegment = function (fssSegment) {
+        if (typeof fssSegment === "object" && fssSegment !== null) {
+            var schemaSegment = Array.isArray(fssSegment) ? [] : {};
 
-            var childProperties = fluid.get(gssSegment, "properties");
+            var childProperties = fluid.get(fssSegment, "properties");
             if (childProperties) {
-                var requiredFields = gpii.schema.deriveRequiredProperties(childProperties);
+                var requiredFields = fluid.schema.deriveRequiredProperties(childProperties);
                 if (requiredFields && requiredFields.length) {
                     schemaSegment.required = requiredFields;
                 }
             }
 
-            // If the GSS segment is an object, filter out our distinct keys such as `required` and `errors`.
-            var filteredSegment = Array.isArray(gssSegment) ? gssSegment : fluid.filterKeys(gssSegment, ["required", "hint", "errors", "enumLabels", "$schema"], true);
+            // If the FSS segment is an object, filter out our distinct keys such as `required` and `errors`.
+            var filteredSegment = Array.isArray(fssSegment) ? fssSegment : fluid.filterKeys(fssSegment, ["required", "hint", "errors", "enumLabels", "$schema"], true);
             fluid.each(filteredSegment, function (value, key) {
                 // Preserve the value, making sure to give each nested object a chance to pull up its own list of required fields.
                 if (typeof value === "object") {
                     // Handle "properties" objects separately to avoid stripping out the above reserved words from non-definitions.
                     if (key === "properties") {
-                        schemaSegment[key] = fluid.transform(value, gpii.schema.gssSegmentToJsonSchemaSegment);
+                        schemaSegment[key] = fluid.transform(value, fluid.schema.fssSegmentToJsonSchemaSegment);
                     }
                     else {
-                        schemaSegment[key] = gpii.schema.gssSegmentToJsonSchemaSegment(value);
+                        schemaSegment[key] = fluid.schema.fssSegmentToJsonSchemaSegment(value);
                     }
                 }
                 else {
@@ -609,14 +607,14 @@ var fluid  = fluid  || require("infusion");
             return schemaSegment;
         }
         else {
-            return gssSegment;
+            return fssSegment;
         }
     };
 
     /**
      *
-     * As of JSON Schema draft v4, the `required` property is now a property of the enclosing element.  GSS uses the v3
-     * syntax, where `required` is a property of the object itself.  This function converts GSS-style properties to an
+     * As of JSON Schema draft v4, the `required` property is now a property of the enclosing element.  FSS uses the v3
+     * syntax, where `required` is a property of the object itself.  This function converts FSS-style properties to an
      * array of required "child" elements that can be used to represent the same list of required fields in modern JSON
      * Schema syntax.
      *
@@ -627,7 +625,7 @@ var fluid  = fluid  || require("infusion");
      * @return {Array<String>} - An array of the property keys that are flagged as required.
      *
      */
-    gpii.schema.deriveRequiredProperties = function (propertiesObject) {
+    fluid.schema.deriveRequiredProperties = function (propertiesObject) {
         var requiredChildren = [];
         fluid.each(propertiesObject, function (value, key) {
             // "pull up" the "required:true" values from our properties.
@@ -641,33 +639,33 @@ var fluid  = fluid  || require("infusion");
 
     // A global component that validates material using the above static functions.  Handles the expensive initial
     // compilation of the schema.  For performance reasons, this is not itself a schema-validated component.
-    fluid.defaults("gpii.schema.validator", {
+    fluid.defaults("fluid.schema.validator", {
         gradeNames: ["fluid.component", "fluid.resolveRootSingle"],
-        singleRootType: "gpii.schema.validator",
+        singleRootType: "fluid.schema.validator",
         members: {
             validatorsByHash: {
             }
         },
         invokers: {
             validate: {
-                funcName: "gpii.schema.validator.validate",
-                args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // gssSchema, toValidate, schemaHash
+                funcName: "fluid.schema.validator.validate",
+                args:     ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // fssSchema, toValidate, schemaHash
             },
             cacheSchema: {
-                funcName: "gpii.schema.validator.cacheSchema",
-                args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
+                funcName: "fluid.schema.validator.cacheSchema",
+                args: ["{that}", "{arguments}.0", "{arguments}.1"] // fssSchema, schemaHash
             },
             forgetSchema: {
-                funcName: "gpii.schema.validator.forgetSchema",
-                args: ["{that}", "{arguments}.0", "{arguments}.1"] // gssSchema, schemaHash
+                funcName: "fluid.schema.validator.forgetSchema",
+                args: ["{that}", "{arguments}.0", "{arguments}.1"] // fssSchema, schemaHash
             },
             clearCache: {
-                funcName: "gpii.schema.validator.clearCache",
+                funcName: "fluid.schema.validator.clearCache",
                 args:     ["{that}"]
             }
         }
     });
 
     // The global validator cache should always be available.
-    gpii.schema.validator();
+    fluid.schema.validator();
 })(fluid, typeof Ajv !== "undefined" ? Ajv : false);
