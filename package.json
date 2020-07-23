@@ -1,6 +1,6 @@
 {
     "name": "fluid-json-schema",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "description": "Support validation of JSON within the Fluid ecosystem.",
     "main": "index.js",
     "scripts": {
