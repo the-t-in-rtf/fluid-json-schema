@@ -12,26 +12,25 @@ var jqUnit = jqUnit || {};
         require("./validator-tests-ajv-errors-testDefs");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.tests.schema.validator");
+    fluid.registerNamespace("fluid.tests.schema.validator");
 
-    gpii.tests.schema.validator.staticFunctionTests = function () {
+    fluid.tests.schema.validator.staticFunctionTests = function () {
         jqUnit.module("Testing validator static functions.");
 
-        jqUnit.test("Testing `gpii.schema.deriveRequiredProperties`.", function () {
-            jqUnit.assertDeepEq("We should be able to generate a list of required sub-properties.", ["foo", "bar"], gpii.schema.deriveRequiredProperties({
+        jqUnit.test("Testing `fluid.schema.deriveRequiredProperties`.", function () {
+            jqUnit.assertDeepEq("We should be able to generate a list of required sub-properties.", ["foo", "bar"], fluid.schema.deriveRequiredProperties({
                 foo: {required: true},
                 bar: {required: true},
                 baz: {}
             }));
-            jqUnit.assertDeepEq("We should be able to handle an empty object.", [], gpii.schema.deriveRequiredProperties({}));
+            jqUnit.assertDeepEq("We should be able to handle an empty object.", [], fluid.schema.deriveRequiredProperties({}));
         });
 
-        jqUnit.test("Testing `gpii.schema.gssToJsonSchema`.", function () {
+        jqUnit.test("Testing `fluid.schema.fssToJsonSchema`.", function () {
             var testDefs = {
                 allSorts: {
                     message: "We should be able to handle a full range of values.",
-                    gssSchema: {properties: {foo: {enum: [[0, 1, 2], true, "a string", undefined]}}},
+                    fssSchema: {properties: {foo: {enum: [[0, 1, 2], true, "a string", undefined]}}},
                     expected: {
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         properties: {foo: {enum: [[0, 1, 2], true, "a string", undefined]}}
@@ -39,7 +38,7 @@ var jqUnit = jqUnit || {};
                 },
                 anyOf: {
                     message: "We should be able to handle array constructs like `anyOf`.",
-                    gssSchema: {anyOf: [{properties: {foo: {required: true}}}, {properties: {errors: {required: true}}}]},
+                    fssSchema: {anyOf: [{properties: {foo: {required: true}}}, {properties: {errors: {required: true}}}]},
                     expected: {
                         "$schema": "http://json-schema.org/draft-07/schema#", anyOf: [
                             {required: ["foo"], properties: {foo: {}}},
@@ -49,37 +48,37 @@ var jqUnit = jqUnit || {};
                 },
                 emptySchema: {
                     message: "We should be able to handle an empty schema.",
-                    gssSchema: {},
+                    fssSchema: {},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#"}
                 },
                 enumLabels: {
                     message: "We should be able to handle our custom `enumLabels` element.",
-                    gssSchema: {properties: {foo: {enumLabels: ["foo"], enum: ["bar"]}}},
+                    fssSchema: {properties: {foo: {enumLabels: ["foo"], enum: ["bar"]}}},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#", properties: {foo: {enum: ["bar"]}}}
                 },
                 hint: {
                     message: "We should be able to handle our custom `hint` element.",
-                    gssSchema: {properties: {foo: {hint: "baz"}}},
+                    fssSchema: {properties: {foo: {hint: "baz"}}},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#", properties: {foo: {}}}
                 },
                 errors: {
                     message: "We should be able to handle our custom `errors` element.",
-                    gssSchema: {properties: {foo: {errors: {"": "baz"}}}},
+                    fssSchema: {properties: {foo: {errors: {"": "baz"}}}},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#", properties: {foo: {}}}
                 },
                 specialPropertyNames: {
-                    message: "We should not filter out properties that match our GSS keywords.",
-                    gssSchema: {properties: {errors: {}, hint: {}}},
+                    message: "We should not filter out properties that match our FSS keywords.",
+                    fssSchema: {properties: {errors: {}, hint: {}}},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#", properties: {errors: {}, hint: {}}}
                 },
                 requiredField: {
                     message: "We should be able to handle a single required field.",
-                    gssSchema: {properties: {foo: {required: true}}},
+                    fssSchema: {properties: {foo: {required: true}}},
                     expected: {"$schema": "http://json-schema.org/draft-07/schema#", required: ["foo"], properties: {foo: {}}}
                 },
                 requiredFields: {
                     message: "We should be able to handle multiple required fields.",
-                    gssSchema: {properties: {foo: {required: true}, bar: {required: true, type: "string"}}},
+                    fssSchema: {properties: {foo: {required: true}, bar: {required: true, type: "string"}}},
                     expected: {
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         required: ["foo", "bar"],
@@ -89,11 +88,11 @@ var jqUnit = jqUnit || {};
             };
 
             fluid.each(testDefs, function (testDef) {
-                jqUnit.assertDeepEq(testDef.message, testDef.expected, gpii.schema.gssToJsonSchema(testDef.gssSchema));
+                jqUnit.assertDeepEq(testDef.message, testDef.expected, fluid.schema.fssToJsonSchema(testDef.fssSchema));
             });
         });
 
-        jqUnit.test("Testing `gpii.schema.removeEmptyItems`.", function () {
+        jqUnit.test("Testing `fluid.schema.removeEmptyItems`.", function () {
             var testDefs = {
                 nonEmpty: {message: "Non-empty items should be preserved.", input: ["a", "string"], expected: ["a", "string"]},
                 emptyStrings: {
@@ -115,54 +114,54 @@ var jqUnit = jqUnit || {};
                 }
             };
             fluid.each(testDefs, function (testDef) {
-                jqUnit.assertDeepEq(testDef.message, testDef.expected, testDef.input.filter(gpii.schema.removeEmptyItems));
+                jqUnit.assertDeepEq(testDef.message, testDef.expected, testDef.input.filter(fluid.schema.removeEmptyItems));
             });
         });
 
-        jqUnit.test("Testing `gpii.schema.validator.errorHintForRule`.", function () {
+        jqUnit.test("Testing `fluid.schema.validator.errorHintForRule`.", function () {
             var testDefs = {
                 defaultMessage: {
                     message: "We should be able to failover to a default message.",
-                    gssSchema: {newRule: "shiny"},
+                    fssSchema: {newRule: "shiny"},
                     rulePath: ["newRule"],
                     defaultMessage: "This is the default message.",
                     expected: "This is the default message."
                 },
                 ruleMessage: {
                     message: "We should be able to failover to one of the built-in keys for a given rule.",
-                    gssSchema: {type: "text"},
+                    fssSchema: {type: "text"},
                     rulePath: ["type"],
                     defaultMessage: "This is the default message.",
-                    expected: "gpii.schema.messages.validationErrors.type"
+                    expected: "fluid.schema.messages.validationErrors.type"
                 },
                 shortForm: {
                     message: "We should be able to use a 'short form' error definition.",
-                    gssSchema: {type: "text", "errors": "short-form-key"},
+                    fssSchema: {type: "text", "errors": "short-form-key"},
                     rulePath: ["type"],
                     defaultMessage: "This is the default message.",
                     expected: "short-form-key"
                 },
                 longFormByRule: {
                     message: "We should be able to use a 'long form' error definition for a single rule.",
-                    gssSchema: {type: "text", "errors": {type: "long-form-by-rule-key"}},
+                    fssSchema: {type: "text", "errors": {type: "long-form-by-rule-key"}},
                     rulePath: ["type"],
                     defaultMessage: "This is the default message.",
                     expected: "long-form-by-rule-key"
                 },
                 longFormFailover: {
                     message: "We should be able to use a 'long form' error definition for multiple rules.",
-                    gssSchema: {type: "text", "errors": {"": "long-form-failover-key"}},
+                    fssSchema: {type: "text", "errors": {"": "long-form-failover-key"}},
                     rulePath: ["type"],
                     defaultMessage: "This is the default message.",
                     expected: "long-form-failover-key"
                 }
             };
             fluid.each(testDefs, function (testDef) {
-                jqUnit.assertEquals(testDef.message, testDef.expected, gpii.schema.validator.errorHintForRule(testDef.rulePath, testDef.gssSchema, testDef.defaultMessage));
+                jqUnit.assertEquals(testDef.message, testDef.expected, fluid.schema.validator.errorHintForRule(testDef.rulePath, testDef.fssSchema, testDef.defaultMessage));
             });
         });
 
-        jqUnit.test("Testing `gpii.schema.validator.extractElDataPathSegmentsFromError`.", function () {
+        jqUnit.test("Testing `fluid.schema.validator.extractElDataPathSegmentsFromError`.", function () {
             var testDefs = {
                 rootDataPath: {
                     message: "We should be able to handle the root dataPath.",
@@ -216,11 +215,11 @@ var jqUnit = jqUnit || {};
                 }
             };
             fluid.each(testDefs, function (testDef) {
-                jqUnit.assertDeepEq(testDef.message, testDef.expected, gpii.schema.validator.extractElDataPathSegmentsFromError(testDef.error));
+                jqUnit.assertDeepEq(testDef.message, testDef.expected, fluid.schema.validator.extractElDataPathSegmentsFromError(testDef.error));
             });
         });
 
-        jqUnit.test("Testing `gpii.schema.validator.jsonPointerToElPath`.", function () {
+        jqUnit.test("Testing `fluid.schema.validator.jsonPointerToElPath`.", function () {
             var testDefs = {
                 withId: {
                     message: "We should be able to handle a pointer that includes an ID.",
@@ -240,32 +239,32 @@ var jqUnit = jqUnit || {};
                 root: { message: "We should be able to handle a pointer to the root of the object.", input: "#/", expected: [] }
             };
             fluid.each(testDefs, function (testDef) {
-                jqUnit.assertDeepEq(testDef.message, testDef.expected, gpii.schema.validator.jsonPointerToElPath(testDef.input));
+                jqUnit.assertDeepEq(testDef.message, testDef.expected, fluid.schema.validator.jsonPointerToElPath(testDef.input));
             });
         });
 
-        jqUnit.test("Testing `gpii.schema.validator.standardiseAjvErrors`.", function () {
-            fluid.each(gpii.tests.validator.ajvErrors, function (testDef) {
-                var standardisedErrors = gpii.schema.validator.standardiseAjvErrors(testDef.schema, testDef.input);
+        jqUnit.test("Testing `fluid.schema.validator.standardiseAjvErrors`.", function () {
+            fluid.each(fluid.tests.validator.ajvErrors, function (testDef) {
+                var standardisedErrors = fluid.schema.validator.standardiseAjvErrors(testDef.schema, testDef.input);
                 jqUnit.assertDeepEq(testDef.message, testDef.expected, standardisedErrors);
             });
 
             var expected = {isValid: true, errors: []};
-            var noErrorOutput = gpii.schema.validator.standardiseAjvErrors({}, false);
+            var noErrorOutput = fluid.schema.validator.standardiseAjvErrors({}, false);
             jqUnit.assertDeepEq("We should be able to handle the case in which there are no AJV errors.", expected, noErrorOutput);
         });
 
-        jqUnit.test("Testing `gpii.schema.validator.localiseErrors`.", function () {
+        jqUnit.test("Testing `fluid.schema.validator.localiseErrors`.", function () {
             var testDefs = {
                 defaultsNoData: {
                     message: "We should be able to resolve error message keys with only the defaults.",
-                    errors: [{message: "gpii.schema.messages.validationErrors.required"}],
+                    errors: [{message: "fluid.schema.messages.validationErrors.required"}],
                     expected: [{message: "This value is required."}]
                 },
                 defaultData: {
                     message: "We should be able to resolve error message keys with the defaults and the data being validated.",
                     toValidate: true,
-                    errors: [{message: "gpii.schema.messages.validationErrors.required", dataPath: [""]}],
+                    errors: [{message: "fluid.schema.messages.validationErrors.required", dataPath: [""]}],
                     expected: [{message: "This value is required.", dataPath: [""]}]
                 },
                 noErrors: {
@@ -284,7 +283,7 @@ var jqUnit = jqUnit || {};
                             "type": "string",
                             "maxLength": 2
                         },
-                        "message": "gpii.schema.messages.validationErrors.maxLength"
+                        "message": "fluid.schema.messages.validationErrors.maxLength"
                     }],
                     expected: [{
                         "dataPath": [],
@@ -301,10 +300,10 @@ var jqUnit = jqUnit || {};
                 customMessageBundle: {
                     message: "We should be able to use a custom message bundle.",
                     messages: {
-                        "gpii.schema.messages.validationErrors.maxLength": "The value is too long."
+                        "fluid.schema.messages.validationErrors.maxLength": "The value is too long."
                     },
                     errors: [{
-                        "message": "gpii.schema.messages.validationErrors.maxLength"
+                        "message": "fluid.schema.messages.validationErrors.maxLength"
                     }],
                     expected: [{
                         "message": "The value is too long."
@@ -352,8 +351,8 @@ var jqUnit = jqUnit || {};
                 }
             };
             fluid.each(testDefs, function (testDef) {
-                var messageBundle = fluid.extend({}, gpii.tests.schema.defaultMessageBundle, testDef.messages);
-                var output = gpii.schema.validator.localiseErrors(testDef.errors, testDef.toValidate, messageBundle, testDef.localisationTransform);
+                var messageBundle = fluid.extend({}, fluid.tests.schema.defaultMessageBundle, testDef.messages);
+                var output = fluid.schema.validator.localiseErrors(testDef.errors, testDef.toValidate, messageBundle, testDef.localisationTransform);
                 jqUnit.assertDeepEq(testDef.message, testDef.expected, output);
             });
         });

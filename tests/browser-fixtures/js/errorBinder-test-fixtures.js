@@ -1,8 +1,8 @@
 (function (fluid) {
     "use strict";
 
-    fluid.defaults("gpii.tests.schema.errorBinder", {
-        gradeNames: ["gpii.schema.client.errorAwareForm"],
+    fluid.defaults("fluid.tests.schema.errorBinder", {
+        gradeNames: ["fluid.schema.client.errorAwareForm"],
         hideOnSuccess: false,
         ajaxOptions: {
             url:      "/gated/POST",
@@ -73,7 +73,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.binder.transforms.stripEmptyString",
+                                type:      "fluid.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -87,7 +87,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.binder.transforms.stripEmptyString",
+                                type:      "fluid.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -101,7 +101,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.binder.transforms.stripEmptyString",
+                                type:      "fluid.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }
@@ -115,7 +115,7 @@
                     domToModel: {
                         "": {
                             transform: {
-                                type:      "gpii.binder.transforms.stripEmptyString",
+                                type:      "fluid.binder.transforms.stripEmptyString",
                                 inputPath: ""
                             }
                         }

@@ -1,6 +1,6 @@
 # Validation
 
-## `gpii.schema.validator`
+## `fluid.schema.validator`
 
 This package provides a global validator that is instantiated when requiring this package from node, or when including
 the validator source from a browser.  Once you have done either, you can access the global validator using an IoC
@@ -8,14 +8,14 @@ reference, as shown in the example at end of this page.
 
 ### Component Invokers
 
-### `{gpii.schema.validator}.validate(toValidate, gssSchema, [schemaHash])`
+### `{fluid.schema.validator}.validate(toValidate, fssSchema, [schemaHash])`
 
-* `{Object} gssSchema`: A GSS schema definition.
+* `{Object} fssSchema`: An FSS schema definition.
 * `{Any} toValidate`: The material to be validated.
-* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.hashSchema` (see below).
+* `{String} [schemaHash]`: An optional schema hash precomputed using `fluid.schema.hashSchema` (see below).
 * Returns: An `{Object}` that describes the validation results.  See below for details.
 
-This function validates material against [a "GPII Schema System" schema](./gss.md), and returns an object describing
+This function validates material against [a "Fluid Schema System" schema](./fss.md), and returns an object describing
 the results. If there are no validation errors, the return value should look like:
 
 ```json
@@ -32,20 +32,20 @@ If there are validation errors, the return value should look like:
          "dataPath": ["requiredField"],
          "schemaPath": ["properties", "requiredField", "required"],
          "rule": { "required": true },
-         "message": "gpii.schema.messages.validationErrors.required"
+         "message": "fluid.schema.messages.validationErrors.required"
      },
      {
          "dataPath": ["deep", "booleanField"],
          "schemaPath": ["properties", "deep", "properties", "booleanField", "type"],
          "rule": { "type": "boolean" },
-         "message": "gpii.schema.messages.validationErrors.type"
+         "message": "fluid.schema.messages.validationErrors.type"
      }
  ]
 }
 ```
 
 The `message` values are "keys" that can be resolved to human-readable text using the
-`gpii.schema.validator.localiseErrors` function described below.
+`fluid.schema.validator.localiseErrors` function described below.
 
 If a low-level error occurs while attempting to validate the data, a separate `isError` property will be set to `true`
 and the raw error message will be displayed in a top-level `messages` element, as in:
@@ -53,11 +53,11 @@ and the raw error message will be displayed in a top-level `messages` element, a
 ```json
 {
   "isError": true,
-  "message": "Invalid GSS Schema."
+  "message": "Invalid FSS Schema."
 }
 ```
 
-### `{gpii.schema.validator}.clearCache()`
+### `{fluid.schema.validator}.clearCache()`
 
 * Returns: Nothing.
 
@@ -65,26 +65,26 @@ As the compilation of a schema is quite expensive, the global validator has an i
 version of each schema that has been used for validation.  This cache can be cleared by calling the validation
 component's `clearCache` invoker.  You can also add or remove single schemas from the cache, see below for details.
 
-### `{gpii.schema.validator}.cacheSchema(gssSchema, [schemaHash])`
+### `{fluid.schema.validator}.cacheSchema(fssSchema, [schemaHash])`
 
-* `{Object} gssSchema`: A GSS schema definition.
-* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
+* `{Object} fssSchema`: An FSS schema definition.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `fluid.schema.stringify`.
 * Returns: The validator created by compiling the schema.
 
-If a schema has not already been cached, it is cached the first time it is used by `{gpii.schema.validator}.validate`
+If a schema has not already been cached, it is cached the first time it is used by `{fluid.schema.validator}.validate`
 (see above).  You can use this invoker to cache a schema ahead of time.
 
-### `{gpii.schema.validator}.forgetSchema(gssSchema, [schemaHash])`
+### `{fluid.schema.validator}.forgetSchema(fssSchema, [schemaHash])`
 
-* `{Object} gssSchema`: A GSS schema definition.
-* `{String} [schemaHash]`: An optional schema hash precomputed using `gpii.schema.stringify`.
+* `{Object} fssSchema`: An FSS schema definition.
+* `{String} [schemaHash]`: An optional schema hash precomputed using `fluid.schema.stringify`.
 * Returns: Nothing.
 
 Remove a single schema from the internal cache.
 
 ## Error Message Internationalisation/Localisation
 
-### `gpii.schema.validator.localiseErrors(validationErrors, [validatedData], [messages], [localisationTransform])`
+### `fluid.schema.validator.localiseErrors(validationErrors, [validatedData], [messages], [localisationTransform])`
 
 * `{Array<Object>} validationErrors`:An array of validation errors.
 * `{Any} validatedData`:The (optional) data that was validated.
@@ -94,7 +94,7 @@ Remove a single schema from the internal cache.
   validation errors (see above).
 * Returns: An `{Array}` containing one or more validation errors, with all message keys replaced with localised strings.
 
-This function takes the validation output returned by `gpii.schema.validator.validate` (see above) and replaces all
+This function takes the validation output returned by `fluid.schema.validator.validate` (see above) and replaces all
 message keys with strings rendered using
 [`fluid.stringTemplate`](https://docs.fluidproject.org/infusion/development/CoreAPI.html#fluidstringtemplatetemplate-terms).
 
@@ -145,21 +145,21 @@ following:
 
 ### Defaults
 
-#### `gpii.schema.validator.defaultI18nKeysByRule`
+#### `fluid.schema.validator.defaultI18nKeysByRule`
 
 For each type of error there is a default message key.  This bundle of defaults has a string template for each of these.
 Any message keys that cannot be found in your message bundle will be looked up against this map and the default string
 template will be used instead.
 
-#### `gpii.schema.validator.defaultLocalisationTransformRules`
+#### `fluid.schema.validator.defaultLocalisationTransformRules`
 
 By default, the `error` (validation error) and `data` (the value that broke the rule) are exposed.  See above for an
 example of changing this behaviour.
 
-## `gpii.schema.hashSchema(gssSchema)`
+## `fluid.schema.hashSchema(fssSchema)`
 
-* `{Object} gssSchema`: A GSS schema definition.
-* Returns: A unique `{String}` hash representing the GSS Schema.
+* `{Object} fssSchema`: An FSS schema definition.
+* Returns: A unique `{String}` hash representing the FSS Schema.
 
 Many of the global validation component's invokers accept a "schema hash", which is used to look up the schema in the
 validation component's internal cache.  This static API function is provided to allow you to hash your schema content
@@ -178,8 +178,7 @@ Here is an example of how you might make use of the global validator in your own
 "use strict";
 var fluid = require("infusion");
 
-fluid.require("%gpii-json-schema");
-var gpii = fluid.registerNamespace("gpii");
+fluid.require("%fluid-json-schema");
 
 var my = fluid.registerNamespace("my");
 
@@ -191,14 +190,14 @@ my.validating.component.validateInput = function (that, globalValidator, toValid
         return { isValid: true };
     }
     else {
-        return { isValid: false, errors: gpii.schema.validator.localiseErrors(validationResults.errors, toValidate) };
+        return { isValid: false, errors: fluid.schema.validator.localiseErrors(validationResults.errors, toValidate) };
     }
 };
 
 fluid.defaults("my.validating.component", {
     gradeNames: ["fluid.component"],
     schema: {
-        "$schema": "gss-v7-full#",
+        "$schema": "fss-v7-full#",
         type: "object",
         properties: {
             foo: {
@@ -210,7 +209,7 @@ fluid.defaults("my.validating.component", {
     invokers: {
         validateInput: {
             funcName: "my.validating.component.validateInput",
-            args: ["{that}", "{gpii.schema.validator}", "{arguments}.0"]
+            args: ["{that}", "{fluid.schema.validator}", "{arguments}.0"]
         }
     }
 });

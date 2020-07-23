@@ -2,43 +2,42 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
-fluid.require("%gpii-express");
+fluid.require("%fluid-express");
 
 require("../../../../");
-require("./middleware-gss-schema");
+require("./middleware-fss-schema");
 
-fluid.registerNamespace("gpii.tests.schema.middleware.gatedMiddleware");
+fluid.registerNamespace("fluid.tests.schema.middleware.gatedMiddleware");
 
-gpii.tests.schema.middleware.gatedMiddleware.respond = function (response) {
+fluid.tests.schema.middleware.gatedMiddleware.respond = function (response) {
     response.send("Nothing can be ill.");
 };
 
-fluid.defaults("gpii.tests.schema.middleware.gatedMiddleware", {
-    gradeNames: ["gpii.express.middleware"],
+fluid.defaults("fluid.tests.schema.middleware.gatedMiddleware", {
+    gradeNames: ["fluid.express.middleware"],
     method: "use",
     invokers: {
         middleware: {
-            funcName: "gpii.tests.schema.middleware.gatedMiddleware.respond",
+            funcName: "fluid.tests.schema.middleware.gatedMiddleware.respond",
             args:     ["{arguments}.1"] // response
         }
     }
 });
 
 // A base grade for all the "method" variations on our router.
-fluid.defaults("gpii.tests.schema.middleware.router.base", {
-    gradeNames: ["gpii.express.router"],
+fluid.defaults("fluid.tests.schema.middleware.router.base", {
+    gradeNames: ["fluid.express.router"],
     components: {
         validationMiddleware: {
-            type: "gpii.schema.validationMiddleware",
+            type: "fluid.schema.validationMiddleware",
             options: {
                 namespace: "validationMiddleware",
-                inputSchema: gpii.tests.schemas.middleware.gatedSchema
+                inputSchema: fluid.tests.schemas.middleware.gatedSchema
             }
         },
         gatedMiddleware: {
-            type: "gpii.tests.schema.middleware.gatedMiddleware",
+            type: "fluid.tests.schema.middleware.gatedMiddleware",
             options: {
                 priority: "after:validationMiddleware"
             }
@@ -47,47 +46,47 @@ fluid.defaults("gpii.tests.schema.middleware.router.base", {
 });
 
 // POST
-fluid.defaults("gpii.tests.schema.middleware.router.post", {
-    gradeNames: ["gpii.tests.schema.middleware.router.base"],
+fluid.defaults("fluid.tests.schema.middleware.router.post", {
+    gradeNames: ["fluid.tests.schema.middleware.router.base"],
     method:     "post",
     path:       "/POST"
 });
 
 // PUT
-fluid.defaults("gpii.tests.schema.middleware.router.put", {
-    gradeNames: ["gpii.tests.schema.middleware.router.base"],
+fluid.defaults("fluid.tests.schema.middleware.router.put", {
+    gradeNames: ["fluid.tests.schema.middleware.router.base"],
     method:     "put",
     path:       "/PUT"
 });
 
 // GET
-fluid.defaults("gpii.tests.schema.middleware.router.get", {
-    gradeNames: ["gpii.tests.schema.middleware.router.base"],
+fluid.defaults("fluid.tests.schema.middleware.router.get", {
+    gradeNames: ["fluid.tests.schema.middleware.router.base"],
     method:     "get",
     path:       "/GET",
     components: {
         validationMiddleware: {
             options: {
-                gradeNames: ["gpii.schema.validationMiddleware.handlesQueryData"]
+                gradeNames: ["fluid.schema.validationMiddleware.handlesQueryData"]
             }
         }
     }
 });
 
 // A common container for all of the different "method" variations
-fluid.defaults("gpii.tests.schema.middleware.router", {
-    gradeNames: ["gpii.express.router"],
+fluid.defaults("fluid.tests.schema.middleware.router", {
+    gradeNames: ["fluid.express.router"],
     path: "/gated",
     method: "use",
     components: {
         get: {
-            type: "gpii.tests.schema.middleware.router.get"
+            type: "fluid.tests.schema.middleware.router.get"
         },
         post: {
-            type: "gpii.tests.schema.middleware.router.post"
+            type: "fluid.tests.schema.middleware.router.post"
         },
         put: {
-            type: "gpii.tests.schema.middleware.router.put"
+            type: "fluid.tests.schema.middleware.router.put"
         }
     }
 });

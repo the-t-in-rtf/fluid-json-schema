@@ -1,11 +1,10 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
-fluid.registerNamespace("gpii.tests.schemas.middleware");
+fluid.registerNamespace("fluid.tests.schemas.middleware");
 
-gpii.tests.schemas.middleware.gatedSchema = {
+fluid.tests.schemas.middleware.gatedSchema = {
     "type": "object",
     "title": "'Gated' schema...",
     "description": "Schema for use in exercising our middleware and client-side components.",

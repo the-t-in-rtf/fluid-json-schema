@@ -1,7 +1,7 @@
 /*
 
-    Independently of the validator, confirm that our GSS metaschema is itself valid, and that it can be used with Ajv
-    to validate GSS schemas.
+    Independently of the validator, confirm that our FSS metaschema is itself valid, and that it can be used with Ajv
+    to validate FSS schemas.
 
 */
 /* globals Ajv, jqUnit, require */
@@ -17,26 +17,24 @@ var jqUnit = jqUnit || {};
         fluid = require("infusion");
         Ajv = require("ajv");
         jqUnit = require("node-jqunit");
-        require("../../../src/js/common/gss-metaschema");
+        require("../../../src/js/common/fss-metaschema");
     }
 
-    var gpii  = fluid.registerNamespace("gpii");
-
-    jqUnit.module("Test the GSS metaschema.");
+    jqUnit.module("Test the FSS metaschema.");
 
     jqUnit.test("The metaschema itself should be valid.", function () {
         var ajv = new Ajv();
-        var metaSchemaIsValid = ajv.validateSchema(gpii.schema.metaSchema);
+        var metaSchemaIsValid = ajv.validateSchema(fluid.schema.metaSchema);
         jqUnit.assertTrue("The metaschema should be valid.", metaSchemaIsValid);
         jqUnit.assertDeepEq("There should be no validation errors.", null, ajv.errors);
     });
 
-    jqUnit.test("We should be able to validate GSS Schemas using the metaschema.", function () {
+    jqUnit.test("We should be able to validate FSS Schemas using the metaschema.", function () {
         var ajv = new Ajv();
-        ajv.addMetaSchema(gpii.schema.metaSchema);
+        ajv.addMetaSchema(fluid.schema.metaSchema);
 
-        var invalidGssSchema = {
-            "$schema": "gss-v7-full#",
+        var invalidFssSchema = {
+            "$schema": "fss-v7-full#",
             "properties": {
                 "foo": {
                     "type": "string",
@@ -44,11 +42,11 @@ var jqUnit = jqUnit || {};
                 }
             }
         };
-        var invalidSchemaIsValid = ajv.validateSchema(invalidGssSchema);
+        var invalidSchemaIsValid = ajv.validateSchema(invalidFssSchema);
         jqUnit.assertFalse("The schema should be reported as invalid.", invalidSchemaIsValid);
 
-        var validGssSchema = {
-            "$schema": "gss-v7-full#",
+        var validFssSchema = {
+            "$schema": "fss-v7-full#",
             "properties": {
                 "foo": {
                     "type": "string",
@@ -63,11 +61,11 @@ var jqUnit = jqUnit || {};
                 }
             }
         };
-        var validSchemaIsValid = ajv.validateSchema(validGssSchema);
+        var validSchemaIsValid = ajv.validateSchema(validFssSchema);
         jqUnit.assertTrue("The schema should be reported as valid.", validSchemaIsValid);
 
         var minIsAllowed = ajv.validateSchema({
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             "type": "integer",
             "min": 0
         });
@@ -75,7 +73,7 @@ var jqUnit = jqUnit || {};
         jqUnit.assertFalse("The deprecated 'min' keyword should be disallowed.", minIsAllowed);
 
         var maxIsAllowed = ajv.validateSchema({
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             "type": "integer",
             "max": 5
         });
@@ -83,7 +81,7 @@ var jqUnit = jqUnit || {};
         jqUnit.assertFalse("The deprecated 'max' keyword should be disallowed.", maxIsAllowed);
 
         var divisibleByIsAllowed = ajv.validateSchema({
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             "type": "integer",
             "divisibleBy": 2
         });
@@ -91,26 +89,26 @@ var jqUnit = jqUnit || {};
         jqUnit.assertFalse("The deprecated 'divisibleBy' keyword should be disallowed.", divisibleByIsAllowed);
 
         var additionalPropertiesAllowed = ajv.validateSchema({
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             "extra": "bonus material"
         });
 
-        jqUnit.assertFalse("Additional properties not found in the GSS schema should be disallowed.", additionalPropertiesAllowed);
+        jqUnit.assertFalse("Additional properties not found in the FSS metaschema should be disallowed.", additionalPropertiesAllowed);
 
         var nestedSchemasAllowed = ajv.validateSchema({
-            "$schema": "gss-v7-full#",
+            "$schema": "fss-v7-full#",
             properties: {
                 named: {
                     "anyOf": [
-                        { $schema: "gss-v7-full#", type: "string" }
+                        { $schema: "fss-v7-full#", type: "string" }
                     ],
                     "allOf": [
-                        { $schema: "gss-v7-full#", maxLength: 3},
-                        { $schema: "gss-v7-full#", minLength: 1}
+                        { $schema: "fss-v7-full#", maxLength: 3},
+                        { $schema: "fss-v7-full#", minLength: 1}
                     ],
                     "oneOf": [
-                        { $schema: "gss-v7-full#", format: "email" },
-                        { $schema: "gss-v7-full#", format: "uri" }
+                        { $schema: "fss-v7-full#", format: "email" },
+                        { $schema: "fss-v7-full#", format: "uri" }
                     ]
                 }
             },
@@ -118,7 +116,7 @@ var jqUnit = jqUnit || {};
                 type: "object",
                 properties: {
                     settings: {
-                        $schema: "gss-v7-full#",
+                        $schema: "fss-v7-full#",
                         type: "string"
                     }
                 }

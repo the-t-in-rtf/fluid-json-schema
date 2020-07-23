@@ -1,6 +1,6 @@
 /*
 
-    Test harness common to all tests that use `gpii-json-schema` in combination with `gpii-express`.  Loads all
+    Test harness common to all tests that use `fluid-json-schema` in combination with `fluid-express`.  Loads all
     required server-side components.
 
  */
@@ -8,68 +8,68 @@
 "use strict";
 var fluid = require("infusion");
 
-fluid.require("%gpii-express");
-fluid.require("%gpii-handlebars");
+fluid.require("%fluid-express");
+fluid.require("%fluid-handlebars");
 
 require("../../../../");
 require("./middleware-express-fixtures.js");
 
-fluid.defaults("gpii.test.schema.harness.base", {
+fluid.defaults("fluid.test.schema.harness.base", {
     gradeNames: ["fluid.component"],
     templateDirs: {
-        validation: "%gpii-json-schema/src/templates",
-        validationTests: "%gpii-json-schema/tests/templates",
-        handlebarsTests: "%gpii-handlebars/tests/templates/primary"
+        validation: "%fluid-json-schema/src/templates",
+        validationTests: "%fluid-json-schema/tests/templates",
+        handlebarsTests: "%fluid-handlebars/tests/templates/primary"
     },
     components: {
         json: {
-            type: "gpii.express.middleware.bodyparser.json",
+            type: "fluid.express.middleware.bodyparser.json",
             options: {
                 priority: "first"
             }
         },
         urlencoded: {
-            type: "gpii.express.middleware.bodyparser.urlencoded",
+            type: "fluid.express.middleware.bodyparser.urlencoded",
             options: {
                 priority: "after:json"
             }
         },
         handlebars: {
-            type: "gpii.express.hb",
+            type: "fluid.express.hb",
             options: {
                 priority:     "after:urlencoded",
-                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
+                templateDirs: "{fluid.test.schema.harness.base}.options.templateDirs"
             }
         },
         gated: {
-            type: "gpii.tests.schema.middleware.router",
+            type: "fluid.tests.schema.middleware.router",
             options: {
                 priority: "after:urlencoded"
             }
         },
         build: {
-            type: "gpii.express.router.static",
+            type: "fluid.express.router.static",
             options: {
                 namespace: "build",
                 path:    "/build",
-                content: "%gpii-json-schema/build"
+                content: "%fluid-json-schema/build"
             }
         },
         inline: {
-            type: "gpii.handlebars.inlineTemplateBundlingMiddleware",
+            type: "fluid.handlebars.inlineTemplateBundlingMiddleware",
             options: {
                 path:         "/templates",
-                templateDirs: "{gpii.test.schema.harness.base}.options.templateDirs"
+                templateDirs: "{fluid.test.schema.harness.base}.options.templateDirs"
             }
         },
         messageBundleLoader: {
-            type: "gpii.handlebars.i18n.messageBundleLoader",
+            type: "fluid.handlebars.i18n.messageBundleLoader",
             options: {
-                messageDirs: { validation: "%gpii-json-schema/src/messages" }
+                messageDirs: { validation: "%fluid-json-schema/src/messages" }
             }
         },
         messages: {
-            type: "gpii.handlebars.inlineMessageBundlingMiddleware",
+            type: "fluid.handlebars.inlineMessageBundlingMiddleware",
             options: {
                 model: {
                     messageBundles: "{messageBundleLoader}.model.messageBundles"
@@ -77,7 +77,7 @@ fluid.defaults("gpii.test.schema.harness.base", {
             }
         },
         htmlErrorHandler: {
-            type: "gpii.handlebars.errorRenderingMiddleware",
+            type: "fluid.handlebars.errorRenderingMiddleware",
             options: {
                 priority:  "after:gated",
                 statusCode:  400,
@@ -86,7 +86,7 @@ fluid.defaults("gpii.test.schema.harness.base", {
         },
         // This is hit by validation errors that are not otherwise handled (for example, by rendering the error).
         defaultErrorMiddleware: {
-            type: "gpii.express.middleware.error",
+            type: "fluid.express.middleware.error",
             options: {
                 priority:  "last",
                 defaultStatusCode: 500
@@ -95,8 +95,8 @@ fluid.defaults("gpii.test.schema.harness.base", {
     }
 });
 
-fluid.defaults("gpii.test.schema.harness", {
-    gradeNames: ["gpii.express", "gpii.test.schema.harness.base"],
+fluid.defaults("fluid.test.schema.harness", {
+    gradeNames: ["fluid.express", "fluid.test.schema.harness.base"],
     port: 6194,
     baseUrl: {
         expander: {
@@ -106,24 +106,24 @@ fluid.defaults("gpii.test.schema.harness", {
     },
     components: {
         js: {
-            type: "gpii.express.router.static",
+            type: "fluid.express.router.static",
             options: {
                 path:    "/src",
-                content: "%gpii-json-schema/src"
+                content: "%fluid-json-schema/src"
             }
         },
         modules: {
-            type: "gpii.express.router.static",
+            type: "fluid.express.router.static",
             options: {
                 path:    "/node_modules",
-                content: "%gpii-json-schema/node_modules"
+                content: "%fluid-json-schema/node_modules"
             }
         },
         content: {
-            type: "gpii.express.router.static",
+            type: "fluid.express.router.static",
             options: {
                 path:    "/content",
-                content: "%gpii-json-schema/tests/browser-fixtures"
+                content: "%fluid-json-schema/tests/browser-fixtures"
             }
         }
     }});

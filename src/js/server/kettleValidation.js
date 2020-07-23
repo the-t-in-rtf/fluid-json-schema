@@ -1,37 +1,35 @@
 /* eslint-env node */
 "use strict";
 var fluid = require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
+fluid.require("%fluid-handlebars");
 
-fluid.require("%gpii-handlebars");
-
-fluid.registerNamespace("gpii.schema.kettle.validator");
+fluid.registerNamespace("fluid.schema.kettle.validator");
 
 /**
  *
- * Validate a request payload according to a GSS Schema.  Fulfills the contract for a `kettle.middleware` `handle`
+ * Validate a request payload according to an FSS Schema.  Fulfills the contract for a `kettle.middleware` `handle`
  * invoker.
  *
- * @param {gpii.schema.kettle.validator} kettleValidator - A `gpii.schema.kettle.validator` instance that has a schema and rules about which part of the payload should be validated.
- * @param {gpii.schema.validator} globalValidator - The global validator instance.
+ * @param {fluid.schema.kettle.validator} kettleValidator - A `fluid.schema.kettle.validator` instance that has a schema and rules about which part of the payload should be validated.
+ * @param {fluid.schema.validator} globalValidator - The global validator instance.
  * @param {kettle.request.http} requestHandler - The component that is fielding the actual request.
  * @return {Promise} - A `fluid.promise` that is rejected with a validation error if the payload is invalid or resolved if the payload is valid.
  *
  */
-gpii.schema.kettle.validator.validateRequest = function (kettleValidator, globalValidator, requestHandler) {
+fluid.schema.kettle.validator.validateRequest = function (kettleValidator, globalValidator, requestHandler) {
     var validationPromise = fluid.promise();
 
-    var gssSchema = kettleValidator.options.requestSchema;
+    var fssSchema = kettleValidator.options.requestSchema;
     var transformationRules = kettleValidator.options.requestContentToValidate;
     var toValidate = fluid.model.transformWithRules(requestHandler.req, transformationRules);
-    var validationResults = globalValidator.validate(gssSchema, toValidate, kettleValidator.options.schemaHash);
+    var validationResults = globalValidator.validate(fssSchema, toValidate, kettleValidator.options.schemaHash);
 
     if (validationResults.isValid) {
         validationPromise.resolve();
     }
     else {
-        var messageBundle = gpii.handlebars.i18n.deriveMessageBundleFromRequest(requestHandler.req, kettleValidator.model.messageBundles, kettleValidator.options.defaultLocale);
-        var localisedErrors = gpii.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, kettleValidator.options.localisationTransform);
+        var messageBundle = fluid.handlebars.i18n.deriveMessageBundleFromRequest(requestHandler.req, kettleValidator.model.messageBundles, kettleValidator.options.defaultLocale);
+        var localisedErrors = fluid.schema.validator.localiseErrors(validationResults.errors, toValidate, messageBundle, kettleValidator.options.localisationTransform);
         var localisedPayload = fluid.copy(validationResults);
         localisedPayload.errors = localisedErrors;
 
@@ -45,15 +43,15 @@ gpii.schema.kettle.validator.validateRequest = function (kettleValidator, global
 // A kettle.middleware grade that can be used in the requestMiddleware stack, as in:
 // https://github.com/fluid-project/kettle/blob/670396acbf4be31be009b2b2dee48373134ea94d/tests/shared/SessionTestDefs.js#L64
 
-fluid.defaults("gpii.schema.kettle.validator", {
+fluid.defaults("fluid.schema.kettle.validator", {
     gradeNames: ["kettle.middleware", "fluid.modelComponent"],
-    schemaHash: "@expand:gpii.schema.hashSchema({that}.options.requestSchema)",
+    schemaHash: "@expand:fluid.schema.hashSchema({that}.options.requestSchema)",
     defaultLocale: "en_US",
     messageDirs: {
-        validation: "%gpii-json-schema/src/messages"
+        validation: "%fluid-json-schema/src/messages"
     },
     model: {
-        messageBundles: "@expand:gpii.handlebars.i18n.loadMessageBundles({that}.options.messageDirs)"
+        messageBundles: "@expand:fluid.handlebars.i18n.loadMessageBundles({that}.options.messageDirs)"
     },
     localisationTransform: {
         "": ""
@@ -64,7 +62,7 @@ fluid.defaults("gpii.schema.kettle.validator", {
         message: "Your request was invalid.  See the errors for details."
     },
     requestSchema: {
-        "$schema": "gss-v7-full#"
+        "$schema": "fss-v7-full#"
     },
     requestContentToValidate: {
         "body":   "body",
@@ -77,34 +75,34 @@ fluid.defaults("gpii.schema.kettle.validator", {
     },
     invokers: {
         handle: {
-            funcName: "gpii.schema.kettle.validator.validateRequest",
-            args:    ["{that}", "{gpii.schema.validator}", "{arguments}.0"] // kettleValidator, globalValidator, request
+            funcName: "fluid.schema.kettle.validator.validateRequest",
+            args:    ["{that}", "{fluid.schema.validator}", "{arguments}.0"] // kettleValidator, globalValidator, request
         }
     },
     listeners: {
         "onCreate.cacheSchema": {
-            func: "{gpii.schema.validator}.cacheSchema",
-            args: ["{that}.options.requestSchema", "{that}.options.schemaHash"] // gssSchema, schemaHash
+            func: "{fluid.schema.validator}.cacheSchema",
+            args: ["{that}.options.requestSchema", "{that}.options.schemaHash"] // fssSchema, schemaHash
         }
     }
 });
 
-fluid.defaults("gpii.schema.kettle.validator.body", {
-    gradeNames: ["gpii.schema.kettle.validator"],
+fluid.defaults("fluid.schema.kettle.validator.body", {
+    gradeNames: ["fluid.schema.kettle.validator"],
     requestContentToValidate: {
         "": "body"
     }
 });
 
-fluid.defaults("gpii.schema.kettle.validator.params", {
-    gradeNames: ["gpii.schema.kettle.validator"],
+fluid.defaults("fluid.schema.kettle.validator.params", {
+    gradeNames: ["fluid.schema.kettle.validator"],
     requestContentToValidate: {
         "": "params"
     }
 });
 
-fluid.defaults("gpii.schema.kettle.validator.query", {
-    gradeNames: ["gpii.schema.kettle.validator"],
+fluid.defaults("fluid.schema.kettle.validator.query", {
+    gradeNames: ["fluid.schema.kettle.validator"],
     requestContentToValidate: {
         "":  "query"
     }

@@ -6,12 +6,10 @@ var fluid  = fluid  || {};
     "use strict";
     if (!fluid.identity) {
         fluid = require("infusion");
-        fluid.require("%gpii-json-schema");
+        fluid.require("%fluid-json-schema");
     }
 
-    var gpii = fluid.registerNamespace("gpii");
-
-    fluid.registerNamespace("gpii.test.schema");
+    fluid.registerNamespace("fluid.test.schema");
 
     /**
      *
@@ -20,16 +18,16 @@ var fluid  = fluid  || {};
      * @param {Object} jqUnit - The instance of jqUnit to use to check assertions.
      *
      */
-    gpii.test.schema.checkContextGrades = function (component, jqUnit) {
-        var isPotentiaTwo = gpii.schema.component.hasRegisterPotentia();
+    fluid.test.schema.checkContextGrades = function (component, jqUnit) {
+        var isPotentiaTwo = fluid.schema.component.hasRegisterPotentia();
 
         if (isPotentiaTwo) {
-            jqUnit.assertTrue("The resulting component should have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.potentiaII"));
-            jqUnit.assertFalse("The resulting component should not have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.legacy"));
+            jqUnit.assertTrue("The resulting component should have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "fluid.schema.component.potentiaII"));
+            jqUnit.assertFalse("The resulting component should not have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "fluid.schema.component.legacy"));
         }
         else {
-            jqUnit.assertFalse("The resulting component should not have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.potentiaII"));
-            jqUnit.assertTrue("The resulting component should have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "gpii.schema.component.legacy"));
+            jqUnit.assertFalse("The resulting component should not have the 'potentia ii' grade mixed in.", fluid.componentHasGrade(component, "fluid.schema.component.potentiaII"));
+            jqUnit.assertTrue("The resulting component should have the 'legacy' grade mixed in.", fluid.componentHasGrade(component, "fluid.schema.component.legacy"));
         }
     };
 })(fluid);

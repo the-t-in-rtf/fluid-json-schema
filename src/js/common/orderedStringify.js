@@ -3,9 +3,7 @@ var fluid  = fluid  || require("infusion");
 (function (fluid) {
     // TODO: pull this up into Infusion if we need to use this type of object hashing more broadly.
     "use strict";
-
-    var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.schema");
+    fluid.registerNamespace("fluid.schema");
 
     // Adapted from: https://github.com/fluid-project/infusion/pull/566/files#diff-ce65b74e18811491f3cd6be95ac827b6R475
     /**
@@ -17,7 +15,7 @@ var fluid  = fluid  || require("infusion");
      * @return {String} - A string representing the object.
      *
      */
-    gpii.schema.stringifyObject = function (objectToStringify) {
+    fluid.schema.stringifyObject = function (objectToStringify) {
         var str = "{";
         var keys = fluid.keys(objectToStringify).sort();
 
@@ -26,7 +24,7 @@ var fluid  = fluid  || require("infusion");
             if (index > 0) {
                 str += ",";
             }
-            str += "\"" + key + "\":" + gpii.schema.stringify(val);
+            str += "\"" + key + "\":" + fluid.schema.stringify(val);
         });
 
         str += "}";
@@ -35,19 +33,19 @@ var fluid  = fluid  || require("infusion");
 
     /**
      *
-     * Generates a stringified version of any type of material. Non-API, you should use `gpii.schema.hashSchema`.
+     * Generates a stringified version of any type of material. Non-API, you should use `fluid.schema.hashSchema`.
      *
      * @param {Any} toStringify - The material to be "stringified".
      * @return {String} - A string representing the the material, suitable for parsing with JSON.parse.
      *
      */
-    gpii.schema.stringify = function (toStringify) {
+    fluid.schema.stringify = function (toStringify) {
         if (Array.isArray(toStringify)) {
-            var segments = fluid.transform(toStringify, gpii.schema.stringify);
+            var segments = fluid.transform(toStringify, fluid.schema.stringify);
             return "[" + segments.join(",") + "]";
         }
         else if (fluid.isPlainObject(toStringify)) {
-            return gpii.schema.stringifyObject(toStringify);
+            return fluid.schema.stringifyObject(toStringify);
         }
 
         return JSON.stringify(toStringify);
