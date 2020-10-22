@@ -25,7 +25,7 @@ messages produced by the validator with on-screen elements.  See that component'
 ### `fluid.schema.validationMiddleware`
 
 The base grade for validation middleware used with fluid-express.  Supports all the options above, plus the options for
-[`fluid.express.middleware`](https://github.com/fluid-project/fluid-express/blob/master/docs/middleware.md#fluidexpressmiddleware).
+[`fluid.express.middleware`](https://github.com/fluid-project/fluid-express/blob/main/docs/middleware.md#fluidexpressmiddleware).
 The incoming request is first transformed using `fluid.model.transformWithRules`
 and`options.rules.requestContentToValidate`. The results are validated against `options.schemaKey`.
 
@@ -64,14 +64,14 @@ see `fluid.schema.validationMiddleware.handlesQueryData` below.
 ##### `{middleware}.middleware(request, response, next)`
 
 * `request`: An object representing the individual user's request.  See [the `fluid-express`
-  documentation](https://github.com/fluid-project/fluid-express/blob/master/docs/express.md#the-express-request-object) for
+  documentation](https://github.com/fluid-project/fluid-express/blob/main/docs/express.md#the-express-request-object) for
   details.
 * `response`: The response object, which can be used to send information to the requesting user.  See [the
   `fluid-express`
-  documentation](https://github.com/fluid-project/fluid-express/blob/master/docs/express.md#the-express-response-object)
+  documentation](https://github.com/fluid-project/fluid-express/blob/main/docs/express.md#the-express-response-object)
   for details.
 * `next`: The next Express middleware or router function in the chain.  See [the `fluid-express` documentation for
-  details](https://github.com/fluid-project/fluid-express/blob/master/docs/middleware.md#what-is-middleware).
+  details](https://github.com/fluid-project/fluid-express/blob/main/docs/middleware.md#what-is-middleware).
 * Returns: Nothing.
 
 This invoker fulfills the standard contract for a `fluid.express.middleware` component.  It examines the `request`
@@ -141,7 +141,7 @@ with a failure message.
 ### `fluid.schema.kettle.validator`
 
 An extension of the `kettle.middleware` grade that is intended to be hosted as a child of your
-[`kettle.app`]((https://github.com/fluid-project/kettle/blob/master/docs/RequestHandlersAndApps.md)) grade, and to be
+[`kettle.app`]((https://github.com/fluid-project/kettle/blob/main/docs/RequestHandlersAndApps.md)) grade, and to be
 referenced as `requestMiddleware` from one or more of your `kettle.request.http` instances.  Each validator validates
 a single type of payload.   See below for a usage example.
 

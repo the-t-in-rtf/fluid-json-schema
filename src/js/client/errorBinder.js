@@ -8,7 +8,7 @@
 
     See the documentation for more details:
 
-    https://github.com/the-t-in-rtf/fluid-json-schema/blob/master/docs/validator.md
+    https://github.com/fluid-project/fluid-json-schema/blob/main/docs/validator.md
 
  */
 (function () {
