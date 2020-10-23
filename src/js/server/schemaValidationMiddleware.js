@@ -3,7 +3,7 @@
     "Gatekeeper" middleware that rejects any request whose JSON payloads are not valid. See this component's
     documentation for more details:
 
-    https://github.com/the-t-in-rtf/fluid-json-schema/blob/master/docs/schemaValidationMiddleware.md
+    https://github.com/fluid-project/fluid-json-schema/blob/main/docs/schemaValidationMiddleware.md
 
  */
 /* eslint-env node */
