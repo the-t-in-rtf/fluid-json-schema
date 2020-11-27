@@ -152,7 +152,7 @@ The following component configuration options are supported:
 | Option                           | Type     | Description |
 | -------------------------------- | -------- | ----------- |
 | `errorTemplate`                  | `Object` | If there are validation errors, this object will be merged with the raw error to set the kettle-specific options like `message` and `statusCode`. |
-| `inputSchema`                    | `Object` | The [FSS](fss.md) schema to use in validating incoming request data. |
+| `requestSchema`                  | `Object` | The [FSS](fss.md) schema to use in validating incoming request data. |
 | `rules.requestContentToValidate` | `Object` | The [rules to use in transforming](http://docs.fluidproject.org/infusion/development/ModelTransformationAPI.html#fluid-model-transformwithrules-source-rules-options-) the incoming data before validation (see below for more details). |
 
 The default `rules.requestContentToValidate` in the express middleware grade can be represented as follows:
@@ -213,7 +213,7 @@ my.kettle.handler.reportSuccess = function (request) {
 
 fluid.defaults("my.kettle.validator", {
     gradeNames: ["fluid.schema.kettle.validator.body"],
-    inputSchema: {
+    requestSchema: {
         type: "object",
         properties: {
             hasBodyContent: {
