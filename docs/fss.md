@@ -67,6 +67,7 @@ We can make use of the above message keys in an FSS Schema that looks like:
 
 ```json
 {
+    "$schema": "fss-v7-full#",
     "properties": {
         "name": {
             "type": "string",
@@ -229,6 +230,7 @@ The above example might be represented in FSS as follows:
 fluid.defaults("my.email.grade", {
     gradeName: ["fluid.schema.component"],
     schema: {
+        "$schema": "fss-v7-full#",
         "description": "Simple email schema.",
         "definitions": {
             "ourEmails": {
