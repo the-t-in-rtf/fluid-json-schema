@@ -119,6 +119,7 @@ fluid.express({
     gradeNames:    ["fluid.schema.validationMiddleware.requestAware.router"],
     handlerGrades: ["fluid.schema.tests.handler"],
     inputSchema: {
+        "$schema": "fss-v7-full#",
         properties: {
             key: {
                 type: "string",
@@ -214,6 +215,7 @@ my.kettle.handler.reportSuccess = function (request) {
 fluid.defaults("my.kettle.validator", {
     gradeNames: ["fluid.schema.kettle.validator.body"],
     requestSchema: {
+        "$schema": "fss-v7-full#",
         type: "object",
         properties: {
             hasBodyContent: {
@@ -270,6 +272,7 @@ Note that we use the `fluid.schema.kettle.validator.body` grade to keep our sche
 
 ```json5
 {
+    "$schema": "fss-v7-full#",
     type: "object",
     properties: {
         body: {
