@@ -4,11 +4,13 @@
     to validate FSS schemas.
 
 */
-/* globals Ajv, jqUnit, require */
 /* eslint-env browser */
+/* eslint-disable no-redeclare */
+/* globals Ajv, jqUnit, require */
 var fluid  = fluid  || {};
 var Ajv    = Ajv    || {};
 var jqUnit = jqUnit || {};
+/* eslint-enable no-redeclare */
 
 (function (fluid, Ajv, jqUnit) {
     "use strict";

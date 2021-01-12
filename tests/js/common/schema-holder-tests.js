@@ -1,7 +1,9 @@
 /* eslint-env browser */
+/* eslint-disable no-redeclare */
 /* globals require */
-var fluid  = fluid || {};
+var fluid  = fluid  || {};
 var jqUnit = jqUnit || {};
+/* eslint-enable no-redeclare */
 
 (function (fluid, jqUnit) {
     "use strict";
