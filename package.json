@@ -22,7 +22,7 @@
         "fluid-binder": "1.1.1",
         "fluid-express": "1.0.16",
         "fluid-handlebars": "2.1.4-dev.20210115T091020Z.6bdf9d3.GH-37",
-        "infusion": "3.0.0-dev.20210114T211758Z.d345ecd74.FLUID-6145",
+        "infusion": "3.0.0-dev.20210114T215306Z.2b1fe9609.FLUID-6580",
         "kettle": "1.15.0"
     },
     "devDependencies": {
