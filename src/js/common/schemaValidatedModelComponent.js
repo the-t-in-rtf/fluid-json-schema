@@ -25,43 +25,7 @@ var fluid  = fluid  || require("infusion");
     };
 
     fluid.defaults("fluid.schema.modelComponent", {
-        gradeNames: ["fluid.schema.component", "fluid.modelComponent"],
-        schema: {
-            properties: {
-                "model": { "type": "object"},
-                options: {
-                    properties: {
-                        modelSchema: { $ref: "fss-v7-full#"},
-                        // This format is what the options look like once they've been merged, and not necessarily what they look like when entered.
-                        "modelListeners": {
-                            "additionalProperties": {
-                                "type": "array",
-                                items: {
-                                    "oneOf": [
-                                        {
-                                            "properties": {
-                                                "func": { "required": true }
-                                            }
-                                        },
-                                        {
-                                            "properties": {
-                                                "funcName": { "type": "string", "required": true }
-                                            }
-                                        }
-                                    ],
-                                    "properties": {
-                                        "args": { "type": "array"},
-                                        "excludeSource": { "oneOf": [{ "type": "string"}, { "type": "array", "items": { "type": "string"}}] },
-                                        "namespace": { "type": "string"},
-                                        "priority": { "type": "string"}
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
+        gradeNames: ["fluid.modelComponent"],
         modelSchema: {
             "$schema": "fss-v7-full#",
             properties: {
