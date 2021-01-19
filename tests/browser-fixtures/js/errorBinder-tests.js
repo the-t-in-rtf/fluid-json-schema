@@ -1,5 +1,7 @@
+/* eslint-disable no-redeclare */
 /* global fluid, jQuery, jqUnit */
 var fluid = fluid || {};
+/* eslint-enable no-redeclare */
 (function (fluid, $, jqUnit) {
     "use strict";
     fluid.setLogging(true);

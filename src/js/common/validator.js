@@ -1,5 +1,6 @@
 /* eslint-env browser */
 /* globals require, Ajv */
+/* eslint-disable-next-line no-redeclare */
 var fluid  = fluid  || require("infusion");
 (function (fluid, Ajv) {
     "use strict";
@@ -253,7 +254,7 @@ var fluid  = fluid  || require("infusion");
      * @typedef schemaValidationResult
      * @property {Boolean} isError - `true` if there is a validation, `false` (or missing) otherwise.
      * @property {String} message - A summary of the result.
-     * @property {Array<ajvError>} - An array of validation errors returned by AJV when validating the schema.
+     * @property {Array<ajvError>} errors - An array of validation errors returned by AJV when validating the schema.
      *
      */
 

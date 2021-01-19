@@ -1,5 +1,6 @@
 /* globals require */
 /* eslint-env browser */
+/* eslint-disable-next-line no-redeclare */
 var fluid  = fluid  || {};
 
 (function (fluid) {

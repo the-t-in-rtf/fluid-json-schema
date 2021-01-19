@@ -1,4 +1,5 @@
 /* globals require */
+/* eslint-disable-next-line no-redeclare */
 var fluid  = fluid  || require("infusion");
 (function (fluid) {
     // TODO: pull this up into Infusion if we need to use this type of object hashing more broadly.

@@ -4,11 +4,12 @@
     "description": "Support validation of JSON within the Fluid ecosystem.",
     "main": "index.js",
     "scripts": {
-        "pretest": "node node_modules/rimraf/bin.js coverage reports && node node_modules/mkdirp coverage reports",
+        "lint": "fluid-lint-all",
+        "pretest": "npx rimraf coverage reports && npx mkdirp coverage reports",
         "test": "npm run test:node && npm run test:browser",
-        "test:node": "node node_modules/nyc/bin/nyc.js --reporter none node tests/all-node-tests.js",
-        "test:browser": "node node_modules/testem/testem.js ci --file tests/testem.js",
-        "posttest": "node node_modules/nyc/bin/nyc.js report"
+        "test:node": "nyc --reporter none node tests/all-node-tests.js",
+        "test:browser": "testem ci --file tests/testem.js",
+        "posttest": "nyc report"
     },
     "repository": {
         "type": "git",
@@ -18,27 +19,23 @@
     "license": "BSD-3-Clause",
     "dependencies": {
         "ajv": "6.12.3",
-        "fluid-binder": "1.1.1",
-        "fluid-express": "1.0.16",
-        "fluid-handlebars": "2.1.3",
-        "infusion": "3.0.0-dev.20200525T143422Z.f7f6aab.FLUID-6148",
+        "fluid-binder": "1.1.2",
+        "fluid-express": "1.0.17",
+        "fluid-handlebars": "2.1.4",
+        "infusion": "3.0.0-dev.20210114T215306Z.2b1fe9609.FLUID-6580",
         "kettle": "1.15.0"
     },
     "devDependencies": {
-        "eslint": "7.4.0",
-        "eslint-config-fluid": "1.4.0",
-        "eslint-plugin-markdown": "1.0.2",
+        "eslint": "7.18.0",
+        "eslint-config-fluid": "2.0.0",
         "foundation-sites": "6.6.3",
-        "fluid-grunt-lint-all": "1.0.8",
-        "fluid-testem": "2.1.13",
-        "grunt": "1.2.1",
+        "fluid-lint-all": "1.0.0",
+        "fluid-testem": "2.1.14",
         "handlebars": "4.7.6",
         "markdown-it": "11.0.0",
-        "mkdirp": "1.0.4",
         "node-jqunit": "1.1.8",
         "nyc": "15.1.0",
         "request": "2.88.2",
-        "rimraf": "3.0.2",
         "testem": "3.2.0"
     }
 }

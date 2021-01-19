@@ -1,5 +1,6 @@
 /* eslint-env browser */
 /* globals require */
+/* eslint-disable-next-line no-redeclare */
 var fluid  = fluid  || require("infusion");
 (function (fluid) {
     "use strict";

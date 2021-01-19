@@ -5,10 +5,12 @@
 
  */
 /* eslint-env browser */
+/* eslint-disable no-redeclare */
 /* globals require */
 var fluid  = fluid  || {};
 var Ajv    = Ajv    || {};
 var jqUnit = jqUnit || {};
+/* eslint-enable no-redeclare */
 
 (function (fluid, Ajv, jqUnit) {
     "use strict";
