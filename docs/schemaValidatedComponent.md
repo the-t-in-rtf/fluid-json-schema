@@ -157,3 +157,11 @@ fluid.defaults("my.irrevocable.restriction", {
 
 This allows others to extend your work without inheriting the restriction.  There are currently discussions around
 improving this by adding the concept of [a "local merge policy"](issues.fluidproject.org/browse/FLUID-5668).
+
+## `fluid.schema.infusionOptionsValidatingComponent`
+
+A `fluid.schema.component` grade validates only the options that a user chooses to express as part of their component's
+schema.  This (experimental) grade adds schema rules that validate the options that are common to fluid components, such
+as invokers, listeners, model listeners.  This functionality was previously bundled with `fluid.schema.component` and
+[`fluid.schema.modelComponent`](./schemaValidatedModelComponent.md), but is now a separate contract that you must
+explicitly opt into.

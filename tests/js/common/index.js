@@ -8,6 +8,7 @@ require("./schema-holder-tests");
 require("./schema-validated-modelComponent-tests");
 require("./schema-validated-component-tests");
 require("./schema-validated-component-pre-potentia-ii-tests");
+require("./schema-validated-infusion-options-component-tests");
 require("./validator-global-component-tests");
 
 // As the mechanisms for retrieving message bundles differ widely, each environment must define the standard namespaced
