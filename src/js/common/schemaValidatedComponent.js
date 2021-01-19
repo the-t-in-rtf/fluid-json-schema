@@ -92,6 +92,28 @@ var fluid  = fluid  || require("infusion");
     fluid.defaults("fluid.schema.component", {
         gradeNames: ["fluid.component", "fluid.contextAware"],
         schema: {
+            "$schema": "fss-v7-full#"
+        },
+        contextAwareness: {
+            validationStrategy: {
+                checks: {
+                    hasRegisterPotentia: {
+                        contextValue: "{fluid.hasRegisterPotentia}",
+                        gradeNames: "fluid.schema.component.potentiaII"
+                    },
+                    legacy: {
+                        contextValue: "{fluid.hasRegisterPotentia}",
+                        equals: false,
+                        gradeNames: "fluid.schema.component.legacy"
+                    }
+                }
+            }
+        }
+    });
+
+    fluid.defaults("fluid.schema.infusionOptionsValidatingComponent", {
+        gradeNames: ["fluid.schema.component"],
+        schema: {
             "$schema": "fss-v7-full#",
             "definitions": {
                 "singleListenerDefinition": {
@@ -270,13 +292,23 @@ var fluid  = fluid  || require("infusion");
                                 }
                             }
                         },
+                        "modelListeners": {
+                            "additionalProperties": {
+                                "oneOf": [
+                                    "{fluid.schema.component}.options.schema.definitions.singleListenerDefinition",
+                                    {
+                                        "type": "array",
+                                        "items": "{fluid.schema.component}.options.schema.definitions.singleListenerDefinition"
+                                    }
+                                ]
+                            }
+                        },
                         "schema": { "$ref": "fss-v7-full#"},
                         "selectors": {
                             "type": "object",
                             "additionalProperties": { "type": "string" }
                         },
                         /*
-
                         workflows: {
                             local: {
                                 concludeComponentObservation: {
@@ -294,21 +326,6 @@ var fluid  = fluid  || require("infusion");
                         "workflows": {
                             "type": "object"
                         }
-                    }
-                }
-            }
-        },
-        contextAwareness: {
-            validationStrategy: {
-                checks: {
-                    hasRegisterPotentia: {
-                        contextValue: "{fluid.hasRegisterPotentia}",
-                        gradeNames: "fluid.schema.component.potentiaII"
-                    },
-                    legacy: {
-                        contextValue: "{fluid.hasRegisterPotentia}",
-                        equals: false,
-                        gradeNames: "fluid.schema.component.legacy"
                     }
                 }
             }
