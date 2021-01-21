@@ -139,7 +139,7 @@ fluid.defaults("fluid.test.schema.caseHolder", {
 fluid.defaults("fluid.test.schema.request", {
     gradeNames: ["kettle.test.request.http"],
     port: "{testEnvironment}.options.port",
-    path: {
+    url: {
         expander: {
             funcName: "fluid.stringTemplate",
             args:     ["http://localhost:%port/%endpoint", { port: "{testEnvironment}.options.port", endpoint: "{that}.options.endpoint"}]

@@ -161,59 +161,59 @@ fluid.defaults("fluid.tests.schema.kettle.caseHolder", {
     ],
     components: {
         validBodyRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "POST",
-                path: "/gated/body"
+                endpoint: "gated/body"
             }
         },
         invalidBodyRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "POST",
-                path: "/gated/body"
+                endpoint: "gated/body"
             }
         },
         validParamsRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "GET",
-                path: "/gated/params/good"
+                endpoint: "gated/params/good"
             }
         },
         invalidParamsRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "GET",
-                path: "/gated/params/bad"
+                endpoint: "gated/params/bad"
             }
         },
         validQueryRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "GET",
-                path: "/gated/query?hasQueryContent=good"
+                endpoint: "gated/query?hasQueryContent=good"
             }
         },
         invalidQueryRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "GET",
-                path: "/gated/query?hasQueryContent=bad"
+                endpoint: "gated/query?hasQueryContent=bad"
             }
         },
         validCombinedRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "POST",
-                path: "/gated/combined/good?hasQueryContent=good"
+                endpoint: "gated/combined/good?hasQueryContent=good"
             }
         },
         invalidCombinedRequest: {
-            type: "fluid.test.schema.kettle.request",
+            type: "fluid.test.schema.request",
             options: {
                 method: "POST",
-                path: "/gated/combined/bad?hasQueryContent=bad"
+                endpoint: "gated/combined/bad?hasQueryContent=bad"
             }
         }
     }

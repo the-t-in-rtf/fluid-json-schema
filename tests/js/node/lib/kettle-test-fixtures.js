@@ -192,11 +192,3 @@ fluid.defaults("fluid.test.schema.kettle.app", {
         }
     }
 });
-
-fluid.defaults("fluid.test.schema.kettle.request", {
-    gradeNames: ["kettle.test.request.http"],
-    headers: {
-        accept: "application/json"
-    },
-    port:  "{testEnvironment}.options.port"
-});

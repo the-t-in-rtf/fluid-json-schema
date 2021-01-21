@@ -19,6 +19,8 @@ kettle.loadTestingSupport();
 
 require("../../../");
 
+require("./lib/fixtures");
+
 fluid.registerNamespace("fluid.tests.schema.middleware.express.caseHolder");
 fluid.tests.schema.middleware.express.caseHolder.examineResponse = function (response, body, shouldBeValid) {
     if (shouldBeValid) {
@@ -37,17 +39,16 @@ fluid.tests.schema.middleware.express.caseHolder.examineResponse = function (res
 };
 
 fluid.defaults("fluid.tests.schema.middleware.request", {
-    gradeNames: ["kettle.test.request.http"],
-    path:       {
+    gradeNames: ["fluid.test.schema.request"],
+    endpoint: {
         expander: {
             funcName: "fluid.stringTemplate",
-            args: ["/gated/%method", { method: "{that}.options.method"}]
+            args: ["gated/%method", { method: "{that}.options.method"}]
         }
     },
     headers: {
         accept: "application/json"
-    },
-    port:       "{testEnvironment}.options.port"
+    }
 });
 
 fluid.defaults("fluid.tests.schema.middleware.request.post", {
@@ -220,7 +221,7 @@ fluid.defaults("fluid.tests.schema.middleware.express.caseHolder", {
         goodJsonGetRequest: {
             type: "fluid.tests.schema.middleware.request.get",
             options: {
-                path: "/gated/get?shallowlyRequired=true"
+                endpoint: "gated/get?shallowlyRequired=true"
             }
         },
         emptyPostRequest: {
