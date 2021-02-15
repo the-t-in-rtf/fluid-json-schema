@@ -20,8 +20,8 @@
     "dependencies": {
         "ajv": "6.12.3",
         "fluid-binder": "1.1.2",
-        "fluid-express": "1.0.18-dev.20210121T091003Z.bfaa948.GH-49",
-        "fluid-handlebars": "2.1.5-dev.20210121T093854Z.653733b.GH-39",
+        "fluid-express": "1.0.18",
+        "fluid-handlebars": "2.1.5",
         "infusion": "3.0.0-dev.20210120T204128Z.6e4be079f.FLUID-6580",
         "kettle": "2.1.0"
     },
