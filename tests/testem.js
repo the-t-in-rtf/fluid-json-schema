@@ -42,7 +42,9 @@ var testemComponent = fluid.testem.instrumentation({
         "Firefox": [
             "--no-remote",
             "--headless"
-        ]
+        ],
+        // Required to get Chromium working on GitHub CI.
+        "Chromium": "{that}.options.browserArgs.Chrome"
     },
     testemOptions: {
         // Disable Headless Chrome we can figure out a solution to this issue: https://issues.fluid.net/browse/fluid-4064
